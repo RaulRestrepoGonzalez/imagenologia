@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+motor
+python-dotenv
+pydantic
+pymongo
+sendgrid
+python-jwt
+twilio
+pydicom
