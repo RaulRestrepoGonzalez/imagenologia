@@ -23,7 +23,7 @@ Este repositorio contiene el código fuente del sistema de gestión integral par
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/usuario/proyecto-imagenologia.git
+git clone git@github.com:RaulRestrepoGonzalez/imagenologia.git
 cd proyecto-imagenologia/backend
 ```
 
