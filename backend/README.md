@@ -11,10 +11,12 @@ Este backend implementa una API REST para gestionar pacientes, órdenes, citas, 
 ## Estructura del Proyecto
 Ver carpetas `app/models`, `app/routers`, `app/services`, `app/utils`.
 
-## Cómo correr el proyecto
+## Cómo correr el proyecto y pasos para ejecutar de forma segura
 ```bash
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+1. Crear un archivo `.env` en la raíz del proyecto y agregar las variables de entorno necesarias con el comando `python -m venv .venv`
+2. ACtivar con el comnado `source .venv/bin/activate.fish`
+3. Actualizar librerias con el comando `pip install --upgrade pip setuptools wheel`
+4. Instalar las dependencias con el comando `pip install -r requirements.txt`
 ```
 
 ## Variables de Entorno
@@ -23,11 +25,4 @@ uvicorn app.main:app --reload
 - `MAIL_SENDER`
 
 ---
-
-# Pasos para ejecutar de forma segura
-1. Crear un archivo `.env` en la raíz del proyecto y agregar las variables de entorno necesarias con el comando `python -m venv .venv`
-2. ACtivar con el comnado `source .venv/bin/activate.fish`
-3. Actualizar librerias con el comando `pip install --upgrade pip setuptools wheel`
-4. Instalar las dependencias con el comando `pip install -r requirements.txt`
-
 © Proyecto de grado 2025 - Universidad Popular del Cesar
