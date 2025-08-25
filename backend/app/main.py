@@ -1,16 +1,41 @@
-from fastapi import FastAPI
-from .config import settings
-from .routers import auth, patients, orders, appointments, notifications
+"""
+Punto de entrada principal de la aplicación
+"""
 
-app = FastAPI(title=settings.app_name)
+from app import create_app
+import uvicorn
+import sys
+import os
 
-app.include_router(auth.router)
-app.include_router(patients.router)
-app.include_router(orders.router)
-app.include_router(appointments.router)
-app.include_router(notifications.router)
+# Agregar el directorio raíz al path para importar server_config
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-@app.get("/")
-async def root():
-    return {"message": f"{settings.app_name} API activa"}
+from server_config import config
 
+def main():
+    """Función principal para ejecutar la aplicación"""
+    
+    # Validar configuración
+    if not config.validate_config():
+        print("❌ Error en la configuración. Verifique las variables de entorno.")
+        sys.exit(1)
+    
+    # Crear la aplicación usando la función factory
+    app = create_app()
+    
+    # Obtener configuración de Uvicorn
+    uvicorn_config = config.get_uvicorn_config()
+    
+    print(f"🚀 Iniciando servidor en {uvicorn_config['host']}:{uvicorn_config['port']}")
+    print(f"🌍 Entorno: {config.environment}")
+    print(f"🔧 Debug: {config.debug}")
+    print(f"📝 Log level: {config.log_level}")
+    
+    # Ejecutar el servidor
+    uvicorn.run(
+        "app.main:app",
+        **uvicorn_config
+    )
+
+if __name__ == "__main__":
+    main()

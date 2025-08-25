@@ -24,4 +24,10 @@ uvicorn app.main:app --reload
 
 ---
 
+# Pasos para ejecutar de forma segura
+1. Crear un archivo `.env` en la raíz del proyecto y agregar las variables de entorno necesarias con el comando `python -m venv .venv`
+2. ACtivar con el comnado `source .venv/bin/activate.fish`
+3. Actualizar librerias con el comando `pip install --upgrade pip setuptools wheel`
+4. Instalar las dependencias con el comando `pip install -r requirements.txt`
+
 © Proyecto de grado 2025 - Universidad Popular del Cesar

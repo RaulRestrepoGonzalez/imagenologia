@@ -1,10 +1,32 @@
+# Dependencias principales del proyecto médico
 fastapi
-uvicorn
-motor
+uvicorn[standard]
 python-dotenv
 pydantic
+
+# Base de datos MongoDB
+motor
 pymongo
-sendgrid
-python-jwt
-twilio
+
+# CORS y middleware
+fastapi-cors
+
+# Procesamiento de archivos DICOM
 pydicom
+Pillow
+numpy
+
+# Servicios de comunicación
+twilio
+python-multipart
+
+# Utilidades
+python-dateutil
+pytz
+
+# Desarrollo y testing
+pytest
+pytest-asyncio
+httpx
+black
+flake8
