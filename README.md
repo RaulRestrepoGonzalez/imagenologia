@@ -6,7 +6,7 @@ Este repositorio contiene el código fuente del sistema de gestión integral par
 
 | Componente   | Tecnología            |
 |--------------|------------------------|
-| Backend      | Python 3.13.3 + FastAPI |
+| Backend      | Python 3.13.3 + FastAPI o superior |
 | Base de Datos| MongoDB (NoSQL)        |
 | Frontend     | Angular 19.2.10 o Superior       |
 | Infraestructura | AWS EC2 + S3 + DocumentDB |
