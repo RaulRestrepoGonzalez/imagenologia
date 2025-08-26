@@ -1,7 +1,7 @@
 Este backend implementa una API REST para gestionar pacientes, órdenes, citas, notificaciones y DICOM.
 
 ## Stack Tecnológico
-- Python 3.13.3
+- Python 3.13.3 o superior
 - FastAPI
 - MongoDB (motor)
 - JWT Auth
