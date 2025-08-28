@@ -1,0 +1,124 @@
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <mat-icon>medical_services</mat-icon>
+    </div>
+    <div class="sidebar-title">Sistema Clínico</div>
+    <div class="sidebar-subtitle">Gestión Integral</div>
+  </div>
+  
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <h3 class="section-title">
+        <mat-icon>dashboard</mat-icon>
+        <span>Gestión Principal</span>
+      </h3>
+      
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a routerLink="/estudios" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>science</mat-icon>
+            </div>
+            <span class="nav-label">Estudios</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/citas" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>event</mat-icon>
+            </div>
+            <span class="nav-label">Citas</span>
+            <div class="nav-indicator"></div>
+            <span class="notification-badge" *ngIf="getNotificacionesNoLeidas() > 0">
+              {{ getNotificacionesNoLeidas() }}
+            </span>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/pacientes" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>group</mat-icon>
+            </div>
+            <span class="nav-label">Pacientes</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/informes" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>description</mat-icon>
+            </div>
+            <span class="nav-label">Informes</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/notificaciones" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>notifications</mat-icon>
+            </div>
+            <span class="nav-label">Notificaciones</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="nav-section">
+      <h3 class="section-title">
+        <mat-icon>settings</mat-icon>
+        <span>Sistema</span>
+      </h3>
+      
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a routerLink="/configuracion" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>tune</mat-icon>
+            </div>
+            <span class="nav-label">Configuración</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/ayuda" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>help</mat-icon>
+            </div>
+            <span class="nav-label">Ayuda</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <button class="nav-link logout-link" (click)="logout()">
+            <div class="nav-icon">
+              <mat-icon>logout</mat-icon>
+            </div>
+            <span class="nav-label">Cerrar Sesión</span>
+            <div class="nav-indicator"></div>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="user-details">
+        <span class="user-name">Dr. Usuario</span>
+        <span class="user-role">Radiólogo</span>
+      </div>
+    </div>
+  </div>
+</nav>

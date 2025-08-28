@@ -1,0 +1,329 @@
+<div class="informes-container">
+  <div class="header-section">
+    <h1>Gestión de Informes Radiológicos</h1>
+    <button mat-raised-button color="primary" (click)="openAddDialog()" class="add-button">
+      <mat-icon>add</mat-icon>
+      Nuevo Informe
+    </button>
+  </div>
+
+  <!-- Dashboard Stats -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <mat-card class="stat-card total">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>assignment</mat-icon>
+            <div class="stat-info">
+              <span class="number">{{ getInformesStats().total }}</span>
+              <span class="label">Total Informes</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card borradores">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>edit</mat-icon>
+            <div class="stat-info">
+              <span class="number">{{ getInformesStats().borradores }}</span>
+              <span class="label">Borradores</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card revision">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>rate_review</mat-icon>
+            <div class="stat-info">
+              <span class="number">{{ getInformesStats().enRevision }}</span>
+              <span class="label">En Revisión</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card validados">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>verified</mat-icon>
+            <div class="stat-info">
+              <span class="number">{{ getInformesStats().validados }}</span>
+              <span class="label">Validados</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card urgentes" *ngIf="getInformesStats().urgentes > 0">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>priority_high</mat-icon>
+            <div class="stat-info">
+              <span class="number">{{ getInformesStats().urgentes }}</span>
+              <span class="label">Urgentes</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Pending and Urgent Reports Alerts -->
+  <div class="alerts-section">
+    <div class="alert-row" *ngIf="getPendingReports().length > 0 || getUrgentReports().length > 0">
+      <!-- Pending Reports Alert -->
+      <mat-card class="alert-card pending" *ngIf="getPendingReports().length > 0">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>pending_actions</mat-icon>
+            Informes Pendientes ({{ getPendingReports().length }})
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="alert-list">
+            <div *ngFor="let informe of getPendingReports().slice(0, 3)" class="alert-item">
+              <div class="item-info">
+                <strong>{{ informe.paciente_nombre }}</strong>
+                <span class="study-type">{{ informe.estudio_tipo }}</span>
+              </div>
+              <mat-chip [class]="getEstadoClass(informe.estado)" selected>
+                {{ informe.estado }}
+              </mat-chip>
+            </div>
+            <div *ngIf="getPendingReports().length > 3" class="more-items">
+              +{{ getPendingReports().length - 3 }} más...
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Urgent Reports Alert -->
+      <mat-card class="alert-card urgent" *ngIf="getUrgentReports().length > 0">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>report_problem</mat-icon>
+            Informes Urgentes ({{ getUrgentReports().length }})
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="alert-list">
+            <div *ngFor="let informe of getUrgentReports().slice(0, 3)" class="alert-item">
+              <div class="item-info">
+                <strong>{{ informe.paciente_nombre }}</strong>
+                <span class="study-type">{{ informe.estudio_tipo }}</span>
+              </div>
+              <mat-chip class="urgent-chip" selected>
+                <mat-icon>priority_high</mat-icon>
+                Urgente
+              </mat-chip>
+            </div>
+            <div *ngIf="getUrgentReports().length > 3" class="more-items">
+              +{{ getUrgentReports().length - 3 }} más...
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="search-filters">
+      <mat-form-field appearance="fill" class="search-field">
+        <mat-label>Buscar informes</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Paciente, médico, diagnóstico..."
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Estado</mat-label>
+        <mat-select [(value)]="selectedEstado" (selectionChange)="onEstadoChange()">
+          <mat-option *ngFor="let estado of estadoOptions" [value]="estado">
+            {{ estado }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Calidad</mat-label>
+        <mat-select [(value)]="selectedCalidad" (selectionChange)="onCalidadChange()">
+          <mat-option *ngFor="let calidad of calidadOptions" [value]="calidad">
+            {{ calidad }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Urgencia</mat-label>
+        <mat-select [(value)]="selectedUrgencia" (selectionChange)="onUrgenciaChange()">
+          <mat-option *ngFor="let urgencia of urgenciaOptions" [value]="urgencia">
+            {{ urgencia }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Validación</mat-label>
+        <mat-select [(value)]="selectedValidacion" (selectionChange)="onValidacionChange()">
+          <mat-option *ngFor="let validacion of validacionOptions" [value]="validacion">
+            {{ validacion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button (click)="sortInformesByDate()" class="sort-button">
+        <mat-icon>sort</mat-icon>
+        Ordenar por fecha
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section" *ngIf="!isLoading; else loadingTemplate">
+    <div *ngIf="filteredInformes.length === 0; else informesTemplate" class="no-data">
+      <mat-icon>description</mat-icon>
+      <h3>
+        {{ searchTerm || selectedEstado !== 'Todos' || selectedCalidad !== 'Todos' ||
+        selectedUrgencia !== 'Todos' || selectedValidacion !== 'Todos' ? 'No se encontraron
+        informes' : 'No hay informes registrados' }}
+      </h3>
+      <p>
+        {{ searchTerm || selectedEstado !== 'Todos' || selectedCalidad !== 'Todos' ||
+        selectedUrgencia !== 'Todos' || selectedValidacion !== 'Todos' ? 'Intenta ajustar los
+        filtros' : 'Comienza creando tu primer informe' }}
+      </p>
+    </div>
+
+    <ng-template #informesTemplate>
+      <div class="cards-container">
+        <mat-card
+          *ngFor="let informe of filteredInformes"
+          class="informe-card"
+          [class.urgent]="informe.urgente"
+          [class.validated]="informe.validado"
+          [class.pending]="isPending(informe.estado)"
+        >
+          <mat-card-header>
+            <div mat-card-avatar class="avatar" [class.urgent-avatar]="informe.urgente">
+              <mat-icon>{{ informe.urgente ? 'priority_high' : 'description' }}</mat-icon>
+            </div>
+            <mat-card-title>{{ informe.paciente_nombre }}</mat-card-title>
+            <mat-card-subtitle>{{ informe.estudio_tipo }}</mat-card-subtitle>
+            <div class="card-badges">
+              <mat-chip [class]="getEstadoClass(informe.estado)" selected>
+                {{ informe.estado }}
+              </mat-chip>
+              <mat-chip [class]="getCalidadClass(informe.calidad_estudio)" selected>
+                {{ informe.calidad_estudio }}
+              </mat-chip>
+              <mat-chip *ngIf="informe.urgente" class="urgent-chip" selected>
+                <mat-icon>priority_high</mat-icon>
+                Urgente
+              </mat-chip>
+              <mat-chip *ngIf="informe.validado" class="validated-chip" selected>
+                <mat-icon>verified</mat-icon>
+                Validado
+              </mat-chip>
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="informe-details">
+              <div class="detail-row">
+                <div class="detail-item">
+                  <mat-icon>person</mat-icon>
+                  <div class="detail-content">
+                    <span class="detail-label">Radiólogo</span>
+                    <span class="detail-value">{{ informe.medico_radiologo }}</span>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>event</mat-icon>
+                  <div class="detail-content">
+                    <span class="detail-label">Fecha</span>
+                    <span class="detail-value" [class.today-date]="isToday(informe.fecha_informe)">
+                      {{ informe.fecha_informe | date:'dd/MM/yyyy' }}
+                      <span *ngIf="isToday(informe.fecha_informe)" class="today-badge">HOY</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Expandable Content -->
+              <mat-expansion-panel class="content-expansion">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon>visibility</mat-icon>
+                    Ver detalles del informe
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="expanded-content">
+                  <div class="content-section-detail">
+                    <h4><mat-icon>search</mat-icon> Hallazgos</h4>
+                    <p class="medical-text">{{ informe.hallazgos }}</p>
+                  </div>
+
+                  <div class="content-section-detail">
+                    <h4><mat-icon>medical_services</mat-icon> Impresión Diagnóstica</h4>
+                    <p class="medical-text diagnostic">{{ informe.impresion_diagnostica }}</p>
+                  </div>
+
+                  <div class="content-section-detail" *ngIf="informe.recomendaciones">
+                    <h4><mat-icon>recommend</mat-icon> Recomendaciones</h4>
+                    <p class="medical-text">{{ informe.recomendaciones }}</p>
+                  </div>
+
+                  <div class="content-section-detail" *ngIf="informe.tecnica_utilizada">
+                    <h4><mat-icon>settings</mat-icon> Técnica Utilizada</h4>
+                    <p class="medical-text technical">{{ informe.tecnica_utilizada }}</p>
+                  </div>
+
+                  <div class="content-section-detail" *ngIf="informe.observaciones_tecnicas">
+                    <h4><mat-icon>notes</mat-icon> Observaciones Técnicas</h4>
+                    <p class="medical-text">{{ informe.observaciones_tecnicas }}</p>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-button color="accent" (click)="exportReport(informe)">
+              <mat-icon>download</mat-icon>
+              Exportar
+            </button>
+            <button mat-button (click)="printReport(informe)">
+              <mat-icon>print</mat-icon>
+              Imprimir
+            </button>
+            <button mat-button color="primary" (click)="openEditDialog(informe)">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <button mat-button color="warn" (click)="deleteInforme(informe)">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-template>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <mat-icon class="loading-spinner">hourglass_empty</mat-icon>
+      <p>Cargando informes...</p>
+    </div>
+  </ng-template>
+</div>

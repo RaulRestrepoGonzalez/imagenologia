@@ -1,0 +1,92 @@
+<div class="pacientes-container">
+  <div class="header-section">
+    <h1>Gestión de Pacientes</h1>
+    <button mat-raised-button color="primary" (click)="openAddDialog()" class="add-button">
+      <mat-icon>add</mat-icon>
+      Agregar Paciente
+    </button>
+  </div>
+
+  <div class="search-section">
+    <mat-form-field appearance="fill" class="search-field">
+      <mat-label>Buscar pacientes</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Nombre, email o documento"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="content-section" *ngIf="!isLoading; else loadingTemplate">
+    <div *ngIf="filteredPacientes.length === 0; else patientsTemplate" class="no-data">
+      <mat-icon>people_outline</mat-icon>
+      <h3>{{ searchTerm ? 'No se encontraron pacientes' : 'No hay pacientes registrados' }}</h3>
+      <p>
+        {{ searchTerm ? 'Intenta con otro término de búsqueda' : 'Comienza agregando tu primer
+        paciente' }}
+      </p>
+    </div>
+
+    <ng-template #patientsTemplate>
+      <div class="cards-container">
+        <mat-card *ngFor="let paciente of filteredPacientes" class="paciente-card">
+          <mat-card-header>
+            <div mat-card-avatar class="avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <mat-card-title>{{ paciente.nombre }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ getDocumentTypeText(paciente.tipo_documento) }}: {{ paciente.numero_documento }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="patient-info">
+              <div class="info-item">
+                <mat-icon>email</mat-icon>
+                <span>{{ paciente.email }}</span>
+              </div>
+              <div class="info-item">
+                <mat-icon>phone</mat-icon>
+                <span>{{ paciente.telefono }}</span>
+              </div>
+              <div class="info-item">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ paciente.direccion }}</span>
+              </div>
+              <div class="info-item">
+                <mat-icon>cake</mat-icon>
+                <span>{{ paciente.fecha_nacimiento | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="info-item">
+                <mat-icon>person_outline</mat-icon>
+                <span>{{ getGenderText(paciente.genero) }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-button color="primary" (click)="openEditDialog(paciente)">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <button mat-button color="warn" (click)="deletePaciente(paciente)">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-template>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <mat-icon class="loading-spinner">hourglass_empty</mat-icon>
+      <p>Cargando pacientes...</p>
+    </div>
+  </ng-template>
+</div>

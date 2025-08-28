@@ -1,0 +1,385 @@
+/* =====================================
+   FORMULARIO DE CITAS
+   ===================================== */
+.form-container {
+  padding: var(--spacing-lg) 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: var(--spacing-lg);
+}
+
+.row {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.half-width {
+  flex: 1;
+}
+
+/* =====================================
+   CAMPOS DEL FORMULARIO
+   ===================================== */
+mat-form-field {
+  width: 100%;
+}
+
+mat-form-field.full-width {
+  margin-bottom: var(--spacing-lg);
+}
+
+mat-form-field.half-width {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* =====================================
+   SELECTORES
+   ===================================== */
+mat-select {
+  width: 100%;
+}
+
+mat-option {
+  font-size: 0.9rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* =====================================
+   DATE PICKER
+   ===================================== */
+mat-datepicker-toggle {
+  color: var(--primary-600);
+}
+
+mat-datepicker {
+  border-radius: var(--radius-lg);
+}
+
+/* =====================================
+   INPUTS
+   ===================================== */
+input[matInput],
+textarea[matInput] {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+input[matInput]:focus,
+textarea[matInput]:focus {
+  outline: none;
+}
+
+/* =====================================
+   VALIDACIONES
+   ===================================== */
+mat-error {
+  font-size: 0.875rem;
+  margin-top: var(--spacing-xs);
+  color: var(--error-600);
+}
+
+mat-form-field.ng-invalid.ng-touched mat-form-field-wrapper {
+  border-color: var(--error-500);
+}
+
+/* =====================================
+   BOTONES
+   ===================================== */
+mat-dialog-actions {
+  padding: var(--spacing-lg) 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+}
+
+mat-dialog-actions button {
+  min-width: 120px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+mat-dialog-actions button[mat-button] {
+  color: var(--gray-600);
+  border: 1px solid var(--border-medium);
+}
+
+mat-dialog-actions button[mat-button]:hover {
+  background-color: var(--gray-100);
+  border-color: var(--gray-400);
+}
+
+mat-dialog-actions button[mat-raised-button] {
+  box-shadow: var(--shadow-sm);
+}
+
+mat-dialog-actions button[mat-raised-button]:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+mat-dialog-actions button[mat-raised-button]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =====================================
+   ESTADOS DE CARGA
+   ===================================== */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing-sm);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* =====================================
+   RESPONSIVE DESIGN
+   ===================================== */
+@media (max-width: 768px) {
+  .form-container {
+    padding: var(--spacing-md) 0;
+  }
+  
+  .row {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .half-width {
+    width: 100%;
+  }
+  
+  mat-dialog-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  mat-dialog-actions button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: var(--spacing-sm) 0;
+  }
+  
+  .full-width,
+  .half-width {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  mat-dialog-actions {
+    padding: var(--spacing-md) 0;
+  }
+}
+
+/* =====================================
+   ANIMACIONES
+   ===================================== */
+.form-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+mat-form-field {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+mat-form-field:nth-child(1) { animation-delay: 0.1s; }
+mat-form-field:nth-child(2) { animation-delay: 0.2s; }
+mat-form-field:nth-child(3) { animation-delay: 0.3s; }
+mat-form-field:nth-child(4) { animation-delay: 0.4s; }
+mat-form-field:nth-child(5) { animation-delay: 0.5s; }
+mat-form-field:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* =====================================
+   TEMA OSCURO
+   ===================================== */
+@media (prefers-color-scheme: dark) {
+  .form-container {
+    color: var(--gray-100);
+  }
+  
+  mat-form-field.ng-invalid.ng-touched mat-form-field-wrapper {
+    border-color: var(--error-400);
+  }
+  
+  mat-dialog-actions button[mat-button] {
+    color: var(--gray-300);
+    border-color: var(--gray-600);
+  }
+  
+  mat-dialog-actions button[mat-button]:hover {
+    background-color: var(--gray-800);
+    border-color: var(--gray-500);
+  }
+}
+
+/* =====================================
+   ESTILOS ESPECÍFICOS PARA DIALOG
+   ===================================== */
+:host {
+  display: block;
+}
+
+mat-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+}
+
+mat-dialog-title {
+  margin: 0;
+  padding: var(--spacing-lg) var(--spacing-lg) 0 var(--spacing-lg);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+mat-dialog-actions {
+  margin: 0;
+  padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+}
+
+/* =====================================
+   PERSONALIZACIÓN DE SCROLLBAR
+   ===================================== */
+mat-dialog-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+mat-dialog-content::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+/* =====================================
+   CORRECCIONES DE CONTRASTE - TEXTOS VISIBLES
+   ===================================== */
+
+/* === TODOS LOS ELEMENTOS DEL FORMULARIO - TEXTO NEGRO === */
+mat-form-field *,
+mat-select *,
+mat-option *,
+button *,
+input,
+textarea,
+label,
+span,
+div {
+  color: #000000 !important;
+}
+
+/* === CAMPOS DE FORMULARIO === */
+mat-form-field input,
+mat-form-field textarea {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === LABELS === */
+mat-form-field mat-label {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+/* === HINTS === */
+mat-form-field mat-hint {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === ERRORS === */
+mat-form-field mat-error {
+  color: #ff0000 !important;
+  font-weight: 600 !important;
+}
+
+/* === SELECT VALUES === */
+mat-select .mat-select-value-text {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === OPTIONS === */
+mat-option {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === BOTONES === */
+button[mat-button] {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+button[mat-raised-button] {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+button[mat-raised-button][color="primary"] {
+  background-color: var(--primary-600) !important;
+}
+
+button[mat-raised-button][color="accent"] {
+  background-color: var(--secondary-600) !important;
+}
+
+button[mat-raised-button][color="warn"] {
+  background-color: var(--error-600) !important;
+}

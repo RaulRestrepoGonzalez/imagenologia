@@ -1,0 +1,130 @@
+/* =====================================
+   FOOTER - PIE DE PÁGINA
+   ===================================== */
+.footer {
+  background: var(--surface-base);
+  border-top: 1px solid var(--border-light);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  margin-top: auto;
+  text-align: center;
+  color: var(--gray-600);
+  font-size: 0.875rem;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 600;
+  color: var(--primary-600);
+}
+
+.footer-logo-icon {
+  font-size: 1.25rem;
+}
+
+.footer-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-sm);
+}
+
+.footer-link {
+  color: var(--gray-500);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  font-size: 0.875rem;
+}
+
+.footer-link:hover {
+  color: var(--primary-600);
+}
+
+.footer-copyright {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-light);
+  color: var(--gray-500);
+  font-size: 0.75rem;
+}
+
+/* =====================================
+   RESPONSIVE FOOTER
+   ===================================== */
+@media (max-width: 768px) {
+  .footer {
+    padding: var(--spacing-md);
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: var(--spacing-sm);
+  }
+  
+  .footer-content {
+    gap: var(--spacing-sm);
+  }
+}
+
+/* =====================================
+   ANIMACIONES DEL FOOTER
+   ===================================== */
+.footer {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================
+   TEMA OSCURO
+   ===================================== */
+@media (prefers-color-scheme: dark) {
+  .footer {
+    background-color: var(--gray-800);
+    border-top-color: var(--gray-700);
+  }
+  
+  .footer-text {
+    color: var(--gray-400);
+  }
+  
+  .footer-link {
+    color: var(--gray-400);
+  }
+  
+  .footer-link:hover {
+    color: var(--primary-400);
+  }
+  
+  .footer-copyright {
+    border-top-color: var(--gray-700);
+    color: var(--gray-500);
+  }
+}

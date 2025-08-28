@@ -1,0 +1,70 @@
+/* =====================================
+   FORMULARIO DE ESTUDIOS - ESTILOS SIMPLIFICADOS
+   ===================================== */
+
+/* === TODOS LOS ELEMENTOS DEL FORMULARIO - TEXTO NEGRO === */
+mat-form-field *,
+mat-select *,
+mat-option *,
+button *,
+input,
+textarea,
+label,
+span,
+div {
+  color: #000000 !important;
+}
+
+/* === CAMPOS DE FORMULARIO === */
+mat-form-field input,
+mat-form-field textarea {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === LABELS === */
+mat-form-field mat-label {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+/* === HINTS === */
+mat-form-field mat-hint {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === ERRORS === */
+mat-form-field mat-error {
+  color: #ff0000 !important;
+  font-weight: 600 !important;
+}
+
+/* === SELECT VALUES === */
+mat-select .mat-select-value-text {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === OPTIONS === */
+mat-option {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === CHECKBOX === */
+mat-checkbox .mat-checkbox-label {
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+/* === BOTONES === */
+button[mat-button] {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+button[mat-raised-button] {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}

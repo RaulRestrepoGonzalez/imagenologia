@@ -1,0 +1,213 @@
+<div class="citas-container">
+  <!-- Header Section with Modern Design -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">event</mat-icon>
+          Gestión de Citas
+        </h1>
+        <p class="page-subtitle">Programa y administra las citas médicas de tus pacientes</p>
+      </div>
+      <button mat-raised-button color="primary" (click)="openAddDialog()" class="add-button">
+        <mat-icon>add</mat-icon>
+        Agendar Cita
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Stats Cards -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card primary">
+        <div class="stat-icon">
+          <mat-icon>today</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ getTodaysCitas().length }}</span>
+          <span class="stat-label">Citas Hoy</span>
+        </div>
+      </div>
+      
+      <div class="stat-card success">
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ getTodaysConfirmedCitas() }}</span>
+          <span class="stat-label">Confirmadas</span>
+        </div>
+      </div>
+      
+      <div class="stat-card warning">
+        <div class="stat-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ getTodaysProgrammedCitas() }}</span>
+          <span class="stat-label">Programadas</span>
+        </div>
+      </div>
+      
+      <div class="stat-card info">
+        <div class="stat-icon">
+          <mat-icon>event_note</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ citas.length }}</span>
+          <span class="stat-label">Total Citas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Filters Section -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>
+            <mat-icon>search</mat-icon>
+            Buscar citas
+          </mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            placeholder="Paciente, tipo de estudio, observaciones..."
+          />
+        </mat-form-field>
+      </div>
+      
+      <div class="filter-controls">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Estado</mat-label>
+          <mat-select [(value)]="selectedEstado" (selectionChange)="onEstadoChange()">
+            <mat-option *ngFor="let estado of estadoOptions" [value]="estado">
+              {{ estado }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Tipo de Estudio</mat-label>
+          <mat-select [(value)]="selectedTipoEstudio" (selectionChange)="onTipoEstudioChange()">
+            <mat-option *ngFor="let tipo of tipoEstudioOptions" [value]="tipo">
+              {{ tipo }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="sortCitasByDate()" class="sort-button">
+          <mat-icon>sort</mat-icon>
+          Ordenar por fecha
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section" *ngIf="!isLoading; else loadingTemplate">
+    <div *ngIf="filteredCitas.length === 0; else citasTemplate" class="empty-state">
+      <div class="empty-state-icon">
+        <mat-icon>event_busy</mat-icon>
+      </div>
+      <h3 class="empty-state-title">
+        {{ searchTerm || selectedEstado !== 'Todos' || selectedTipoEstudio !== 'Todos' ? 'No se encontraron citas' : 'No hay citas registradas' }}
+      </h3>
+      <p class="empty-state-description">
+        {{ searchTerm || selectedEstado !== 'Todos' || selectedTipoEstudio !== 'Todos' ? 'Intenta ajustar los filtros de búsqueda' : 'Comienza agendando tu primera cita médica' }}
+      </p>
+      <button mat-raised-button color="primary" (click)="openAddDialog()" class="empty-state-action">
+        <mat-icon>add</mat-icon>
+        Agendar Primera Cita
+      </button>
+    </div>
+
+    <ng-template #citasTemplate>
+      <div class="cards-container">
+        <mat-card
+          *ngFor="let cita of filteredCitas; trackBy: trackByCitaId"
+          class="cita-card"
+          [class.upcoming]="isUpcoming(cita.fecha_hora)"
+          [class.urgent]="isUrgent(cita.fecha_hora)"
+        >
+          <mat-card-header class="card-header">
+            <div mat-card-avatar class="avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <mat-card-title class="card-title">{{ cita.paciente_nombre }}</mat-card-title>
+            <mat-card-subtitle class="card-subtitle">{{ cita.tipo_estudio }}</mat-card-subtitle>
+            
+            <div class="card-actions-header">
+              <mat-chip [class]="getEstadoClass(cita.estado)" selected>
+                {{ cita.estado }}
+              </mat-chip>
+              
+              <div class="priority-indicator" *ngIf="isUrgent(cita.fecha_hora)">
+                <mat-icon>priority_high</mat-icon>
+                <span>Urgente</span>
+              </div>
+            </div>
+          </mat-card-header>
+
+          <mat-card-content class="card-content">
+            <div class="cita-details">
+              <div class="detail-item">
+                <mat-icon class="detail-icon">event</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Fecha y Hora</span>
+                  <span class="detail-value">
+                    {{ formatFechaHora(cita.fecha_hora).fecha }} - {{ formatFechaHora(cita.fecha_hora).hora }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="cita.observaciones">
+                <mat-icon class="detail-icon">notes</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Observaciones</span>
+                  <span class="detail-value">{{ cita.observaciones }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="isUpcoming(cita.fecha_hora)">
+                <mat-icon class="detail-icon upcoming-icon">notification_important</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label upcoming-label">Próxima cita</span>
+                  <span class="detail-value">Programada para hoy</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions class="card-actions">
+            <button mat-button color="primary" (click)="openEditDialog(cita)" class="action-button">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <button mat-button color="warn" (click)="deleteCita(cita)" class="action-button">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+            <button mat-button color="accent" (click)="confirmCita(cita)" class="action-button" *ngIf="cita.estado === 'Programada'">
+              <mat-icon>check</mat-icon>
+              Confirmar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Enhanced Loading Template -->
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <div class="loading-content">
+        <mat-icon class="loading-spinner">hourglass_empty</mat-icon>
+        <h3>Cargando citas...</h3>
+        <p>Preparando la información de tus citas médicas</p>
+      </div>
+    </div>
+  </ng-template>
+</div>
