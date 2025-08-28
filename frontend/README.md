@@ -1,4 +1,3 @@
-# Sistema Clínico - Frontend Angular
 
 Sistema de Gestión Integral de Imágenes Diagnósticas con una interfaz moderna e intuitiva.
 
