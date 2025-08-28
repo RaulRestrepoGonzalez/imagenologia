@@ -15,7 +15,6 @@ Este repositorio contiene el código fuente del sistema de gestión integral par
 
 ```
 /backend
-/Docker
 /frontend
 ```
 
