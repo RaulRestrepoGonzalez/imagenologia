@@ -53,23 +53,12 @@ Sistema de Gestión Integral de Imágenes Diagnósticas con una interfaz moderna
 npm start
 # o
 ng serve
+# o
+npx ng serve
 ```
 
 La aplicación estará disponible en: `http://localhost:4200`
 
-### Construcción para Producción
-```bash
-npm run build
-# o
-ng build --configuration production
-```
-
-### Ejecutar Tests
-```bash
-npm test
-# o
-ng test
-```
 
 ## 📁 Estructura del Proyecto
 
@@ -148,34 +137,6 @@ frontend/
 - **Tablet**: 768px - 1023px
 - **Mobile**: 767px e inferior
 
-## 🎯 Componentes Clave
-
-### Header
-- Logo y título del sistema
-- Navegación principal
-- Sistema de notificaciones
-- Perfil de usuario con menú
-
-### Sidebar
-- Navegación por módulos
-- Agrupación lógica de funciones
-- Indicadores de estado
-- Información del usuario
-
-### Citas
-- Formulario de agendamiento
-- Lista de citas con filtros
-- Estados visuales claros
-- Acciones contextuales
-
-## 🚀 Despliegue
-
-### Netlify
-```bash
-npm run build
-# Subir la carpeta dist/ a Netlify
-```
-
 ### Vercel
 ```bash
 npm run build
@@ -186,19 +147,6 @@ npm run build
 ```bash
 npm run build
 # Copiar la carpeta dist/ al servidor web
-```
-
-## 🧪 Testing
-
-```bash
-# Ejecutar tests unitarios
-npm test
-
-# Ejecutar tests con coverage
-ng test --code-coverage
-
-# Ejecutar tests e2e
-ng e2e
 ```
 
 ## 🔧 Configuración
@@ -225,36 +173,5 @@ ng e2e
 - **Content Security Policy**: Políticas de contenido
 - **HTTPS**: Conexiones seguras
 - **Validación de formularios**: Entrada de datos segura
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📝 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 📞 Soporte
-
-Para soporte técnico o preguntas:
-- Crear un issue en el repositorio
-- Contactar al equipo de desarrollo
-- Revisar la documentación técnica
-
-## 🎉 Estado del Proyecto
-
-✅ **Completado**: UI moderna y funcional
-✅ **Completado**: Todos los botones operativos
-✅ **Completado**: Sistema de navegación
-✅ **Completado**: Gestión de citas
-✅ **Completado**: Diseño responsive
-✅ **Completado**: Tema adaptativo
-✅ **Completado**: Listo para despliegue
-
----
 
 **Desarrollado con ❤️ para el Sistema Clínico**
