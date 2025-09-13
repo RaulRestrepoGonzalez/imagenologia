@@ -97,7 +97,7 @@ export class Citas implements OnInit {
           paciente_id: c.paciente_id,
           paciente_nombre: c.paciente_nombre,
           paciente_apellidos: c.paciente_apellidos,
-          fecha_hora: c.fecha_hora,
+          fecha_hora: c.fecha_cita,
           tipo_estudio: c.tipo_estudio,
           estado: c.estado,
           observaciones: c.observaciones,

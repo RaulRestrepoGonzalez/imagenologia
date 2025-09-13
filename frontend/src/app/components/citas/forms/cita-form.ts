@@ -574,16 +574,26 @@ export class CitaFormComponent implements OnInit {
         const [hours, minutes] = formValue.hora.split(':');
         fecha.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-        formValue.fecha_hora = fecha.toISOString();
+        formValue.fecha_cita = fecha.toISOString();
         delete formValue.fecha;
         delete formValue.hora;
       }
 
-      // Simular guardado exitoso
-      setTimeout(() => {
-        this.isLoading = false;
-        this.dialogRef.close(formValue);
-      }, 1000);
+      // Realizar petición real al backend
+      const operation = this.isEdit
+        ? this.api.put(`api/citas/${this.data.id}`, formValue)
+        : this.api.post('api/citas', formValue);
+
+      operation.subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          this.dialogRef.close(response);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error al guardar cita:', error);
+        }
+      });
     }
   }
 
