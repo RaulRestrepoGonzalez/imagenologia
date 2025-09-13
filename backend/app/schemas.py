@@ -3,6 +3,12 @@ from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    RADIOLOGO = "radiologo"
+    SECRETARIO = "secretario"
+    PACIENTE = "paciente"
+
 class EstadoEstudio(str, Enum):
     PENDIENTE = "pendiente"
     PROGRAMADO = "programado"
@@ -24,6 +30,7 @@ class TipoNotificacion(str, Enum):
 
 class PacienteBase(BaseModel):
     nombre: str
+    apellidos: Optional[str] = None
     identificacion: str
     email: EmailStr
     telefono: str
@@ -72,20 +79,27 @@ class Estudio(EstudioBase):
         from_attributes = True
 
 class CitaBase(BaseModel):
-    estudio_id: str
-    fecha_hora: datetime
-    tecnico_asignado: str
-    sala: str
-    duracion_minutos: int = 30
+    paciente_id: str
+    fecha_cita: datetime
+    tipo_estudio: str
     observaciones: Optional[str] = None
+    estado: EstadoCita = EstadoCita.PROGRAMADA
 
 class CitaCreate(CitaBase):
-    pass
+    estudio_id: Optional[str] = None
+    tecnico_asignado: Optional[str] = None
+    sala: Optional[str] = None
+    duracion_minutos: int = 30
 
 class Cita(CitaBase):
     id: str
-    estado: EstadoCita
+    estudio_id: Optional[str] = None
+    tecnico_asignado: Optional[str] = None
+    sala: Optional[str] = None
+    duracion_minutos: int = 30
     asistio: Optional[bool] = None
+    paciente_nombre: Optional[str] = None
+    paciente_apellidos: Optional[str] = None
     fecha_creacion: datetime
     fecha_actualizacion: datetime
 
@@ -154,6 +168,7 @@ class CitaUpdate(BaseModel):
 
 class PacienteUpdate(BaseModel):
     nombre: Optional[str] = None
+    apellidos: Optional[str] = None
     email: Optional[EmailStr] = None
     telefono: Optional[str] = None
     direccion: Optional[str] = None
@@ -162,3 +177,45 @@ class PacienteUpdate(BaseModel):
     alergias: Optional[str] = None
     condiciones_cronicas: Optional[str] = None
     medicamentos: Optional[str] = None
+
+# User Authentication Schemas
+class UserBase(BaseModel):
+    email: EmailStr
+    nombre: str
+    apellidos: Optional[str] = None
+    role: UserRole
+    is_active: bool = True
+
+class UserCreate(UserBase):
+    password: str
+    paciente_id: Optional[str] = None  # Link to patient record if role is PACIENTE
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class User(UserBase):
+    id: str
+    fecha_creacion: datetime
+    fecha_actualizacion: datetime
+    paciente_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class UserUpdate(BaseModel):
+    nombre: Optional[str] = None
+    apellidos: Optional[str] = None
+    is_active: Optional[bool] = None
+    role: Optional[UserRole] = None
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    expires_in: int
+    user: User
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+    user_id: Optional[str] = None
+    role: Optional[str] = None

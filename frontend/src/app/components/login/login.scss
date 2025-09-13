@@ -1,13 +1,9 @@
-/* =====================================
-   COMPONENTE DE LOGIN
-   ===================================== */
 .login-container {
-  min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
-  padding: var(--spacing-lg);
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .login-card {
@@ -178,26 +174,74 @@ mat-form-field.ng-invalid.ng-touched mat-form-field-wrapper {
 @media (max-width: 768px) {
   .login-container {
     padding: var(--spacing-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
   
   .login-card {
-    max-width: 100%;
+    max-width: 500px;
+    width: 100%;
+    margin: 2rem;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
   }
   
-  .login-header {
-    padding: var(--spacing-lg);
+  .login-card mat-card-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
   }
   
-  .login-logo {
-    font-size: 2.5rem;
+  .full-width {
+    width: 100%;
+    margin-bottom: 1.5rem;
   }
   
-  .login-title {
-    font-size: 1.5rem;
+  .half-width {
+    width: 48%;
+    margin-bottom: 1.5rem;
   }
   
-  .login-content {
-    padding: var(--spacing-lg);
+  .name-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .submit-button {
+    height: 48px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+  
+  .login-form, .register-form {
+    padding-top: 1.5rem;
+  }
+  
+  .mat-form-field {
+    .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+  
+  .success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+  
+  .error-snackbar {
+    background-color: #f44336 !important;
+    color: white !important;
   }
 }
 
@@ -224,6 +268,24 @@ mat-form-field.ng-invalid.ng-touched mat-form-field-wrapper {
   
   .login-form {
     gap: var(--spacing-md);
+  }
+  
+  .login-card {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .login-card mat-card-title {
+    font-size: 1.5rem;
+  }
+  
+  .name-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .half-width {
+    width: 100%;
   }
 }
 

@@ -375,6 +375,4 @@ async def exportar_informe(tipo: str, inicio: str, fin: str, formato: str = "jso
         # Implementar conversión a CSV
         raise HTTPException(status_code=501, detail="Exportación CSV no implementada aún")
     else:
-
-
-
+        raise HTTPException(status_code=400, detail="Formato de exportación no válido")

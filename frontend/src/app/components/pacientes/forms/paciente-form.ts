@@ -13,6 +13,7 @@ import { Api } from '../../../services/api';
 export interface PacienteData {
   id?: number;
   nombre: string;
+  apellidos?: string;
   email: string;
   telefono: string;
   direccion: string;
@@ -40,13 +41,20 @@ export interface PacienteData {
     <h2 mat-dialog-title>{{ isEdit ? 'Editar' : 'Agregar' }} Paciente</h2>
     <mat-dialog-content>
       <form [formGroup]="pacienteForm" class="form-container">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Nombre completo</mat-label>
-          <input matInput formControlName="nombre" placeholder="Ingrese el nombre completo">
-          <mat-error *ngIf="pacienteForm.get('nombre')?.hasError('required')">
-            El nombre es requerido
-          </mat-error>
-        </mat-form-field>
+        <div class="row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Nombres</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ingrese los nombres">
+            <mat-error *ngIf="pacienteForm.get('nombre')?.hasError('required')">
+              Los nombres son requeridos
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Apellidos</mat-label>
+            <input matInput formControlName="apellidos" placeholder="Ingrese los apellidos">
+          </mat-form-field>
+        </div>
 
         <div class="row">
           <mat-form-field appearance="fill" class="half-width">
@@ -185,6 +193,7 @@ export class PacienteFormComponent implements OnInit {
   private createForm(): FormGroup {
     return this.fb.group({
       nombre: ['', [Validators.required]],
+      apellidos: [''],
       email: ['', [Validators.required, Validators.email]],
       telefono: ['', [Validators.required]],
       direccion: ['', [Validators.required]],
@@ -198,6 +207,7 @@ export class PacienteFormComponent implements OnInit {
   private populateForm(): void {
     this.pacienteForm.patchValue({
       nombre: this.data.nombre,
+      apellidos: this.data.apellidos,
       email: this.data.email,
       telefono: this.data.telefono,
       direccion: this.data.direccion,
@@ -215,14 +225,39 @@ export class PacienteFormComponent implements OnInit {
 
       // Convertir fecha a string ISO
       if (formValue.fecha_nacimiento) {
-        formValue.fecha_nacimiento = formValue.fecha_nacimiento.toISOString();
+        formValue.fecha_nacimiento = formValue.fecha_nacimiento.toISOString().split('T')[0];
       }
 
-      // Simular guardado exitoso
-      setTimeout(() => {
-        this.isLoading = false;
-        this.dialogRef.close(formValue);
-      }, 1000);
+      // Mapear campos al formato esperado por el backend
+      const pacienteData = {
+        nombre: formValue.nombre,
+        apellidos: formValue.apellidos,
+        identificacion: formValue.numero_documento,
+        tipo_identificacion: formValue.tipo_documento,
+        email: formValue.email,
+        telefono: formValue.telefono,
+        direccion: formValue.direccion,
+        fecha_nacimiento: formValue.fecha_nacimiento,
+        genero: formValue.genero
+      };
+
+      const apiCall = this.isEdit 
+        ? this.api.put(`api/pacientes/${this.data.id}`, pacienteData)
+        : this.api.post('api/pacientes', pacienteData);
+
+      apiCall.subscribe({
+        next: (response) => {
+          console.log('Paciente guardado exitosamente:', response);
+          this.isLoading = false;
+          this.dialogRef.close(response);
+        },
+        error: (error) => {
+          console.error('Error al guardar paciente:', error);
+          this.isLoading = false;
+          // Mostrar error al usuario
+          alert(`Error al guardar paciente: ${error.error?.detail || error.message}`);
+        }
+      });
     }
   }
 

@@ -49,6 +49,10 @@ MAIL_SENDER=notificaciones@ips.com
 ```bash
 uvicorn app.main:app --reload
 ```
+#### 5.5 Ejecutar en linux
+```bash
+./start-services.sh
+```
 
 ### 6. Probar en navegador o Postman:
 ```

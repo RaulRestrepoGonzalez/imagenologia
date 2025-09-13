@@ -3,6 +3,11 @@ fastapi
 uvicorn[standard]
 python-dotenv
 pydantic
+email-validator
+
+# Autenticación y seguridad
+python-jose[cryptography]
+passlib[bcrypt]
 
 # Base de datos MongoDB
 motor

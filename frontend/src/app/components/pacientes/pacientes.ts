@@ -15,6 +15,7 @@ import { PacienteFormComponent } from './forms/paciente-form';
 export interface Paciente {
   id: number;
   nombre: string;
+  apellidos?: string;
   email: string;
   telefono: string;
   direccion: string;
@@ -62,33 +63,49 @@ export class Pacientes implements OnInit {
 
   loadPacientes(): void {
     this.isLoading = true;
-    // Simular datos de ejemplo para demostración
-    this.pacientes = [
-      {
-        id: 1,
-        nombre: 'Juan Pérez',
-        email: 'juan.perez@email.com',
-        telefono: '3001234567',
-        direccion: 'Calle 123 #45-67',
-        fecha_nacimiento: '1985-03-15',
-        tipo_documento: 'CC',
-        numero_documento: '12345678',
-        genero: 'Masculino'
+    this.api.get('api/pacientes').subscribe({
+      next: (response: any[]) => {
+        console.log('Pacientes cargados desde el backend:', response);
+        // Mapear los datos del backend al formato del frontend
+        this.pacientes = response.map(p => ({
+          id: p.id,
+          nombre: p.nombre,
+          apellidos: p.apellidos,
+          email: p.email,
+          telefono: p.telefono,
+          direccion: p.direccion,
+          fecha_nacimiento: p.fecha_nacimiento,
+          tipo_documento: p.tipo_identificacion,
+          numero_documento: p.identificacion,
+          genero: p.genero,
+          created_at: p.fecha_creacion,
+          updated_at: p.fecha_actualizacion
+        }));
+        this.filteredPacientes = [...this.pacientes];
+        this.isLoading = false;
       },
-      {
-        id: 2,
-        nombre: 'María García',
-        email: 'maria.garcia@email.com',
-        telefono: '3009876543',
-        direccion: 'Carrera 78 #90-12',
-        fecha_nacimiento: '1990-07-22',
-        tipo_documento: 'CC',
-        numero_documento: '87654321',
-        genero: 'Femenino'
+      error: (error) => {
+        console.error('Error al cargar pacientes:', error);
+        this.isLoading = false;
+        this.showMessage('Error al cargar pacientes desde el servidor', 'error');
+        // Fallback a datos de ejemplo si hay error de conexión
+        this.pacientes = [
+          {
+            id: 1,
+            nombre: 'Juan',
+            apellidos: 'Pérez González (Ejemplo)',
+            email: 'juan.perez@email.com',
+            telefono: '3001234567',
+            direccion: 'Calle 123 #45-67',
+            fecha_nacimiento: '1985-03-15',
+            tipo_documento: 'CC',
+            numero_documento: '12345678',
+            genero: 'Masculino'
+          }
+        ];
+        this.filteredPacientes = [...this.pacientes];
       }
-    ];
-    this.filteredPacientes = [...this.pacientes];
-    this.isLoading = false;
+    });
   }
 
   openAddDialog(): void {
@@ -121,15 +138,24 @@ export class Pacientes implements OnInit {
 
   deletePaciente(paciente: Paciente): void {
     if (confirm(`¿Está seguro que desea eliminar al paciente ${paciente.nombre}?`)) {
-      this.pacientes = this.pacientes.filter(p => p.id !== paciente.id);
-      this.filteredPacientes = [...this.pacientes];
-      this.showMessage('Paciente eliminado exitosamente', 'success');
+      this.api.delete(`api/pacientes/${paciente.id}`).subscribe({
+        next: (response) => {
+          console.log('Paciente eliminado exitosamente:', response);
+          this.loadPacientes(); // Recargar la lista
+          this.showMessage('Paciente eliminado exitosamente', 'success');
+        },
+        error: (error) => {
+          console.error('Error al eliminar paciente:', error);
+          this.showMessage(`Error al eliminar paciente: ${error.error?.detail || error.message}`, 'error');
+        }
+      });
     }
   }
 
   onSearchChange(): void {
     this.filteredPacientes = this.pacientes.filter(paciente =>
       paciente.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      (paciente.apellidos && paciente.apellidos.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
       paciente.numero_documento.includes(this.searchTerm) ||
       paciente.email.toLowerCase().includes(this.searchTerm.toLowerCase())
     );

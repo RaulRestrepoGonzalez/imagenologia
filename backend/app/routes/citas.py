@@ -22,7 +22,7 @@ async def get_citas(fecha: str = None, estado: str = None, skip: int = 0, limit:
             fecha_obj = datetime.strptime(fecha, "%Y-%m-%d")
             inicio_dia = datetime(fecha_obj.year, fecha_obj.month, fecha_obj.day)
             fin_dia = inicio_dia + timedelta(days=1)
-            query["fecha_hora"] = {"$gte": inicio_dia, "$lt": fin_dia}
+            query["fecha_cita"] = {"$gte": inicio_dia, "$lt": fin_dia}
         except ValueError:
             raise HTTPException(status_code=400, detail="Formato de fecha inválido. Use YYYY-MM-DD")
     
@@ -30,15 +30,18 @@ async def get_citas(fecha: str = None, estado: str = None, skip: int = 0, limit:
         query["estado"] = estado
     
     citas = []
-    async for cita in db.citas.find(query).skip(skip).limit(limit).sort("fecha_hora", 1):
-        # Obtener información del estudio y paciente
-        estudio = await db.estudios.find_one({"_id": ObjectId(cita["estudio_id"])})
-        if estudio:
-            paciente = await db.pacientes.find_one({"_id": ObjectId(estudio["paciente_id"])})
-            cita["paciente_nombre"] = paciente["nombre"] if paciente else "Desconocido"
-            cita["tipo_estudio"] = estudio["tipo_estudio"]
+    async for cita in db.citas.find(query).skip(skip).limit(limit).sort("fecha_cita", 1):
+        # Obtener información del paciente
+        paciente = await db.pacientes.find_one({"_id": ObjectId(cita["paciente_id"])})
+        if paciente:
+            cita["paciente_nombre"] = paciente["nombre"]
+            cita["paciente_apellidos"] = paciente.get("apellidos")
+        else:
+            cita["paciente_nombre"] = "Desconocido"
+            cita["paciente_apellidos"] = None
         
         cita["id"] = str(cita["_id"])
+        del cita["_id"]
         citas.append(Cita(**cita))
     
     return citas
@@ -81,52 +84,36 @@ async def get_citas_estudio(estudio_id: str):
 @router.post("/citas", response_model=Cita)
 async def create_cita(cita: CitaCreate, background_tasks: BackgroundTasks):
     """Crear una nueva cita"""
-    try:
-        db = get_database()
-        
-        # Verificar que el estudio existe
-        estudio = await db.estudios.find_one({"_id": ObjectId(cita.estudio_id)})
-        if not estudio:
-            raise HTTPException(status_code=404, detail="Estudio no encontrado")
-        
-        # Verificar disponibilidad de la sala y técnico
-        cita_existente = await db.citas.find_one({
-            "fecha_hora": cita.fecha_hora,
-            "$or": [
-                {"sala": cita.sala},
-                {"tecnico_asignado": cita.tecnico_asignado}
-            ]
-        })
-        
-        if cita_existente:
-            raise HTTPException(status_code=400, detail="Conflicto de horario: sala o técnico no disponible")
-        
-        cita_dict = cita.dict()
-        cita_dict["estado"] = "programada"
-        cita_dict["fecha_creacion"] = datetime.now()
-        cita_dict["fecha_actualizacion"] = datetime.now()
-        
-        result = await db.citas.insert_one(cita_dict)
-        new_cita = await db.citas.find_one({"_id": result.inserted_id})
-        
-        # Actualizar estado del estudio
-        await db.estudios.update_one(
-            {"_id": ObjectId(cita.estudio_id)},
-            {"$set": {
-                "estado": "programado",
-                "fecha_programada": cita.fecha_hora,
-                "fecha_actualizacion": datetime.now()
-            }}
+    db = get_database()
+    
+    # Verificar que el paciente existe
+    paciente = await db.pacientes.find_one({"_id": ObjectId(cita.paciente_id)})
+    if not paciente:
+        raise HTTPException(status_code=404, detail="Paciente no encontrado")
+    
+    # Crear la cita
+    cita_dict = cita.dict()
+    cita_dict["fecha_creacion"] = datetime.now()
+    cita_dict["fecha_actualizacion"] = datetime.now()
+    
+    result = await db.citas.insert_one(cita_dict)
+    nueva_cita = await db.citas.find_one({"_id": result.inserted_id})
+    nueva_cita["id"] = str(nueva_cita["_id"])
+    nueva_cita["paciente_nombre"] = paciente["nombre"]
+    nueva_cita["paciente_apellidos"] = paciente.get("apellidos")
+    del nueva_cita["_id"]
+    
+    # Enviar notificaciones
+    if paciente.get("email"):
+        background_tasks.add_task(
+            send_appointment_notifications,
+            paciente["email"],
+            paciente.get("telefono"),
+            nueva_cita["fecha_cita"],
+            nueva_cita["tipo_estudio"]
         )
-        
-        # Enviar notificación de confirmación
-        background_tasks.add_task(enviar_confirmacion_cita, cita.estudio_id, cita.fecha_hora)
-        
-        new_cita["id"] = str(new_cita["_id"])
-        return Cita(**new_cita)
-        
-    except ValueError:
-        raise HTTPException(status_code=400, detail="ID de estudio inválido")
+    
+    return Cita(**nueva_cita)
 
 @router.put("/citas/{cita_id}", response_model=Cita)
 async def update_cita(cita_id: str, cita: CitaUpdate):

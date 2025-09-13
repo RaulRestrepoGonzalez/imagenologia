@@ -18,6 +18,7 @@ export interface Cita {
   id: number;
   paciente_id: number;
   paciente_nombre: string;
+  paciente_apellidos?: string;
   fecha_hora: string;
   tipo_estudio: string;
   estado: string;
@@ -88,29 +89,53 @@ export class Citas implements OnInit {
 
   loadCitas(): void {
     this.isLoading = true;
-    // Simular datos de ejemplo para demostración
-    this.citas = [
-      {
-        id: 1,
-        paciente_id: 1,
-        paciente_nombre: 'Juan Pérez',
-        fecha_hora: '2024-01-15T10:00:00',
-        tipo_estudio: 'Radiografía',
-        estado: 'Programada',
-        observaciones: 'Radiografía de tórax'
+    this.api.get('api/citas').subscribe({
+      next: (response: any[]) => {
+        console.log('Citas cargadas desde el backend:', response);
+        this.citas = response.map(c => ({
+          id: c.id,
+          paciente_id: c.paciente_id,
+          paciente_nombre: c.paciente_nombre,
+          paciente_apellidos: c.paciente_apellidos,
+          fecha_hora: c.fecha_hora,
+          tipo_estudio: c.tipo_estudio,
+          estado: c.estado,
+          observaciones: c.observaciones,
+          created_at: c.fecha_creacion,
+          updated_at: c.fecha_actualizacion
+        }));
+        this.applyFilters();
+        this.isLoading = false;
       },
-      {
-        id: 2,
-        paciente_id: 2,
-        paciente_nombre: 'María García',
-        fecha_hora: '2024-01-15T14:00:00',
-        tipo_estudio: 'Ecografía',
-        estado: 'Confirmada',
-        observaciones: 'Ecografía abdominal'
+      error: (error) => {
+        console.error('Error al cargar citas:', error);
+        // Fallback a datos de ejemplo si hay error de conexión
+        this.citas = [
+          {
+            id: 1,
+            paciente_id: 1,
+            paciente_nombre: 'Juan',
+            paciente_apellidos: 'Pérez González',
+            fecha_hora: '2024-01-15T10:00:00',
+            tipo_estudio: 'Radiografía',
+            estado: 'Programada',
+            observaciones: 'Radiografía de tórax'
+          },
+          {
+            id: 2,
+            paciente_id: 2,
+            paciente_nombre: 'María',
+            paciente_apellidos: 'García López',
+            fecha_hora: '2024-01-15T14:00:00',
+            tipo_estudio: 'Ecografía',
+            estado: 'Confirmada',
+            observaciones: 'Ecografía abdominal'
+          }
+        ];
+        this.applyFilters();
+        this.isLoading = false;
       }
-    ];
-    this.applyFilters();
-    this.isLoading = false;
+    });
   }
 
   openAddDialog(): void {
@@ -142,10 +167,19 @@ export class Citas implements OnInit {
   }
 
   deleteCita(cita: Cita): void {
-    if (confirm(`¿Está seguro que desea eliminar la cita de ${cita.paciente_nombre}?`)) {
-      this.citas = this.citas.filter(c => c.id !== cita.id);
-      this.applyFilters();
-      this.showMessage('Cita eliminada exitosamente', 'success');
+    const nombreCompleto = `${cita.paciente_nombre} ${cita.paciente_apellidos || ''}`.trim();
+    if (confirm(`¿Está seguro que desea eliminar la cita de ${nombreCompleto}?`)) {
+      this.api.delete(`api/citas/${cita.id}`).subscribe({
+        next: (response) => {
+          console.log('Cita eliminada exitosamente:', response);
+          this.loadCitas(); // Recargar la lista
+          this.showMessage('Cita eliminada exitosamente', 'success');
+        },
+        error: (error) => {
+          console.error('Error al eliminar cita:', error);
+          this.showMessage(`Error al eliminar cita: ${error.error?.detail || error.message}`, 'error');
+        }
+      });
     }
   }
 
@@ -170,6 +204,7 @@ export class Citas implements OnInit {
       filtered = filtered.filter(
         (cita) =>
           cita.paciente_nombre.toLowerCase().includes(term) ||
+          (cita.paciente_apellidos && cita.paciente_apellidos.toLowerCase().includes(term)) ||
           cita.tipo_estudio.toLowerCase().includes(term) ||
           cita.observaciones?.toLowerCase().includes(term),
       );
@@ -271,10 +306,16 @@ export class Citas implements OnInit {
   }
 
   confirmCita(cita: Cita): void {
-    if (confirm(`¿Confirmar la cita de ${cita.paciente_nombre}?`)) {
+    const nombreCompleto = `${cita.paciente_nombre} ${cita.paciente_apellidos || ''}`.trim();
+    if (confirm(`¿Confirmar la cita de ${nombreCompleto}?`)) {
       cita.estado = 'Confirmada';
       this.applyFilters();
       this.showMessage('Cita confirmada exitosamente', 'success');
     }
+  }
+
+  // Método para obtener el nombre completo del paciente
+  getFullPatientName(cita: Cita): string {
+    return `${cita.paciente_nombre} ${cita.paciente_apellidos || ''}`.trim();
   }
 }

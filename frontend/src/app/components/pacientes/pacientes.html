@@ -14,7 +14,7 @@
         matInput
         [(ngModel)]="searchTerm"
         (input)="onSearchChange()"
-        placeholder="Nombre, email o documento"
+        placeholder="Nombre, apellidos, email o documento"
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
@@ -37,7 +37,7 @@
             <div mat-card-avatar class="avatar">
               <mat-icon>person</mat-icon>
             </div>
-            <mat-card-title>{{ paciente.nombre }}</mat-card-title>
+            <mat-card-title>{{ paciente.nombre }} {{ paciente.apellidos || '' }}</mat-card-title>
             <mat-card-subtitle>
               {{ getDocumentTypeText(paciente.tipo_documento) }}: {{ paciente.numero_documento }}
             </mat-card-subtitle>

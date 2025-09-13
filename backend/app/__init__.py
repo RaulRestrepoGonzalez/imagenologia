@@ -43,8 +43,9 @@ def create_app(config_name=None):
     )
     
     # Registrar rutas
-    from app.routes import pacientes, estudios, citas, informes, notificaciones
+    from app.routes import pacientes, estudios, citas, informes, notificaciones, auth
     
+    app.include_router(auth.router, prefix="/api", tags=["Autenticación"])
     app.include_router(pacientes.router, prefix="/api", tags=["Pacientes"])
     app.include_router(estudios.router, prefix="/api", tags=["Estudios"])
     app.include_router(citas.router, prefix="/api", tags=["Citas"])

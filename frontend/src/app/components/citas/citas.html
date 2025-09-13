@@ -74,7 +74,7 @@
             matInput
             [(ngModel)]="searchTerm"
             (input)="onSearchChange()"
-            placeholder="Paciente, tipo de estudio, observaciones..."
+            placeholder="Buscar por nombre, apellidos, tipo de estudio, observaciones..."
           />
         </mat-form-field>
       </div>
@@ -136,7 +136,7 @@
             <div mat-card-avatar class="avatar">
               <mat-icon>person</mat-icon>
             </div>
-            <mat-card-title class="card-title">{{ cita.paciente_nombre }}</mat-card-title>
+            <mat-card-title class="card-title">{{ getFullPatientName(cita) }}</mat-card-title>
             <mat-card-subtitle class="card-subtitle">{{ cita.tipo_estudio }}</mat-card-subtitle>
             
             <div class="card-actions-header">
