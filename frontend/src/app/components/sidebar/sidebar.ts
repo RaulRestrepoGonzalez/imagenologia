@@ -11,10 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './sidebar.scss'
 })
 export class Sidebar {
+  private notificacionesNoLeidas = 3; // Valor fijo para evitar NG0100
   
   getNotificacionesNoLeidas(): number {
     // Simular notificaciones no leídas para demostración
-    return Math.floor(Math.random() * 5) + 1;
+    return this.notificacionesNoLeidas;
   }
 
   logout(): void {

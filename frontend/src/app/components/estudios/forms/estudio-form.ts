@@ -14,17 +14,19 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Api } from '../../../services/api';
 
 export interface EstudioData {
-  id?: number;
-  paciente_id: number;
+  id?: string;
+  paciente_id: string;
   tipo_estudio: string;
-  fecha_realizacion: string;
-  estado: string;
-  modalidad: string;
-  parte_cuerpo: string;
-  contraste: boolean;
-  observaciones?: string;
-  medico_referente?: string;
-  urgente: boolean;
+  medico_solicitante: string;
+  prioridad: string;
+  indicaciones?: string;
+  sala?: string;
+  tecnico_asignado?: string;
+  estado?: string;
+  fecha_solicitud?: string;
+  fecha_programada?: string;
+  fecha_realizacion?: string;
+  resultados?: string;
   paciente_nombre?: string;
 }
 
@@ -71,116 +73,72 @@ export interface Paciente {
           </mat-error>
         </mat-form-field>
 
-        <div class="row">
-          <mat-form-field appearance="fill" class="half-width">
-            <mat-label>Tipo de Estudio</mat-label>
-            <mat-select formControlName="tipo_estudio">
-              <mat-option value="Radiografía">Radiografía</mat-option>
-              <mat-option value="Tomografía Computarizada">Tomografía Computarizada</mat-option>
-              <mat-option value="Resonancia Magnética">Resonancia Magnética</mat-option>
-              <mat-option value="Ecografía">Ecografía</mat-option>
-              <mat-option value="Mamografía">Mamografía</mat-option>
-              <mat-option value="Densitometría Ósea">Densitometría Ósea</mat-option>
-              <mat-option value="Angiografía">Angiografía</mat-option>
-              <mat-option value="PET/CT">PET/CT</mat-option>
-              <mat-option value="SPECT">SPECT</mat-option>
-              <mat-option value="Fluoroscopia">Fluoroscopia</mat-option>
-            </mat-select>
-            <mat-error *ngIf="estudioForm.get('tipo_estudio')?.hasError('required')">
-              Seleccione un tipo de estudio
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="fill" class="half-width">
-            <mat-label>Modalidad</mat-label>
-            <mat-select formControlName="modalidad">
-              <mat-option value="RX">RX - Rayos X</mat-option>
-              <mat-option value="CT">CT - Tomografía</mat-option>
-              <mat-option value="MR">MR - Resonancia</mat-option>
-              <mat-option value="US">US - Ultrasonido</mat-option>
-              <mat-option value="MG">MG - Mamografía</mat-option>
-              <mat-option value="DX">DX - Densitometría</mat-option>
-              <mat-option value="XA">XA - Angiografía</mat-option>
-              <mat-option value="PT">PT - PET</mat-option>
-              <mat-option value="NM">NM - Medicina Nuclear</mat-option>
-              <mat-option value="RF">RF - Fluoroscopia</mat-option>
-            </mat-select>
-            <mat-error *ngIf="estudioForm.get('modalidad')?.hasError('required')">
-              Seleccione una modalidad
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Tipo de Estudio</mat-label>
+          <mat-select formControlName="tipo_estudio">
+            <mat-option value="Radiografía">Radiografía</mat-option>
+            <mat-option value="Tomografía Computarizada">Tomografía Computarizada</mat-option>
+            <mat-option value="Resonancia Magnética">Resonancia Magnética</mat-option>
+            <mat-option value="Ecografía">Ecografía</mat-option>
+            <mat-option value="Mamografía">Mamografía</mat-option>
+            <mat-option value="Densitometría Ósea">Densitometría Ósea</mat-option>
+            <mat-option value="Angiografía">Angiografía</mat-option>
+            <mat-option value="PET/CT">PET/CT</mat-option>
+            <mat-option value="SPECT">SPECT</mat-option>
+            <mat-option value="Fluoroscopia">Fluoroscopia</mat-option>
+          </mat-select>
+          <mat-error *ngIf="estudioForm.get('tipo_estudio')?.hasError('required')">
+            Seleccione un tipo de estudio
+          </mat-error>
+        </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Parte del Cuerpo</mat-label>
-          <mat-select formControlName="parte_cuerpo">
-            <mat-option value="Cabeza">Cabeza</mat-option>
-            <mat-option value="Cuello">Cuello</mat-option>
-            <mat-option value="Tórax">Tórax</mat-option>
-            <mat-option value="Abdomen">Abdomen</mat-option>
-            <mat-option value="Pelvis">Pelvis</mat-option>
-            <mat-option value="Extremidad Superior">Extremidad Superior</mat-option>
-            <mat-option value="Extremidad Inferior">Extremidad Inferior</mat-option>
-            <mat-option value="Columna Vertebral">Columna Vertebral</mat-option>
-            <mat-option value="Corazón">Corazón</mat-option>
-            <mat-option value="Sistema Vascular">Sistema Vascular</mat-option>
-            <mat-option value="Todo el Cuerpo">Todo el Cuerpo</mat-option>
-          </mat-select>
-          <mat-error *ngIf="estudioForm.get('parte_cuerpo')?.hasError('required')">
-            Seleccione la parte del cuerpo
+          <mat-label>Médico Solicitante</mat-label>
+          <input matInput formControlName="medico_solicitante" placeholder="Dr(a). Nombre del médico solicitante">
+          <mat-error *ngIf="estudioForm.get('medico_solicitante')?.hasError('required')">
+            El médico solicitante es requerido
           </mat-error>
         </mat-form-field>
 
         <div class="row">
           <mat-form-field appearance="fill" class="half-width">
-            <mat-label>Fecha de Realización</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="fecha_realizacion">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="estudioForm.get('fecha_realizacion')?.hasError('required')">
-              La fecha es requerida
+            <mat-label>Prioridad</mat-label>
+            <mat-select formControlName="prioridad">
+              <mat-option value="baja">Baja</mat-option>
+              <mat-option value="normal">Normal</mat-option>
+              <mat-option value="alta">Alta</mat-option>
+              <mat-option value="urgente">Urgente</mat-option>
+            </mat-select>
+            <mat-error *ngIf="estudioForm.get('prioridad')?.hasError('required')">
+              Seleccione una prioridad
             </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="half-width">
-            <mat-label>Estado</mat-label>
-            <mat-select formControlName="estado">
-              <mat-option value="Programado">Programado</mat-option>
-              <mat-option value="En Proceso">En Proceso</mat-option>
-              <mat-option value="Completado">Completado</mat-option>
-              <mat-option value="Interpretado">Interpretado</mat-option>
-              <mat-option value="Informado">Informado</mat-option>
-              <mat-option value="Entregado">Entregado</mat-option>
-              <mat-option value="Cancelado">Cancelado</mat-option>
+            <mat-label>Sala</mat-label>
+            <mat-select formControlName="sala">
+              <mat-option value="Sala 1">Sala 1</mat-option>
+              <mat-option value="Sala 2">Sala 2</mat-option>
+              <mat-option value="Sala 3">Sala 3</mat-option>
+              <mat-option value="Sala CT">Sala CT</mat-option>
+              <mat-option value="Sala RM">Sala RM</mat-option>
+              <mat-option value="Sala Eco">Sala Eco</mat-option>
             </mat-select>
-            <mat-error *ngIf="estudioForm.get('estado')?.hasError('required')">
-              Seleccione un estado
-            </mat-error>
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Médico Referente</mat-label>
-          <input matInput formControlName="medico_referente" placeholder="Dr(a). Nombre del médico">
+          <mat-label>Técnico Asignado</mat-label>
+          <input matInput formControlName="tecnico_asignado" placeholder="Nombre del técnico asignado (opcional)">
         </mat-form-field>
 
-        <div class="checkboxes-row">
-          <mat-checkbox formControlName="contraste">
-            <span class="checkbox-label">Requiere contraste</span>
-          </mat-checkbox>
-
-          <mat-checkbox formControlName="urgente">
-            <span class="checkbox-label">Estudio urgente</span>
-          </mat-checkbox>
-        </div>
-
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Observaciones</mat-label>
+          <mat-label>Indicaciones</mat-label>
           <textarea
             matInput
-            formControlName="observaciones"
+            formControlName="indicaciones"
             rows="3"
-            placeholder="Ingrese observaciones adicionales (opcional)">
+            placeholder="Indicaciones médicas o instrucciones especiales (opcional)">
           </textarea>
         </mat-form-field>
       </form>
@@ -288,14 +246,11 @@ export class EstudioFormComponent implements OnInit {
     return this.fb.group({
       paciente_id: ['', [Validators.required]],
       tipo_estudio: ['', [Validators.required]],
-      modalidad: ['', [Validators.required]],
-      parte_cuerpo: ['', [Validators.required]],
-      fecha_realizacion: ['', [Validators.required]],
-      estado: ['Programado', [Validators.required]],
-      medico_referente: [''],
-      contraste: [false],
-      urgente: [false],
-      observaciones: ['']
+      medico_solicitante: ['', [Validators.required]],
+      prioridad: ['normal', [Validators.required]],
+      indicaciones: [''],
+      sala: [''],
+      tecnico_asignado: ['']
     });
   }
 
@@ -314,22 +269,15 @@ export class EstudioFormComponent implements OnInit {
   }
 
   private populateForm(): void {
-    if (this.data.fecha_realizacion) {
-      const fecha = new Date(this.data.fecha_realizacion);
-
-      this.estudioForm.patchValue({
-        paciente_id: this.data.paciente_id,
-        tipo_estudio: this.data.tipo_estudio,
-        modalidad: this.data.modalidad,
-        parte_cuerpo: this.data.parte_cuerpo,
-        fecha_realizacion: fecha,
-        estado: this.data.estado,
-        medico_referente: this.data.medico_referente || '',
-        contraste: this.data.contraste || false,
-        urgente: this.data.urgente || false,
-        observaciones: this.data.observaciones || ''
-      });
-    }
+    this.estudioForm.patchValue({
+      paciente_id: this.data.paciente_id,
+      tipo_estudio: this.data.tipo_estudio,
+      medico_solicitante: this.data.medico_solicitante || '',
+      prioridad: this.data.prioridad || 'normal',
+      indicaciones: this.data.indicaciones || '',
+      sala: this.data.sala || '',
+      tecnico_asignado: this.data.tecnico_asignado || ''
+    });
   }
 
   onSave(): void {
@@ -337,10 +285,14 @@ export class EstudioFormComponent implements OnInit {
       this.isLoading = true;
       const formValue = { ...this.estudioForm.value };
 
-      // Formatear fecha
-      if (formValue.fecha_realizacion instanceof Date) {
-        formValue.fecha_realizacion = formValue.fecha_realizacion.toISOString().split('T')[0];
+      // Validar campos requeridos
+      if (!formValue.paciente_id || !formValue.tipo_estudio || !formValue.medico_solicitante) {
+        console.error('Campos requeridos faltantes:', formValue);
+        this.isLoading = false;
+        return;
       }
+
+      console.log('Datos enviados al backend (estudio):', formValue);
 
       const operation = this.isEdit
         ? this.api.put(`api/estudios/${this.data.id}`, formValue)
@@ -348,12 +300,14 @@ export class EstudioFormComponent implements OnInit {
 
       operation.subscribe({
         next: (response) => {
+          console.log('Respuesta del backend (estudio):', response);
           this.isLoading = false;
           this.dialogRef.close(response);
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Error al guardar estudio:', error);
+          console.error('Error completo al guardar estudio:', error);
+          console.error('Detalles del error:', error.error);
         }
       });
     }

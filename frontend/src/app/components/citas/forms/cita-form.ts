@@ -225,6 +225,43 @@ export interface Paciente {
 
           <div class="form-section">
             <h3 class="section-title">
+              <mat-icon>settings</mat-icon>
+              Configuración Adicional
+            </h3>
+            
+            <div class="datetime-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Sala</mat-label>
+                <mat-select formControlName="sala">
+                  <mat-option value="Sala 1">Sala 1</mat-option>
+                  <mat-option value="Sala 2">Sala 2</mat-option>
+                  <mat-option value="Sala 3">Sala 3</mat-option>
+                  <mat-option value="Sala CT">Sala CT</mat-option>
+                  <mat-option value="Sala RM">Sala RM</mat-option>
+                  <mat-option value="Sala Eco">Sala Eco</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Duración (minutos)</mat-label>
+                <input matInput type="number" formControlName="duracion_minutos" min="15" max="180">
+                <mat-error *ngIf="citaForm.get('duracion_minutos')?.hasError('min')">
+                  Mínimo 15 minutos
+                </mat-error>
+                <mat-error *ngIf="citaForm.get('duracion_minutos')?.hasError('max')">
+                  Máximo 180 minutos
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Técnico Asignado</mat-label>
+              <input matInput formControlName="tecnico_asignado" placeholder="Nombre del técnico asignado (opcional)">
+            </mat-form-field>
+          </div>
+
+          <div class="form-section">
+            <h3 class="section-title">
               <mat-icon>notes</mat-icon>
               Observaciones Adicionales
             </h3>
@@ -528,7 +565,11 @@ export class CitaFormComponent implements OnInit {
       hora: ['', [Validators.required]],
       tipo_estudio: ['', [Validators.required]],
       estado: ['programada', [Validators.required]],
-      observaciones: ['']
+      observaciones: [''],
+      estudio_id: [''],
+      tecnico_asignado: [''],
+      sala: [''],
+      duracion_minutos: [30, [Validators.min(15), Validators.max(180)]]
     });
   }
 
@@ -579,12 +620,20 @@ export class CitaFormComponent implements OnInit {
         delete formValue.hora;
       }
 
-      // Validar que todos los campos requeridos estén presentes
-      if (!formValue.paciente_id || !formValue.fecha_cita || !formValue.tipo_estudio) {
-        console.error('Campos requeridos faltantes:', formValue);
+      // Validar que todos los campos requeridos estén presentes y no vacíos
+      if (!formValue.paciente_id || formValue.paciente_id === '' || 
+          !formValue.fecha_cita || formValue.fecha_cita === '' || 
+          !formValue.tipo_estudio || formValue.tipo_estudio === '') {
+        console.error('Campos requeridos faltantes o vacíos:', formValue);
+        console.error('paciente_id:', formValue.paciente_id);
+        console.error('fecha_cita:', formValue.fecha_cita);
+        console.error('tipo_estudio:', formValue.tipo_estudio);
         this.isLoading = false;
         return;
       }
+
+      // Log para debugging
+      console.log('Datos enviados al backend:', formValue);
 
       // Realizar petición real al backend
       const operation = this.isEdit
@@ -593,12 +642,14 @@ export class CitaFormComponent implements OnInit {
 
       operation.subscribe({
         next: (response) => {
+          console.log('Respuesta del backend:', response);
           this.isLoading = false;
           this.dialogRef.close(response);
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Error al guardar cita:', error);
+          console.error('Error completo al guardar cita:', error);
+          console.error('Detalles del error:', error.error);
         }
       });
     }

@@ -21,10 +21,11 @@ import { MatDividerModule } from '@angular/material/divider';
   styleUrl: './header.scss'
 })
 export class Header {
+  private notificacionesNoLeidas = 2; // Valor fijo para evitar NG0100
   
   getNotificacionesNoLeidas(): number {
     // Simular notificaciones no leídas para demostración
-    return Math.floor(Math.random() * 3) + 1;
+    return this.notificacionesNoLeidas;
   }
 
   markAllAsRead(): void {
