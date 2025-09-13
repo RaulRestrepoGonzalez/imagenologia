@@ -534,13 +534,16 @@ export class CitaFormComponent implements OnInit {
 
   private loadPacientes(): void {
     this.isLoadingPacientes = true;
-    // Simular carga de pacientes para demostración
-    this.pacientes = [
-      { id: 1, nombre: 'Juan Pérez', numero_documento: '12345678', tipo_documento: 'CC' },
-      { id: 2, nombre: 'María García', numero_documento: '87654321', tipo_documento: 'CC' },
-      { id: 3, nombre: 'Carlos López', numero_documento: '11223344', tipo_documento: 'CE' }
-    ];
-    this.isLoadingPacientes = false;
+    this.api.get('api/pacientes').subscribe({
+      next: (data: Paciente[]) => {
+        this.pacientes = data;
+        this.isLoadingPacientes = false;
+      },
+      error: (error) => {
+        console.error('Error loading patients:', error);
+        this.isLoadingPacientes = false;
+      }
+    });
   }
 
   private populateForm(): void {

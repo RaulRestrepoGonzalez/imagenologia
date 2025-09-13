@@ -390,7 +390,7 @@ export class InformeFormComponent implements OnInit {
 
   private loadEstudios(): void {
     this.isLoadingEstudios = true;
-    this.api.get('estudios').subscribe({
+    this.api.get('api/estudios').subscribe({
       next: (data: Estudio[]) => {
         // Filtrar solo estudios completados que no tengan informe
         this.estudios = data.filter(estudio =>
@@ -437,8 +437,8 @@ export class InformeFormComponent implements OnInit {
       }
 
       const operation = this.isEdit
-        ? this.api.put(`informes/${this.data.id}`, formValue)
-        : this.api.post('informes', formValue);
+        ? this.api.put(`api/informes/${this.data.id}`, formValue)
+        : this.api.post('api/informes', formValue);
 
       operation.subscribe({
         next: (response) => {

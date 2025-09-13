@@ -301,7 +301,7 @@ export class EstudioFormComponent implements OnInit {
 
   private loadPacientes(): void {
     this.isLoadingPacientes = true;
-    this.api.get('pacientes').subscribe({
+    this.api.get('api/pacientes').subscribe({
       next: (data: Paciente[]) => {
         this.pacientes = data;
         this.isLoadingPacientes = false;
@@ -343,8 +343,8 @@ export class EstudioFormComponent implements OnInit {
       }
 
       const operation = this.isEdit
-        ? this.api.put(`estudios/${this.data.id}`, formValue)
-        : this.api.post('estudios', formValue);
+        ? this.api.put(`api/estudios/${this.data.id}`, formValue)
+        : this.api.post('api/estudios', formValue);
 
       operation.subscribe({
         next: (response) => {
