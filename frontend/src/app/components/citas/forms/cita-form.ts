@@ -527,7 +527,7 @@ export class CitaFormComponent implements OnInit {
       fecha: ['', [Validators.required]],
       hora: ['', [Validators.required]],
       tipo_estudio: ['', [Validators.required]],
-      estado: ['Programada', [Validators.required]],
+      estado: ['programada', [Validators.required]],
       observaciones: ['']
     });
   }
@@ -577,6 +577,13 @@ export class CitaFormComponent implements OnInit {
         formValue.fecha_cita = fecha.toISOString();
         delete formValue.fecha;
         delete formValue.hora;
+      }
+
+      // Validar que todos los campos requeridos estén presentes
+      if (!formValue.paciente_id || !formValue.fecha_cita || !formValue.tipo_estudio) {
+        console.error('Campos requeridos faltantes:', formValue);
+        this.isLoading = false;
+        return;
       }
 
       // Realizar petición real al backend
