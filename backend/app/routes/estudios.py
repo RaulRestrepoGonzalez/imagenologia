@@ -30,12 +30,20 @@ async def get_estudios(skip: int = 0, limit: int = 100, estado: str = None, tipo
             if paciente:
                 estudio["paciente_nombre"] = paciente["nombre"]
                 estudio["paciente_apellidos"] = paciente.get("apellidos")
+                estudio["paciente_cedula"] = paciente.get("cedula")
+                estudio["paciente_edad"] = paciente.get("edad")
             else:
-                estudio["paciente_nombre"] = "Desconocido"
+                print(f"Paciente no encontrado para ID: {estudio['paciente_id']}")
+                estudio["paciente_nombre"] = "Paciente no encontrado"
                 estudio["paciente_apellidos"] = None
-        except:
-            estudio["paciente_nombre"] = "Desconocido"
+                estudio["paciente_cedula"] = None
+                estudio["paciente_edad"] = None
+        except Exception as e:
+            print(f"Error al cargar paciente {estudio.get('paciente_id')}: {e}")
+            estudio["paciente_nombre"] = "Error al cargar paciente"
             estudio["paciente_apellidos"] = None
+            estudio["paciente_cedula"] = None
+            estudio["paciente_edad"] = None
         
         estudio["id"] = str(estudio["_id"])
         del estudio["_id"]
@@ -51,12 +59,36 @@ async def get_estudio(estudio_id: str):
         estudio = await db.estudios.find_one({"_id": ObjectId(estudio_id)})
         
         if estudio:
+            # Obtener información del paciente
+            try:
+                paciente = await db.pacientes.find_one({"_id": ObjectId(estudio["paciente_id"])})
+                if paciente:
+                    estudio["paciente_nombre"] = paciente["nombre"]
+                    estudio["paciente_apellidos"] = paciente.get("apellidos")
+                    estudio["paciente_cedula"] = paciente.get("cedula")
+                    estudio["paciente_edad"] = paciente.get("edad")
+                else:
+                    estudio["paciente_nombre"] = "Paciente no encontrado"
+                    estudio["paciente_apellidos"] = None
+                    estudio["paciente_cedula"] = None
+                    estudio["paciente_edad"] = None
+            except Exception as e:
+                print(f"Error al cargar paciente {estudio.get('paciente_id')}: {e}")
+                estudio["paciente_nombre"] = "Error al cargar paciente"
+                estudio["paciente_apellidos"] = None
+                estudio["paciente_cedula"] = None
+                estudio["paciente_edad"] = None
+            
             estudio["id"] = str(estudio["_id"])
-            return Estudio(**estudio)
+            del estudio["_id"]
+            return estudio
         else:
             raise HTTPException(status_code=404, detail="Estudio no encontrado")
     except ValueError:
         raise HTTPException(status_code=400, detail="ID de estudio inválido")
+    except Exception as e:
+        print(f"Error general en get_estudio: {e}")
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 @router.get("/pacientes/{paciente_id}/estudios", response_model=List[Estudio])
 async def get_estudios_paciente(paciente_id: str):

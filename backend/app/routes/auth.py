@@ -165,12 +165,15 @@ async def register_patient_with_user(user_data: UserCreate):
     
     # Create patient record first if paciente_id is not provided
     if not user_data.paciente_id:
-        # Create basic patient record
+        # Create patient record for patient users
+        import uuid
+        temp_identificacion = f"TEMP_{uuid.uuid4().hex[:8].upper()}"
+        
         patient_data = {
             "nombre": user_data.nombre,
             "apellidos": user_data.apellidos,
             "email": user_data.email,
-            "identificacion": "",  # Will need to be filled later
+            "identificacion": temp_identificacion,  # Temporary unique ID
             "tipo_identificacion": "CC",
             "telefono": "",
             "fecha_nacimiento": datetime.now(),

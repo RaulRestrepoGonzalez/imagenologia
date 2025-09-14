@@ -10,13 +10,59 @@ router = APIRouter()
 
 @router.get("/informes", response_model=List[Informe])
 async def get_informes(skip: int = 0, limit: int = 100):
-    """Obtener lista de informes"""
+    """Obtener lista de informes con información del paciente"""
     db = get_database()
     
-    cursor = db.informes.find().skip(skip).limit(limit)
+    cursor = db.informes.find().skip(skip).limit(limit).sort("fecha_creacion", -1)
     informes = []
     
     async for informe in cursor:
+        # Obtener información del estudio y paciente
+        try:
+            estudio = await db.estudios.find_one({"_id": ObjectId(informe["estudio_id"])})
+            if estudio:
+                # Obtener información del paciente
+                try:
+                    paciente = await db.pacientes.find_one({"_id": ObjectId(estudio["paciente_id"])})
+                    if paciente:
+                        informe["paciente_nombre"] = paciente["nombre"]
+                        informe["paciente_apellidos"] = paciente.get("apellidos")
+                        informe["paciente_cedula"] = paciente.get("identificacion")
+                        informe["paciente_id"] = str(estudio["paciente_id"])
+                    else:
+                        informe["paciente_nombre"] = "Paciente no encontrado"
+                        informe["paciente_apellidos"] = None
+                        informe["paciente_cedula"] = None
+                        informe["paciente_id"] = str(estudio["paciente_id"])
+                except Exception as e:
+                    print(f"Error al cargar paciente: {e}")
+                    informe["paciente_nombre"] = "Error al cargar paciente"
+                    informe["paciente_apellidos"] = None
+                    informe["paciente_cedula"] = None
+                    informe["paciente_id"] = None
+                
+                # Información del estudio
+                informe["estudio_tipo"] = estudio.get("tipo_estudio", "No especificado")
+                informe["estudio_modalidad"] = estudio.get("modalidad", "No especificada")
+                informe["estudio_fecha"] = estudio.get("fecha_realizacion")
+            else:
+                informe["paciente_nombre"] = "Estudio no encontrado"
+                informe["paciente_apellidos"] = None
+                informe["paciente_cedula"] = None
+                informe["paciente_id"] = None
+                informe["estudio_tipo"] = "No especificado"
+                informe["estudio_modalidad"] = "No especificada"
+                informe["estudio_fecha"] = None
+        except Exception as e:
+            print(f"Error al cargar estudio {informe.get('estudio_id')}: {e}")
+            informe["paciente_nombre"] = "Error al cargar datos"
+            informe["paciente_apellidos"] = None
+            informe["paciente_cedula"] = None
+            informe["paciente_id"] = None
+            informe["estudio_tipo"] = "Error"
+            informe["estudio_modalidad"] = "Error"
+            informe["estudio_fecha"] = None
+        
         informe["id"] = str(informe["_id"])
         del informe["_id"]
         informes.append(informe)

@@ -265,7 +265,7 @@ export interface Estudio {
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancelar</button>
       <button mat-raised-button color="primary" (click)="onSave()"
-              [disabled]="informeForm.invalid || isLoading">
+              [disabled]="isLoading">
         {{ isLoading ? 'Guardando...' : 'Guardar' }}
       </button>
     </mat-dialog-actions>
@@ -510,6 +510,12 @@ export class InformeFormComponent implements OnInit {
   onSave(): void {
     console.log('onSave called - Form valid:', this.informeForm.valid);
     console.log('Form value:', this.informeForm.value);
+    console.log('Form errors:', this.getFormErrors());
+    
+    if (this.isLoading) {
+      console.log('Ya está guardando, ignorando click');
+      return;
+    }
     
     this.isLoading = true;
     const formValue = { ...this.informeForm.value };
@@ -524,7 +530,7 @@ export class InformeFormComponent implements OnInit {
 
     // Formatear fecha
     if (formValue.fecha_informe instanceof Date) {
-      formValue.fecha_informe = formValue.fecha_informe.toISOString().split('T')[0];
+      formValue.fecha_informe = formValue.fecha_informe.toISOString();
     }
 
     console.log('Datos enviados al backend (informe):', formValue);
@@ -543,8 +549,20 @@ export class InformeFormComponent implements OnInit {
         this.isLoading = false;
         console.error('Error completo al guardar informe:', error);
         console.error('Detalles del error:', error.error);
+        alert(`Error al guardar: ${error.error?.detail || error.message || 'Error desconocido'}`);
       }
     });
+  }
+
+  private getFormErrors(): any {
+    const errors: any = {};
+    Object.keys(this.informeForm.controls).forEach(key => {
+      const control = this.informeForm.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
   }
 
   onCancel(): void {

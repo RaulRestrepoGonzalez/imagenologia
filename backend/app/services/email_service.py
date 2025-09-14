@@ -11,7 +11,8 @@ load_dotenv()
 class EmailService:
     def __init__(self):
         self.smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-        self.smtp_port = int(os.getenv("SMTP_PORT", "587"))
+        smtp_port = os.getenv("SMTP_PORT", "587")
+        self.smtp_port = int(smtp_port) if smtp_port else 587
         self.smtp_username = os.getenv("SMTP_USERNAME")
         self.smtp_password = os.getenv("SMTP_PASSWORD")
         self.from_name = os.getenv("FROM_NAME", "Centro de Imagenología")

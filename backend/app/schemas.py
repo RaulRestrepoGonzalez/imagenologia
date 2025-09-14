@@ -74,6 +74,11 @@ class Estudio(EstudioBase):
     resultados: Optional[str] = None
     archivos_dicom: List[str] = []
     fecha_actualizacion: datetime
+    # Campos adicionales para información del paciente
+    paciente_nombre: Optional[str] = None
+    paciente_apellidos: Optional[str] = None
+    paciente_cedula: Optional[str] = None
+    paciente_edad: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -143,6 +148,14 @@ class Informe(InformeBase):
     fecha_actualizacion: datetime
     firmado: bool = False
     fecha_firma: Optional[datetime] = None
+    # Campos adicionales para información del paciente y estudio
+    paciente_id: Optional[str] = None
+    paciente_nombre: Optional[str] = None
+    paciente_apellidos: Optional[str] = None
+    paciente_cedula: Optional[str] = None
+    estudio_tipo: Optional[str] = None
+    estudio_modalidad: Optional[str] = None
+    estudio_fecha: Optional[datetime] = None
 
     class Config:
         from_attributes = True
