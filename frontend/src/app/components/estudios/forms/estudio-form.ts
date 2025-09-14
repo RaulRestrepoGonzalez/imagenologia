@@ -145,7 +145,7 @@ export interface Paciente {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="onSave()" [disabled]="estudioForm.invalid || isLoading">
+      <button mat-raised-button color="primary" (click)="onSave()" [disabled]="isLoading">
         {{ isLoading ? 'Guardando...' : 'Guardar' }}
       </button>
     </mat-dialog-actions>
@@ -281,36 +281,35 @@ export class EstudioFormComponent implements OnInit {
   }
 
   onSave(): void {
-    if (this.estudioForm.valid) {
-      this.isLoading = true;
-      const formValue = { ...this.estudioForm.value };
+    this.isLoading = true;
+    const formValue = { ...this.estudioForm.value };
 
-      // Validar campos requeridos
-      if (!formValue.paciente_id || !formValue.tipo_estudio || !formValue.medico_solicitante) {
-        console.error('Campos requeridos faltantes:', formValue);
-        this.isLoading = false;
-        return;
-      }
-
-      console.log('Datos enviados al backend (estudio):', formValue);
-
-      const operation = this.isEdit
-        ? this.api.put(`api/estudios/${this.data.id}`, formValue)
-        : this.api.post('api/estudios', formValue);
-
-      operation.subscribe({
-        next: (response) => {
-          console.log('Respuesta del backend (estudio):', response);
-          this.isLoading = false;
-          this.dialogRef.close(response);
-        },
-        error: (error) => {
-          this.isLoading = false;
-          console.error('Error completo al guardar estudio:', error);
-          console.error('Detalles del error:', error.error);
-        }
-      });
+    // Validar campos requeridos
+    if (!formValue.paciente_id || !formValue.tipo_estudio || !formValue.medico_solicitante) {
+      console.error('Campos requeridos faltantes:', formValue);
+      alert('Por favor complete todos los campos requeridos: Paciente, Tipo de Estudio y Médico Solicitante');
+      this.isLoading = false;
+      return;
     }
+
+    console.log('Datos enviados al backend (estudio):', formValue);
+
+    const operation = this.isEdit
+      ? this.api.put(`api/estudios/${this.data.id}`, formValue)
+      : this.api.post('api/estudios', formValue);
+
+    operation.subscribe({
+      next: (response) => {
+        console.log('Respuesta del backend (estudio):', response);
+        this.isLoading = false;
+        this.dialogRef.close(response);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error completo al guardar estudio:', error);
+        console.error('Detalles del error:', error.error);
+      }
+    });
   }
 
   onCancel(): void {

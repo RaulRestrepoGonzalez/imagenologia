@@ -1,10 +1,120 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime, timedelta
+from app.schemas import InformeCreate, Informe, InformeUpdate
 from app.database import get_database
 from bson import ObjectId
+from typing import List
 import json
 
 router = APIRouter()
+
+@router.get("/informes", response_model=List[Informe])
+async def get_informes(skip: int = 0, limit: int = 100):
+    """Obtener lista de informes"""
+    db = get_database()
+    
+    cursor = db.informes.find().skip(skip).limit(limit)
+    informes = []
+    
+    async for informe in cursor:
+        informe["id"] = str(informe["_id"])
+        del informe["_id"]
+        informes.append(informe)
+    
+    return informes
+
+@router.post("/informes", response_model=Informe)
+async def create_informe(informe: InformeCreate):
+    """Crear un nuevo informe"""
+    db = get_database()
+    
+    # Convertir a diccionario y agregar timestamps
+    informe_dict = informe.dict()
+    informe_dict["fecha_creacion"] = datetime.now()
+    informe_dict["fecha_actualizacion"] = datetime.now()
+    
+    # Insertar en la base de datos
+    result = await db.informes.insert_one(informe_dict)
+    
+    # Obtener el informe creado
+    nuevo_informe = await db.informes.find_one({"_id": result.inserted_id})
+    nuevo_informe["id"] = str(nuevo_informe["_id"])
+    del nuevo_informe["_id"]
+    
+    return Informe(**nuevo_informe)
+
+@router.get("/informes/{informe_id}", response_model=Informe)
+async def get_informe(informe_id: str):
+    """Obtener un informe por ID"""
+    try:
+        db = get_database()
+        informe = await db.informes.find_one({"_id": ObjectId(informe_id)})
+        
+        if not informe:
+            raise HTTPException(status_code=404, detail="Informe no encontrado")
+        
+        informe["id"] = str(informe["_id"])
+        del informe["_id"]
+        
+        return Informe(**informe)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="ID de informe inválido")
+
+@router.put("/informes/{informe_id}", response_model=Informe)
+async def update_informe(informe_id: str, informe: InformeUpdate):
+    """Actualizar un informe"""
+    try:
+        db = get_database()
+        
+        # Verificar que el informe existe
+        existing_informe = await db.informes.find_one({"_id": ObjectId(informe_id)})
+        if not existing_informe:
+            raise HTTPException(status_code=404, detail="Informe no encontrado")
+        
+        # Preparar datos para actualizar
+        update_data = informe.dict(exclude_unset=True)
+        update_data["fecha_actualizacion"] = datetime.now()
+        
+        # Actualizar en la base de datos
+        result = await db.informes.update_one(
+            {"_id": ObjectId(informe_id)},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 1:
+            # Obtener el informe actualizado
+            updated_informe = await db.informes.find_one({"_id": ObjectId(informe_id)})
+            updated_informe["id"] = str(updated_informe["_id"])
+            del updated_informe["_id"]
+            
+            return Informe(**updated_informe)
+        else:
+            raise HTTPException(status_code=500, detail="Error al actualizar el informe")
+            
+    except ValueError:
+        raise HTTPException(status_code=400, detail="ID de informe inválido")
+
+@router.delete("/informes/{informe_id}")
+async def delete_informe(informe_id: str):
+    """Eliminar un informe"""
+    try:
+        db = get_database()
+        
+        # Verificar que el informe existe
+        existing_informe = await db.informes.find_one({"_id": ObjectId(informe_id)})
+        if not existing_informe:
+            raise HTTPException(status_code=404, detail="Informe no encontrado")
+        
+        # Eliminar el informe
+        result = await db.informes.delete_one({"_id": ObjectId(informe_id)})
+        
+        if result.deleted_count == 1:
+            return {"message": "Informe eliminado correctamente"}
+        else:
+            raise HTTPException(status_code=500, detail="Error al eliminar el informe")
+            
+    except ValueError:
+        raise HTTPException(status_code=400, detail="ID de informe inválido")
 
 @router.get("/informes/estadisticas")
 async def get_estadisticas(inicio: str, fin: str):

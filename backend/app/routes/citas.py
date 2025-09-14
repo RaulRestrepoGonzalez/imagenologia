@@ -11,8 +11,48 @@ router = APIRouter()
 email_service = EmailService()
 sms_service = SMSService()
 
+async def send_appointment_notifications(email: str, telefono: str, fecha_cita: datetime, tipo_estudio: str):
+    """Enviar notificaciones de cita por email y SMS"""
+    try:
+        # Formatear fecha para mostrar
+        fecha_formateada = fecha_cita.strftime("%d/%m/%Y a las %H:%M")
+        
+        # Enviar email solo si el servicio está configurado
+        if email:
+            try:
+                subject = "Confirmación de Cita - Imagenología"
+                body = f"""
+                Estimado paciente,
+                
+                Su cita ha sido programada exitosamente:
+                
+                Fecha y Hora: {fecha_formateada}
+                Tipo de Estudio: {tipo_estudio}
+                
+                Por favor, llegue 15 minutos antes de su cita.
+                
+                Saludos,
+                Centro de Imagenología
+                """
+                await email_service.send_email(email, subject, body)
+                print(f"Email enviado a {email}")
+            except Exception as e:
+                print(f"No se pudo enviar email (servicio no configurado): {e}")
+        
+        # Enviar SMS solo si el servicio está configurado
+        if telefono:
+            try:
+                mensaje = f"Cita confirmada: {tipo_estudio} el {fecha_formateada}. Centro de Imagenología."
+                await sms_service.send_sms(telefono, mensaje)
+                print(f"SMS enviado a {telefono}")
+            except Exception as e:
+                print(f"No se pudo enviar SMS (servicio no configurado): {e}")
+            
+    except Exception as e:
+        print(f"Error general enviando notificaciones: {e}")
+
 @router.get("/citas", response_model=List[Cita])
-async def get_citas(fecha: str = None, estado: str = None, skip: int = 0, limit: int = 100):
+async def get_citas(fecha: str = None, estado: str = None, tipo_estudio: str = None, paciente_nombre: str = None, skip: int = 0, limit: int = 100):
     """Obtener lista de citas con filtros opcionales"""
     db = get_database()
     query = {}
@@ -28,6 +68,9 @@ async def get_citas(fecha: str = None, estado: str = None, skip: int = 0, limit:
     
     if estado:
         query["estado"] = estado
+    
+    if tipo_estudio:
+        query["tipo_estudio"] = {"$regex": tipo_estudio, "$options": "i"}
     
     citas = []
     async for cita in db.citas.find(query).skip(skip).limit(limit).sort("fecha_cita", 1):
@@ -177,9 +220,9 @@ async def delete_cita(cita_id: str):
         if not existing_appointment:
             raise HTTPException(status_code=404, detail="Cita no encontrada")
         
-        # Solo se pueden cancelar citas programadas
-        if existing_appointment["estado"] != "programada":
-            raise HTTPException(status_code=400, detail="Solo se pueden cancelar citas programadas")
+        # Solo se pueden cancelar citas que no estén ya canceladas o completadas
+        if existing_appointment["estado"] in ["cancelada", "completada"]:
+            raise HTTPException(status_code=400, detail="No se puede cancelar una cita ya cancelada o completada")
         
         # Marcar cita como cancelada
         result = await db.citas.update_one(
@@ -191,14 +234,18 @@ async def delete_cita(cita_id: str):
         )
         
         if result.modified_count == 1:
-            # Actualizar estado del estudio
-            await db.estudios.update_one(
-                {"_id": ObjectId(existing_appointment["estudio_id"])},
-                {"$set": {
-                    "estado": "pendiente",
-                    "fecha_actualizacion": datetime.now()
-                }}
-            )
+            # Actualizar estado del estudio si existe estudio_id
+            if existing_appointment.get("estudio_id"):
+                try:
+                    await db.estudios.update_one(
+                        {"_id": ObjectId(existing_appointment["estudio_id"])},
+                        {"$set": {
+                            "estado": "pendiente",
+                            "fecha_actualizacion": datetime.now()
+                        }}
+                    )
+                except Exception as e:
+                    print(f"Error actualizando estudio: {e}")
             
             return {"message": "Cita cancelada correctamente"}
         else:

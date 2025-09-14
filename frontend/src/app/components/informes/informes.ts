@@ -21,18 +21,22 @@ export interface Informe {
   estudio_id: number;
   paciente_id: number;
   paciente_nombre: string;
+  paciente_apellidos?: string;
+  paciente_cedula?: string;
   estudio_tipo: string;
+  estudio_modalidad?: string;
+  estudio_fecha?: string;
   medico_radiologo: string;
   fecha_informe: string;
   hallazgos: string;
   impresion_diagnostica: string;
-  recomendaciones?: string;
+  recomendaciones: string;
   estado: string;
-  tecnica_utilizada?: string;
+  tecnica_utilizada: string;
   calidad_estudio: string;
   urgente: boolean;
   validado: boolean;
-  observaciones_tecnicas?: string;
+  observaciones_tecnicas: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -97,47 +101,108 @@ export class Informes implements OnInit {
 
   loadInformes(): void {
     this.isLoading = true;
-    // Simular datos de ejemplo para demostración
-    this.informes = [
-      {
-        id: 1,
-        estudio_id: 1,
-        paciente_id: 1,
-        paciente_nombre: 'Juan Pérez',
-        estudio_tipo: 'Radiografía de Tórax',
-        medico_radiologo: 'Dr. Rodríguez',
-        fecha_informe: '2024-01-15T10:30:00',
-        hallazgos: 'Pulmones con campos pulmonares libres. Silueta cardíaca normal. No se observan masas ni derrames pleurales.',
-        impresion_diagnostica: 'Radiografía de tórax normal',
-        recomendaciones: 'Control en 6 meses si persisten síntomas',
-        estado: 'Validado',
-        tecnica_utilizada: 'Radiografía PA y lateral',
-        calidad_estudio: 'Buena',
-        urgente: false,
-        validado: true,
-        observaciones_tecnicas: 'Estudio técnicamente satisfactorio'
+    this.api.get('api/informes').subscribe({
+      next: (response: any[]) => {
+        console.log('Informes cargados desde el backend:', response);
+        // Cargar informes con información completa del paciente y estudio
+        this.informes = [];
+        
+        // Para cada informe, obtener información del estudio asociado
+        const informesPromises = response.map(async (i) => {
+          try {
+            // Obtener datos del estudio
+            const estudioResponse = await this.api.get(`api/estudios/${i.estudio_id}`).toPromise();
+            
+            return {
+              id: i.id,
+              estudio_id: i.estudio_id,
+              paciente_id: estudioResponse?.paciente_id || i.paciente_id || 0,
+              paciente_nombre: estudioResponse?.paciente_nombre || i.paciente_nombre || 'Desconocido',
+              paciente_apellidos: estudioResponse?.paciente_apellidos || '',
+              paciente_cedula: estudioResponse?.paciente_cedula || '',
+              estudio_tipo: estudioResponse?.tipo_estudio || i.estudio_tipo || 'No especificado',
+              estudio_modalidad: estudioResponse?.modalidad || 'No especificada',
+              estudio_fecha: estudioResponse?.fecha_realizacion || '',
+              medico_radiologo: i.medico_radiologo,
+              fecha_informe: i.fecha_informe,
+              hallazgos: i.hallazgos,
+              impresion_diagnostica: i.impresion_diagnostica,
+              recomendaciones: i.recomendaciones,
+              estado: i.estado,
+              tecnica_utilizada: i.tecnica_utilizada,
+              calidad_estudio: i.calidad_estudio,
+              urgente: i.urgente,
+              validado: i.validado,
+              observaciones_tecnicas: i.observaciones_tecnicas,
+              created_at: i.fecha_creacion,
+              updated_at: i.fecha_actualizacion
+            };
+          } catch (error) {
+            console.warn(`Error al cargar estudio ${i.estudio_id}:`, error);
+            return {
+              id: i.id,
+              estudio_id: i.estudio_id,
+              paciente_id: i.paciente_id || 0,
+              paciente_nombre: i.paciente_nombre || 'Desconocido',
+              paciente_apellidos: '',
+              paciente_cedula: '',
+              estudio_tipo: i.estudio_tipo || 'No especificado',
+              estudio_modalidad: 'No especificada',
+              estudio_fecha: '',
+              medico_radiologo: i.medico_radiologo,
+              fecha_informe: i.fecha_informe,
+              hallazgos: i.hallazgos,
+              impresion_diagnostica: i.impresion_diagnostica,
+              recomendaciones: i.recomendaciones,
+              estado: i.estado,
+              tecnica_utilizada: i.tecnica_utilizada,
+              calidad_estudio: i.calidad_estudio,
+              urgente: i.urgente,
+              validado: i.validado,
+              observaciones_tecnicas: i.observaciones_tecnicas,
+              created_at: i.fecha_creacion,
+              updated_at: i.fecha_actualizacion
+            };
+          }
+        });
+        
+        Promise.all(informesPromises).then(informesCompletos => {
+          this.informes = informesCompletos;
+          this.applyFilters();
+          this.isLoading = false;
+        });
       },
-      {
-        id: 2,
-        estudio_id: 2,
-        paciente_id: 2,
-        paciente_nombre: 'María García',
-        estudio_tipo: 'Tomografía Abdominal',
-        medico_radiologo: 'Dr. Martínez',
-        fecha_informe: '2024-01-15T15:00:00',
-        hallazgos: 'Hígado de tamaño normal. Vesícula biliar sin cálculos. Páncreas y riñones sin alteraciones.',
-        impresion_diagnostica: 'Tomografía abdominal normal',
-        recomendaciones: 'Seguimiento clínico',
-        estado: 'En Revisión',
-        tecnica_utilizada: 'TC helicoidal con contraste IV',
-        calidad_estudio: 'Excelente',
-        urgente: true,
-        validado: false,
-        observaciones_tecnicas: 'Estudio con contraste intravenoso'
+      error: (error) => {
+        console.error('Error al cargar informes:', error);
+        // Fallback a datos de ejemplo si hay error de conexión
+        this.informes = [
+          {
+            id: 1,
+            estudio_id: 1,
+            paciente_id: 1,
+            paciente_nombre: 'Juan Pérez',
+            paciente_apellidos: 'García',
+            paciente_cedula: '12345678',
+            estudio_tipo: 'Radiografía de Tórax',
+            estudio_modalidad: 'RX',
+            estudio_fecha: '2024-01-15',
+            medico_radiologo: 'Dr. Rodríguez',
+            fecha_informe: '2024-01-15',
+            hallazgos: 'Pulmones con campos pulmonares libres.',
+            impresion_diagnostica: 'Radiografía de tórax normal',
+            recomendaciones: 'Control en 6 meses',
+            estado: 'Validado',
+            tecnica_utilizada: 'Radiografía PA y lateral',
+            calidad_estudio: 'Buena',
+            urgente: false,
+            validado: true,
+            observaciones_tecnicas: 'Estudio satisfactorio'
+          }
+        ];
+        this.applyFilters();
+        this.isLoading = false;
       }
-    ];
-    this.applyFilters();
-    this.isLoading = false;
+    });
   }
 
   openAddDialog(): void {
@@ -170,9 +235,17 @@ export class Informes implements OnInit {
 
   deleteInforme(informe: Informe): void {
     if (confirm(`¿Está seguro que desea eliminar el informe de ${informe.paciente_nombre}?`)) {
-      this.informes = this.informes.filter(i => i.id !== informe.id);
-      this.applyFilters();
-      this.showMessage('Informe eliminado exitosamente', 'success');
+      this.api.delete(`api/informes/${informe.id}`).subscribe({
+        next: (response) => {
+          console.log('Informe eliminado exitosamente:', response);
+          this.loadInformes(); // Recargar la lista
+          this.showMessage('Informe eliminado exitosamente', 'success');
+        },
+        error: (error) => {
+          console.error('Error al eliminar informe:', error);
+          this.showMessage(`Error al eliminar informe: ${error.error?.detail || error.message}`, 'error');
+        }
+      });
     }
   }
 
@@ -205,6 +278,8 @@ export class Informes implements OnInit {
       filtered = filtered.filter(
         (informe) =>
           informe.paciente_nombre.toLowerCase().includes(term) ||
+          (informe.paciente_apellidos && informe.paciente_apellidos.toLowerCase().includes(term)) ||
+          (informe.paciente_cedula && informe.paciente_cedula.toLowerCase().includes(term)) ||
           informe.estudio_tipo.toLowerCase().includes(term) ||
           informe.medico_radiologo.toLowerCase().includes(term) ||
           informe.hallazgos.toLowerCase().includes(term),

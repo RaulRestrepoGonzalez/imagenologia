@@ -8,7 +8,7 @@ from typing import List
 router = APIRouter()
 
 @router.get("/estudios", response_model=List[Estudio])
-async def get_estudios(skip: int = 0, limit: int = 100, estado: str = None):
+async def get_estudios(skip: int = 0, limit: int = 100, estado: str = None, tipo_estudio: str = None, paciente_id: str = None):
     """Obtener lista de estudios con filtros opcionales"""
     db = get_database()
     query = {}
@@ -16,10 +16,30 @@ async def get_estudios(skip: int = 0, limit: int = 100, estado: str = None):
     if estado:
         query["estado"] = estado
     
+    if tipo_estudio:
+        query["tipo_estudio"] = {"$regex": tipo_estudio, "$options": "i"}
+    
+    if paciente_id:
+        query["paciente_id"] = paciente_id
+    
     estudios = []
     async for estudio in db.estudios.find(query).skip(skip).limit(limit).sort("fecha_solicitud", -1):
+        # Obtener información del paciente
+        try:
+            paciente = await db.pacientes.find_one({"_id": ObjectId(estudio["paciente_id"])})
+            if paciente:
+                estudio["paciente_nombre"] = paciente["nombre"]
+                estudio["paciente_apellidos"] = paciente.get("apellidos")
+            else:
+                estudio["paciente_nombre"] = "Desconocido"
+                estudio["paciente_apellidos"] = None
+        except:
+            estudio["paciente_nombre"] = "Desconocido"
+            estudio["paciente_apellidos"] = None
+        
         estudio["id"] = str(estudio["_id"])
-        estudios.append(Estudio(**estudio))
+        del estudio["_id"]
+        estudios.append(estudio)
     
     return estudios
 

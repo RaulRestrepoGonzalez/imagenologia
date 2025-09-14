@@ -16,20 +16,29 @@ import { FormsModule } from '@angular/forms';
 import { EstudioFormComponent } from './forms/estudio-form';
 
 export interface Estudio {
-  id: number;
-  paciente_id: number;
-  paciente_nombre: string;
+  id: string;
+  paciente_id: string;
+  paciente_nombre?: string;
   tipo_estudio: string;
-  fecha_realizacion: string;
+  medico_solicitante: string;
+  prioridad: string;
+  indicaciones?: string;
+  sala?: string;
+  tecnico_asignado?: string;
   estado: string;
-  modalidad: string;
-  parte_cuerpo: string;
-  contraste: boolean;
-  urgente: boolean;
-  observaciones?: string;
-  medico_referente?: string;
+  fecha_solicitud: string;
+  fecha_programada?: string;
+  fecha_realizacion?: string;
+  resultados?: string;
   created_at?: string;
   updated_at?: string;
+  // Legacy fields for template compatibility
+  urgente?: boolean;
+  modalidad?: string;
+  parte_cuerpo?: string;
+  contraste?: boolean;
+  observaciones?: string;
+  medico_referente?: string;
 }
 
 @Component({
@@ -58,6 +67,7 @@ export class Estudios implements OnInit {
   filteredEstudios: Estudio[] = [];
   searchTerm: string = '';
   selectedEstado: string = 'Todos';
+  selectedTipoEstudio: string = 'Todos';
   selectedModalidad: string = 'Todos';
   selectedUrgencia: string = 'Todos';
   isLoading: boolean = true;
@@ -73,7 +83,17 @@ export class Estudios implements OnInit {
     'Cancelado',
   ];
 
-  modalidadOptions = ['Todos', 'RX', 'CT', 'MR', 'US', 'MG', 'DX', 'XA', 'PT', 'NM', 'RF'];
+  tipoEstudioOptions = [
+    'Todos',
+    'Radiografía de Tórax',
+    'Tomografía Abdominal',
+    'Resonancia Magnética',
+    'Ecografía',
+    'Mamografía',
+    'Densitometría Ósea'
+  ];
+
+  modalidadOptions = ['Todos', 'RX', 'CT', 'MR', 'US', 'MG', 'DX', 'XA', 'PT', 'NM', 'RF', 'EC', 'OT'];
 
   urgenciaOptions = ['Todos', 'Urgente', 'Normal'];
 
@@ -89,39 +109,42 @@ export class Estudios implements OnInit {
 
   loadEstudios(): void {
     this.isLoading = true;
-    // Simular datos de ejemplo para demostración
-    this.estudios = [
-      {
-        id: 1,
-        paciente_id: 1,
-        paciente_nombre: 'Juan Pérez',
-        tipo_estudio: 'Radiografía de Tórax',
-        fecha_realizacion: '2024-01-15T10:00:00',
-        estado: 'Completado',
-        modalidad: 'RX',
-        parte_cuerpo: 'Tórax',
-        contraste: false,
-        urgente: false,
-        observaciones: 'Radiografía PA y lateral',
-        medico_referente: 'Dr. García'
+    this.api.get('api/estudios').subscribe({
+      next: (response: any[]) => {
+        this.estudios = response.map(e => ({
+          id: e.id,
+          paciente_id: e.paciente_id,
+          paciente_nombre: e.paciente_nombre || 'Paciente no encontrado',
+          tipo_estudio: e.tipo_estudio,
+          medico_solicitante: e.medico_solicitante,
+          prioridad: e.prioridad,
+          indicaciones: e.indicaciones,
+          sala: e.sala,
+          tecnico_asignado: e.tecnico_asignado,
+          estado: e.estado,
+          fecha_solicitud: e.fecha_solicitud,
+          fecha_programada: e.fecha_programada,
+          fecha_realizacion: e.fecha_realizacion,
+          resultados: e.resultados,
+          created_at: e.fecha_creacion,
+          updated_at: e.fecha_actualizacion,
+          // Map to legacy fields for template compatibility
+          urgente: e.prioridad === 'urgente' || e.prioridad === 'alta',
+          modalidad: 'RX', // Default modalidad
+          parte_cuerpo: 'General', // Default parte_cuerpo
+          contraste: e.indicaciones?.toLowerCase().includes('contraste') || false,
+          observaciones: e.indicaciones || e.resultados,
+          medico_referente: e.medico_solicitante
+        }));
+        this.applyFilters();
+        this.isLoading = false;
       },
-      {
-        id: 2,
-        paciente_id: 2,
-        paciente_nombre: 'María García',
-        tipo_estudio: 'Tomografía Abdominal',
-        fecha_realizacion: '2024-01-15T14:00:00',
-        estado: 'En Proceso',
-        modalidad: 'CT',
-        parte_cuerpo: 'Abdomen',
-        contraste: true,
-        urgente: true,
-        observaciones: 'Con contraste IV',
-        medico_referente: 'Dr. López'
+      error: (error) => {
+        console.error('Error al cargar estudios:', error);
+        this.estudios = [];
+        this.isLoading = false;
       }
-    ];
-    this.applyFilters();
-    this.isLoading = false;
+    });
   }
 
   openAddDialog(): void {
@@ -172,41 +195,50 @@ export class Estudios implements OnInit {
     this.applyFilters();
   }
 
+  onTipoEstudioChange(): void {
+    this.applyFilters();
+  }
+
   onUrgenciaChange(): void {
     this.applyFilters();
   }
 
   private applyFilters(): void {
+    console.log('Aplicando filtros estudios - Datos originales:', this.estudios.length);
+    console.log('Filtros activos:', {
+      searchTerm: this.searchTerm,
+      selectedEstado: this.selectedEstado,
+      selectedTipoEstudio: this.selectedTipoEstudio
+    });
+    
     let filtered = [...this.estudios];
 
     // Filtro por término de búsqueda
-    if (this.searchTerm.trim()) {
+    if (this.searchTerm && this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
         (estudio) =>
-          estudio.paciente_nombre.toLowerCase().includes(term) ||
-          estudio.tipo_estudio.toLowerCase().includes(term) ||
-          estudio.observaciones?.toLowerCase().includes(term),
+          (estudio.paciente_nombre && estudio.paciente_nombre.toLowerCase().includes(term)) ||
+          (estudio.tipo_estudio && estudio.tipo_estudio.toLowerCase().includes(term)) ||
+          (estudio.medico_solicitante && estudio.medico_solicitante.toLowerCase().includes(term))
       );
+      console.log('Después de filtro de búsqueda estudios:', filtered.length);
     }
 
     // Filtro por estado
     if (this.selectedEstado && this.selectedEstado !== 'Todos') {
       filtered = filtered.filter((estudio) => estudio.estado === this.selectedEstado);
+      console.log('Después de filtro de estado estudios:', filtered.length);
     }
 
-    // Filtro por modalidad
-    if (this.selectedModalidad && this.selectedModalidad !== 'Todos') {
-      filtered = filtered.filter((estudio) => estudio.modalidad === this.selectedModalidad);
-    }
-
-    // Filtro por urgencia
-    if (this.selectedUrgencia && this.selectedUrgencia !== 'Todos') {
-      const isUrgente = this.selectedUrgencia === 'Urgente';
-      filtered = filtered.filter((estudio) => estudio.urgente === isUrgente);
+    // Filtro por tipo de estudio
+    if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
+      filtered = filtered.filter((estudio) => estudio.tipo_estudio === this.selectedTipoEstudio);
+      console.log('Después de filtro de tipo estudio estudios:', filtered.length);
     }
 
     this.filteredEstudios = filtered;
+    console.log('Resultado final filtrado estudios:', this.filteredEstudios.length);
   }
 
   private showMessage(message: string, type: 'success' | 'error'): void {
@@ -295,11 +327,12 @@ export class Estudios implements OnInit {
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
     return this.estudios.filter(estudio => 
-      estudio.fecha_realizacion.startsWith(todayString)
+      estudio.fecha_realizacion?.startsWith(todayString) || false
     );
   }
 
-  getModalidadName(modalidad: string): string {
+  getModalidadName(modalidad: string | undefined): string {
+    if (!modalidad) return 'No especificada';
     const modalidadNames: { [key: string]: string } = {
       'RX': 'Radiografía',
       'CT': 'Tomografía Computarizada',
@@ -316,12 +349,15 @@ export class Estudios implements OnInit {
   }
 
   sortEstudiosByDate(): void {
-    this.filteredEstudios.sort((a, b) => 
-      new Date(b.fecha_realizacion).getTime() - new Date(a.fecha_realizacion).getTime()
-    );
+    this.filteredEstudios.sort((a, b) => {
+      const fechaA = a.fecha_realizacion ? new Date(a.fecha_realizacion).getTime() : 0;
+      const fechaB = b.fecha_realizacion ? new Date(b.fecha_realizacion).getTime() : 0;
+      return fechaB - fechaA;
+    });
   }
 
-  isToday(fecha: string): boolean {
+  isToday(fecha: string | undefined): boolean {
+    if (!fecha) return false;
     const fechaEstudio = new Date(fecha);
     const today = new Date();
     return fechaEstudio.toDateString() === today.toDateString();

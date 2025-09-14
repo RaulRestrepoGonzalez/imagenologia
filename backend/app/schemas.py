@@ -109,19 +109,39 @@ class Cita(CitaBase):
 class InformeBase(BaseModel):
     estudio_id: str
     medico_radiologo: str
+    fecha_informe: str
     hallazgos: str
-    conclusion: str
+    impresion_diagnostica: str
     recomendaciones: Optional[str] = None
-    prioridad: str = "normal"
+    estado: str = "Borrador"
+    tecnica_utilizada: Optional[str] = None
+    calidad_estudio: str = "Buena"
+    urgente: bool = False
+    validado: bool = False
+    observaciones_tecnicas: Optional[str] = None
 
 class InformeCreate(InformeBase):
     pass
+
+class InformeUpdate(BaseModel):
+    estudio_id: Optional[str] = None
+    medico_radiologo: Optional[str] = None
+    fecha_informe: Optional[str] = None
+    hallazgos: Optional[str] = None
+    impresion_diagnostica: Optional[str] = None
+    recomendaciones: Optional[str] = None
+    estado: Optional[str] = None
+    tecnica_utilizada: Optional[str] = None
+    calidad_estudio: Optional[str] = None
+    urgente: Optional[bool] = None
+    validado: Optional[bool] = None
+    observaciones_tecnicas: Optional[str] = None
 
 class Informe(InformeBase):
     id: str
     fecha_creacion: datetime
     fecha_actualizacion: datetime
-    firmado: bool
+    firmado: bool = False
     fecha_firma: Optional[datetime] = None
 
     class Config:

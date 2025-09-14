@@ -180,37 +180,31 @@ export interface Paciente {
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Estado</mat-label>
               <mat-select formControlName="estado">
-                <mat-option value="Programada">
+                <mat-option value="programada">
                   <div class="estado-option programada">
                     <mat-icon>schedule</mat-icon>
                     <span>Programada</span>
                   </div>
                 </mat-option>
-                <mat-option value="Confirmada">
-                  <div class="estado-option confirmada">
-                    <mat-icon>check_circle</mat-icon>
-                    <span>Confirmada</span>
-                  </div>
-                </mat-option>
-                <mat-option value="En Proceso">
+                <mat-option value="en_proceso">
                   <div class="estado-option en-proceso">
                     <mat-icon>play_circle</mat-icon>
                     <span>En Proceso</span>
                   </div>
                 </mat-option>
-                <mat-option value="Completada">
+                <mat-option value="completada">
                   <div class="estado-option completada">
                     <mat-icon>done_all</mat-icon>
                     <span>Completada</span>
                   </div>
                 </mat-option>
-                <mat-option value="Cancelada">
+                <mat-option value="cancelada">
                   <div class="estado-option cancelada">
                     <mat-icon>cancel</mat-icon>
                     <span>Cancelada</span>
                   </div>
                 </mat-option>
-                <mat-option value="No Asistió">
+                <mat-option value="no_asistio">
                   <div class="estado-option no-asistio">
                     <mat-icon>person_off</mat-icon>
                     <span>No Asistió</span>

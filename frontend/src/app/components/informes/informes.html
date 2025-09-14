@@ -216,8 +216,15 @@
             <div mat-card-avatar class="avatar" [class.urgent-avatar]="informe.urgente">
               <mat-icon>{{ informe.urgente ? 'priority_high' : 'description' }}</mat-icon>
             </div>
-            <mat-card-title>{{ informe.paciente_nombre }}</mat-card-title>
-            <mat-card-subtitle>{{ informe.estudio_tipo }}</mat-card-subtitle>
+            <mat-card-title>
+              {{ informe.paciente_nombre }} {{ informe.paciente_apellidos }}
+              <span *ngIf="informe.paciente_cedula" class="cedula-badge">CC: {{ informe.paciente_cedula }}</span>
+            </mat-card-title>
+            <mat-card-subtitle>
+              {{ informe.estudio_tipo }}
+              <span *ngIf="informe.estudio_modalidad" class="modalidad-info">({{ informe.estudio_modalidad }})</span>
+              <span *ngIf="informe.estudio_fecha" class="fecha-estudio">- {{ informe.estudio_fecha | date:'dd/MM/yyyy' }}</span>
+            </mat-card-subtitle>
             <div class="card-badges">
               <mat-chip [class]="getEstadoClass(informe.estado)" selected>
                 {{ informe.estado }}

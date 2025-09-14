@@ -191,36 +191,51 @@
 }
 
 .informe-card {
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  transition: all var(--transition-normal);
-  border: 1px solid var(--border-light);
-  position: relative;
-}
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  border-left: 4px solid #e0e0e0;
 
-.informe-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 
-.informe-card.urgente {
-  border-color: var(--error-300);
-  background: linear-gradient(135deg, var(--error-50) 0%, white 100%);
-}
+  &.urgent {
+    border-left-color: #f44336;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+  }
 
-.informe-card.urgente::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--error-500), var(--error-600));
-}
+  &.validated {
+    border-left-color: #4caf50;
+    background: linear-gradient(135deg, #f3f9f3 0%, #ffffff 100%);
+  }
 
-.informe-card.validado {
-  border-color: var(--success-300);
-  background: linear-gradient(135deg, var(--success-50) 0%, white 100%);
+  &.pending {
+    border-left-color: #ff9800;
+    background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+  }
+
+  .cedula-badge {
+    font-size: 0.75rem;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 0.2rem 0.4rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    font-weight: 500;
+  }
+
+  .modalidad-info {
+    font-weight: 500;
+    color: #2196f3;
+    margin-left: 0.3rem;
+  }
+
+  .fecha-estudio {
+    color: #666;
+    font-size: 0.9rem;
+    margin-left: 0.3rem;
+  }
 }
 
 .informe-card.validado::before {

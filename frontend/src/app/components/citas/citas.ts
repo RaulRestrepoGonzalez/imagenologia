@@ -196,31 +196,42 @@ export class Citas implements OnInit {
   }
 
   private applyFilters(): void {
+    console.log('Aplicando filtros - Datos originales:', this.citas.length);
+    console.log('Filtros activos:', {
+      searchTerm: this.searchTerm,
+      selectedEstado: this.selectedEstado,
+      selectedTipoEstudio: this.selectedTipoEstudio
+    });
+    
     let filtered = [...this.citas];
 
     // Filtro por término de búsqueda
-    if (this.searchTerm.trim()) {
+    if (this.searchTerm && this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
         (cita) =>
-          cita.paciente_nombre.toLowerCase().includes(term) ||
+          (cita.paciente_nombre && cita.paciente_nombre.toLowerCase().includes(term)) ||
           (cita.paciente_apellidos && cita.paciente_apellidos.toLowerCase().includes(term)) ||
-          cita.tipo_estudio.toLowerCase().includes(term) ||
-          cita.observaciones?.toLowerCase().includes(term),
+          (cita.tipo_estudio && cita.tipo_estudio.toLowerCase().includes(term)) ||
+          (cita.observaciones && cita.observaciones.toLowerCase().includes(term))
       );
+      console.log('Después de filtro de búsqueda:', filtered.length);
     }
 
     // Filtro por estado
     if (this.selectedEstado && this.selectedEstado !== 'Todos') {
       filtered = filtered.filter((cita) => cita.estado === this.selectedEstado);
+      console.log('Después de filtro de estado:', filtered.length);
     }
 
     // Filtro por tipo de estudio
     if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
       filtered = filtered.filter((cita) => cita.tipo_estudio === this.selectedTipoEstudio);
+      console.log('Después de filtro de tipo estudio:', filtered.length);
     }
 
     this.filteredCitas = filtered;
+    console.log('Resultado final filtrado:', this.filteredCitas.length);
   }
 
   private showMessage(message: string, type: 'success' | 'error'): void {
