@@ -7,17 +7,17 @@
    VARIABLES CSS GLOBALES - DESIGN TOKENS
    ===================================== */
 :root {
-  /* === COLORES PRINCIPALES === */
-  --primary-50: #e8f2ff;
-  --primary-100: #c2dfff;
-  --primary-200: #94c8ff;
-  --primary-300: #66b0ff;
-  --primary-400: #4099ff;
-  --primary-500: #1a73e8;
-  --primary-600: #1557b0;
-  --primary-700: #0f4085;
-  --primary-800: #0a2c5a;
-  --primary-900: #051c42;
+  /* === COLORES PRINCIPALES - CAMBIADOS A NARANJA === */
+  --primary-50: #fef7ed;
+  --primary-100: #feecd0;
+  --primary-200: #fdd4a2;
+  --primary-300: #fbb869;
+  --primary-400: #F0AB69;
+  --primary-500: #E89A52;
+  --primary-600: #D4956A;
+  --primary-700: #C8875B;
+  --primary-800: #a0743d;
+  --primary-900: #7f5f32;
 
   /* === COLORES SECUNDARIOS === */
   --secondary-50: #f3e8ff;
@@ -788,7 +788,7 @@ p {
   margin: var(--space-xs) 0 0 0 !important;
 }
 
-/* === BUTTONS === */
+/* === BUTTONS - ACTUALIZADOS A NARANJA === */
 .mat-raised-button {
   border-radius: var(--border-radius-sm) !important;
   font-weight: var(--font-weight-medium) !important;
@@ -1352,7 +1352,7 @@ p {
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 /* =====================================
-   OVERRIDES DEL TEMA DE MATERIAL
+   OVERRIDES DEL TEMA DE MATERIAL - ACTUALIZADOS A NARANJA
    ===================================== */
 .mat-mdc-dialog-container {
   border-radius: 20px !important;
@@ -1391,7 +1391,7 @@ p {
 
 .mat-mdc-form-field-appearance-outline.mat-focused .mat-mdc-form-field-flex {
   border-color: var(--primary-500) !important;
-  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(240, 171, 105, 0.1) !important;
 }
 
 .mat-mdc-form-field-label {
@@ -1532,86 +1532,165 @@ p {
    ESTADOS DE LAS CITAS
    ===================================== */
 .estado-programada {
-  background-color: var(--warning-100) !important;
-  color: var(--warning-700) !important;
+  background-color: var(--warning-500) !important;
+  color: white !important;
 }
 
 .estado-confirmada {
-  background-color: var(--success-100) !important;
-  color: var(--success-700) !important;
+  background-color: var(--success-500) !important;
+  color: white !important;
 }
 
 .estado-en-proceso {
-  background-color: var(--info-100) !important;
-  color: var(--info-700) !important;
+  background-color: var(--info-500) !important;
+  color: white !important;
 }
 
 .estado-completada {
-  background-color: var(--success-100) !important;
-  color: var(--success-700) !important;
+  background-color: var(--success-600) !important;
+  color: white !important;
 }
 
 .estado-cancelada {
-  background-color: var(--error-100) !important;
-  color: var(--error-700) !important;
+  background-color: var(--error-500) !important;
+  color: white !important;
 }
 
 .estado-no-asistio {
-  background-color: var(--gray-100) !important;
-  color: var(--gray-700) !important;
+  background-color: var(--gray-500) !important;
+  color: white !important;
 }
 
 .estado-default {
-  background-color: var(--gray-100) !important;
-  color: var(--gray-600) !important;
+  background-color: var(--gray-400) !important;
+  color: white !important;
 }
 
 /* =====================================
-   CORRECCIONES DE CONTRASTE - TEXTOS VISIBLES
+   CORRECCIONES DE CONTRASTE Y CONSISTENCIA
    ===================================== */
 
-/* === REGLA BASE: TEXTO NEGRO EN TODOS LADOS === */
-body, 
-.app-container,
+/* === HEADER Y SIDEBAR - FONDOS NARANJAS === */
+.header-section {
+  background: linear-gradient(135deg, #F0AB69 0%, #E89A52 100%) !important;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, #F0AB69 0%, #E89A52 100%) !important;
+}
+
+/* === TÍTULOS PRINCIPALES - TEXTO BLANCO SOBRE FONDO NARANJA === */
+.page-title,
+.section-title,
+h1.page-title,
+h2.page-title,
+.header-title,
+.main-title {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #F0AB69 0%, #E89A52 100%) !important;
+  padding: var(--space-md) var(--space-lg) !important;
+  border-radius: var(--border-radius-lg) !important;
+  margin-bottom: var(--space-lg) !important;
+  font-weight: var(--font-weight-bold) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* === BOTONES PRIMARIOS - ACTUALIZADOS A NARANJA === */
+.mat-mdc-raised-button[color="primary"],
+.mat-raised-button.mat-primary,
+.btn-primary,
+button.primary,
+.add-button {
+  background-color: #E89A52 !important;
+  color: #ffffff !important;
+  border-color: #E89A52 !important;
+}
+
+.mat-mdc-raised-button[color="primary"]:hover,
+.mat-raised-button.mat-primary:hover,
+.btn-primary:hover,
+button.primary:hover,
+.add-button:hover {
+  background-color: #D4956A !important;
+  border-color: #D4956A !important;
+  color: #ffffff !important;
+}
+
+/* === ELEMENTOS DEL SIDEBAR - TEXTO BLANCO === */
+.sidebar,
+.sidebar *,
+nav.sidebar,
+nav.sidebar *,
+app-sidebar,
+app-sidebar * {
+  color: #ffffff !important;
+}
+
+/* === TARJETAS DE ESTADÍSTICAS - FONDOS Y TEXTOS CONSISTENTES === */
+.stat-card.primary,
+.statistic-card.primary {
+  background: linear-gradient(135deg, #F0AB69 0%, #E89A52 100%) !important;
+  color: #ffffff !important;
+}
+
+.stat-card.primary *,
+.statistic-card.primary * {
+  color: #ffffff !important;
+}
+
+.stat-card.success,
+.statistic-card.success {
+  background-color: var(--success-500) !important;
+  color: #ffffff !important;
+}
+
+.stat-card.success *,
+.statistic-card.success * {
+  color: #ffffff !important;
+}
+
+.stat-card.warning,
+.statistic-card.warning {
+  background-color: var(--warning-500) !important;
+  color: #ffffff !important;
+}
+
+.stat-card.warning *,
+.statistic-card.warning * {
+  color: #ffffff !important;
+}
+
+.stat-card.info,
+.statistic-card.info {
+  background-color: var(--info-500) !important;
+  color: #ffffff !important;
+}
+
+.stat-card.info *,
+.statistic-card.info * {
+  color: #ffffff !important;
+}
+
+/* === CONTENIDO PRINCIPAL - TEXTO NEGRO EN FONDO BLANCO === */
 .main-content,
 .content-wrapper,
 .estudios-container,
 .informes-container,
 .pacientes-container,
-.citas-container {
-  color: #000000 !important;
-}
-
-/* === ELEMENTOS CON FONDO BLANCO - TEXTO NEGRO === */
+.citas-container,
 .mat-mdc-card,
-.stat-card,
-.cita-card,
-.informe-card,
-.estudio-card,
-.paciente-card,
-.filters-section,
-.search-section,
-.table-section,
-.form-container,
-.dialog-content,
-.mat-mdc-dialog-container,
-.mat-mdc-menu-panel {
+.card {
   background-color: #ffffff !important;
 }
 
-.mat-mdc-card *,
-.stat-card *,
-.cita-card *,
-.informe-card *,
-.estudio-card *,
-.paciente-card *,
-.filters-section *,
-.search-section *,
-.table-section *,
-.form-container *,
-.dialog-content *,
-.mat-mdc-dialog-container *,
-.mat-mdc-menu-panel * {
+.main-content *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.content-wrapper *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.estudios-container *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.informes-container *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.pacientes-container *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.citas-container *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.mat-mdc-card *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info),
+.card *:not(.page-title):not(.section-title):not(.primary):not(.success):not(.warning):not(.info) {
   color: #000000 !important;
 }
 
@@ -1621,149 +1700,30 @@ body,
 .mat-mdc-select,
 .mat-mdc-select *,
 .mat-mdc-option,
-.mat-mdc-chip,
 input,
 textarea,
-label,
-.mat-mdc-form-field-label,
-.mat-mdc-form-field-hint,
-.mat-mdc-form-field-error {
+label:not(.page-title):not(.section-title) {
   color: #000000 !important;
 }
 
-/* === BOTONES - TEXTO NEGRO POR DEFECTO === */
-.mat-mdc-button,
-.mat-mdc-stroked-button,
-button {
+/* === BOTONES SECUNDARIOS - TEXTO NEGRO === */
+.mat-mdc-button:not([color]),
+.mat-mdc-stroked-button:not([color]),
+button:not(.primary):not(.success):not(.warning):not(.info):not(.add-button) {
   color: #000000 !important;
 }
 
-/* === EXCEPCIONES: TEXTO BLANCO SOBRE FONDOS OSCUROS === */
-.header-section,
-.header-section *,
-.sidebar,
-.sidebar *,
-.stat-card.primary,
-.stat-card.success,
-.stat-card.warning,
-.stat-card.info,
-.estado-programada,
-.estado-confirmada,
-.estado-en-proceso,
-.estado-completada,
-.estado-cancelada,
-.estado-no-asistio,
-.estado-default,
-.mat-mdc-raised-button[color="primary"],
-.mat-mdc-raised-button[color="accent"],
-.mat-mdc-raised-button[color="warn"],
-.mat-mdc-snack-bar-container,
-.mat-mdc-snack-bar-container *,
-.add-button,
-.page-title,
-.page-subtitle {
-  color: #ffffff !important;
-}
-
-/* === ESTADOS ESPECÍFICOS - FONDOS DE COLORES === */
-.estado-programada {
-  background-color: #fbbf24 !important;
+/* === TÍTULOS EN CONTENIDO - NEGRO === */
+h1:not(.page-title):not(.section-title),
+h2:not(.page-title):not(.section-title),
+h3:not(.page-title):not(.section-title),
+h4:not(.page-title):not(.section-title),
+h5:not(.page-title):not(.section-title),
+h6:not(.page-title):not(.section-title) {
   color: #000000 !important;
 }
 
-.estado-confirmada {
-  background-color: #10b981 !important;
-  color: #ffffff !important;
-}
-
-.estado-en-proceso {
-  background-color: #3b82f6 !important;
-  color: #ffffff !important;
-}
-
-.estado-completada {
-  background-color: #10b981 !important;
-  color: #ffffff !important;
-}
-
-.estado-cancelada {
-  background-color: #ef4444 !important;
-  color: #ffffff !important;
-}
-
-.estado-no-asistio {
-  background-color: #6b7280 !important;
-  color: #ffffff !important;
-}
-
-.estado-default {
-  background-color: #e5e7eb !important;
-  color: #000000 !important;
-}
-
-/* === TARJETAS DE ESTADÍSTICAS - FONDOS DE COLORES === */
-.stat-card.primary {
-  background-color: #1a73e8 !important;
-  color: #ffffff !important;
-}
-
-.stat-card.success {
-  background-color: #10b981 !important;
-  color: #ffffff !important;
-}
-
-.stat-card.warning {
-  background-color: #f59e0b !important;
-  color: #ffffff !important;
-}
-
-.stat-card.info {
-  background-color: #3b82f6 !important;
-  color: #ffffff !important;
-}
-
-/* === HEADER Y SIDEBAR - FONDOS OSCUROS === */
-.header-section {
-  background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%) !important;
-}
-
-.sidebar {
-  background: linear-gradient(180deg, #1a73e8 0%, #1557b0 100%) !important;
-}
-
-/* === BOTONES PRIMARIOS - FONDOS DE COLORES === */
-.mat-mdc-raised-button[color="primary"] {
-  background-color: #1a73e8 !important;
-  color: #ffffff !important;
-}
-
-.mat-mdc-raised-button[color="accent"] {
-  background-color: #8b5cf6 !important;
-  color: #ffffff !important;
-}
-
-.mat-mdc-raised-button[color="warn"] {
-  background-color: #ef4444 !important;
-  color: #ffffff !important;
-}
-
-/* === SNACKBARS - FONDOS DE COLORES === */
-.mat-mdc-snack-bar-container.success-snackbar {
-  background-color: #10b981 !important;
-  color: #ffffff !important;
-}
-
-.mat-mdc-snack-bar-container.error-snackbar {
-  background-color: #ef4444 !important;
-  color: #ffffff !important;
-}
-
-.mat-mdc-snack-bar-container.warning-snackbar {
-  background-color: #f59e0b !important;
-  color: #ffffff !important;
-}
-
-.mat-mdc-snack-bar-container.info-snackbar {
-  background-color: #3b82f6 !important;
-  color: #ffffff !important;
+/* === SOBREESCRIBIR CUALQUIER REGLA DE COLORES CONFLICTIVA === */
+[class*="text-"] {
+  color: inherit !important;
 }

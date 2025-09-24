@@ -52,7 +52,7 @@
   font-weight: 800;
   margin: 0 0 8px 0;
   line-height: 1.2;
-  color: white;
+  color: #000000 !important; /* cambiado a negro */
 }
 
 .title-icon {
@@ -67,12 +67,12 @@
   opacity: 0.9;
   margin: 0;
   font-weight: 400;
-  color: white;
+  color: #000000 !important; /* cambiado a negro */
 }
 
 .add-button {
-  background: rgba(255, 255, 255, 0.95) !important;
-  color: var(--primary-700) !important;
+  background: #f97316 !important; /* naranja */
+  color: #ffffff !important;
   padding: 16px 24px !important;
   border-radius: 16px !important;
   font-weight: 600 !important;
@@ -84,7 +84,7 @@
 }
 
 .add-button:hover {
-  background: white !important;
+  background: #ea580c !important; /* naranja más oscuro */
   transform: translateY(-2px) !important;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2) !important;
 }
@@ -534,7 +534,7 @@
 }
 
 .mat-mdc-chip.mat-mdc-chip-selected {
-  background-color: #3b82f6 !important;
+  background-color: #EBA15C !important;
   color: #ffffff !important;
 }
 
@@ -549,7 +549,7 @@
 }
 
 .mat-mdc-raised-button[color="primary"] {
-  background-color: #3b82f6 !important;
+  background-color: #EBA15C !important;
   color: #ffffff !important;
 }
 
