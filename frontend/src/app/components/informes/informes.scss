@@ -117,6 +117,9 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-light);
+  background-color: #87C15C !important;
+  border-radius: 12px;
+  padding: 1rem;
 }
 
 .search-field {
@@ -510,4 +513,16 @@
   .detail-value {
     color: var(--gray-100);
   }
+}
+
+.informe-card .content-expansion .mat-expansion-panel-header {
+  background-color: #87C15C !important;
+  border-radius: 8px;
+  color: inherit; /* Mantener texto e íconos como están */
+}
+
+.informe-card mat-card-actions {
+  background-color: #87C15C !important;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }

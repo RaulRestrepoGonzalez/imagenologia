@@ -472,3 +472,76 @@ table tr:nth-child(5) { animation-delay: 0.5s; }
   background-color: var(--error-600) !important;
   color: white !important;
 }
+
+/* =====================================
+   FOOTER VERDE PARA TARJETAS DE PACIENTES
+   ===================================== */
+
+/* Si usas mat-card-actions para los botones */
+mat-card-actions,
+.mat-card-actions {
+  background-color: #87C15C !important;
+  padding: var(--spacing-lg) !important;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl) !important;
+  margin: 0 !important;
+}
+
+/* Botones dentro del footer verde */
+mat-card-actions button,
+.mat-card-actions button {
+  color: white !important;
+  font-weight: 600 !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+mat-card-actions button:hover,
+.mat-card-actions button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Iconos de los botones en blanco */
+mat-card-actions button mat-icon,
+.mat-card-actions button mat-icon {
+  color: white !important;
+}
+
+/* Si usas clases específicas para los botones de acción */
+.action-buttons {
+  background-color: #87C15C !important;
+  padding: var(--spacing-lg) !important;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl) !important;
+}
+
+.action-button {
+  color: white !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.action-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Para elementos con clase específica de footer */
+.card-footer,
+.patient-card-footer {
+  background-color: #87C15C !important;
+  padding: var(--spacing-lg) !important;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl) !important;
+}
+
+/* Variante para tema oscuro */
+@media (prefers-color-scheme: dark) {
+  mat-card-actions,
+  .mat-card-actions,
+  .action-buttons,
+  .card-footer,
+  .patient-card-footer {
+    background-color: #6fa94a !important; /* Verde más oscuro para tema oscuro */
+  }
+}

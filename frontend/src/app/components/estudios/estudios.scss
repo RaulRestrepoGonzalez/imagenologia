@@ -113,10 +113,10 @@
   gap: var(--spacing-md);
   align-items: end;
   padding: var(--spacing-lg);
-  background: var(--surface-base);
+  background: #87C15C;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-light);
+  border: 1px solid #6fa94a; 
 }
 
 .search-field {
@@ -294,22 +294,57 @@
   font-weight: 500;
 }
 
-.estudio-card mat-card-actions {
-  padding: var(--spacing-md) 0;
-  border-top: 1px solid var(--border-light);
-  display: flex;
-  gap: var(--spacing-sm);
+/* Selector más específico para sobrescribir otros estilos */
+.estudio-card mat-card-actions,
+mat-card mat-card-actions,
+.mat-card .mat-card-actions,
+.estudio-card .mat-card-actions {
+  padding: var(--spacing-lg) !important;
+  border-top: 1px solid var(--border-light) !important;
+  display: flex !important;
+  gap: var(--spacing-sm) !important;
+  background-color: #87C15C !important;
+  background: #87C15C !important;
+  margin: 0 !important;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl) !important;
 }
 
-.estudio-card mat-card-actions button {
-  flex: 1;
-  border-radius: var(--radius-lg);
-  font-weight: 500;
-  transition: all var(--transition-fast);
+/* Botones dentro del footer */
+.estudio-card mat-card-actions button,
+mat-card mat-card-actions button,
+.mat-card .mat-card-actions button,
+.estudio-card .mat-card-actions button {
+  flex: 1 !important;
+  border-radius: var(--radius-lg) !important;
+  font-weight: 500 !important;
+  transition: all var(--transition-fast) !important;
+  color: white !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
-.estudio-card mat-card-actions button:hover {
-  transform: translateY(-1px);
+.estudio-card mat-card-actions button:hover,
+mat-card mat-card-actions button:hover,
+.mat-card .mat-card-actions button:hover,
+.estudio-card .mat-card-actions button:hover {
+  transform: translateY(-1px) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Iconos de los botones */
+.estudio-card mat-card-actions button mat-icon,
+mat-card mat-card-actions button mat-icon,
+.mat-card .mat-card-actions button mat-icon,
+.estudio-card .mat-card-actions button mat-icon {
+  color: white !important;
+}
+
+/* Si Angular Material usa clases específicas, también incluirlas */
+.mat-mdc-card-actions,
+.mdc-card__actions {
+  background-color: #87C15C !important;
+  background: #87C15C !important;
 }
 
 /* =====================================

@@ -308,7 +308,7 @@ mat-dialog-content::-webkit-scrollbar-thumb:hover {
 }
 
 /* =====================================
-   CORRECCIONES DE CONTRASTE - TEXTOS VISIBLES
+   CORRECCIONES DE CONTRASTE
    ===================================== */
 
 /* === TODOS LOS ELEMENTOS DEL FORMULARIO - TEXTO NEGRO === */
@@ -383,3 +383,4 @@ button[mat-raised-button][color="accent"] {
 button[mat-raised-button][color="warn"] {
   background-color: var(--error-600) !important;
 }
+
