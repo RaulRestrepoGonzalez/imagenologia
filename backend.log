@@ -1,110 +1,76 @@
 INFO:     Will watch for changes in these directories: ['/home/raul/Source/imagenologia/backend']
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [101861] using WatchFiles
-2025-09-30 14:08:08 - root - INFO - Sistema de logging configurado correctamente
-2025-09-30 14:08:08 - root - INFO - Nivel de log: INFO
-2025-09-30 14:08:08 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-09-30 14:08:08 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-2025-09-30 14:08:08 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-09-30 14:08:08 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-INFO:     Started server process [101873]
+INFO:     Started reloader process [110879] using WatchFiles
+2025-09-30 14:27:24 - root - INFO - Sistema de logging configurado correctamente
+2025-09-30 14:27:24 - root - INFO - Nivel de log: INFO
+2025-09-30 14:27:25 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
+2025-09-30 14:27:25 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
+2025-09-30 14:27:25 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
+2025-09-30 14:27:25 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
+INFO:     Started server process [110883]
 INFO:     Waiting for application startup.
-2025-09-30 14:08:08 - root - INFO - Conexión a MongoDB exitosa
-2025-09-30 14:08:08 - root - INFO - Base de datos inicializada correctamente
-2025-09-30 14:08:08 - app - INFO - Aplicación iniciada correctamente
+2025-09-30 14:27:25 - root - INFO - Conexión a MongoDB exitosa
+2025-09-30 14:27:25 - root - INFO - Base de datos inicializada correctamente
+2025-09-30 14:27:25 - app - INFO - Aplicación iniciada correctamente
 INFO:     Application startup complete.
-INFO:     127.0.0.1:56722 - "GET /health HTTP/1.1" 200 OK
-2025-09-30 14:08:11 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+INFO:     127.0.0.1:40400 - "GET /health HTTP/1.1" 200 OK
+2025-09-30 14:27:27 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
 Traceback (most recent call last):
   File "/home/raul/Source/imagenologia/backend/.venv/lib/python3.13/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
     version = _bcrypt.__about__.__version__
               ^^^^^^^^^^^^^^^^^
 AttributeError: module 'bcrypt' has no attribute '__about__'
-2025-09-30 14:08:11 - app.routes.auth - INFO - Usuario autenticado: admin@imagenologia.com
-INFO:     127.0.0.1:56728 - "POST /api/auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38466 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38466 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38484 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38474 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41780 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60690 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46676 - "POST /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:45354 - "GET /api/informes/68dbf93c447ae8a012bc1f09/debug/imagenes HTTP/1.1" 200 OK
-WARNING:  WatchFiles detected changes in 'app/routes/informes.py'. Reloading...
+2025-09-30 14:27:27 - app.routes.auth - INFO - Usuario autenticado: admin@imagenologia.com
+INFO:     127.0.0.1:40402 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52424 - "OPTIONS /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52440 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52440 - "OPTIONS /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52424 - "OPTIONS /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52440 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52454 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37140 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37140 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37146 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58122 - "OPTIONS /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58126 - "POST /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58126 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58126 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58122 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58122 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
+Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
+Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
+Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
+INFO:     127.0.0.1:58126 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58380 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58380 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58384 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38054 - "OPTIONS /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38062 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38062 - "OPTIONS /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38054 - "OPTIONS /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38062 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38068 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49694 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49694 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49706 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36386 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36386 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36400 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40614 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40614 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40630 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58110 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58110 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58126 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58290 - "OPTIONS /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58294 - "POST /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58294 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58294 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58290 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
-2025-09-30 14:12:05 - root - INFO - Conexión a la base de datos cerrada
-2025-09-30 14:12:05 - app - INFO - Aplicación cerrada correctamente
+2025-09-30 14:49:10 - root - INFO - Conexión a la base de datos cerrada
+2025-09-30 14:49:10 - app - INFO - Aplicación cerrada correctamente
 INFO:     Application shutdown complete.
-INFO:     Finished server process [101873]
-2025-09-30 14:12:06 - root - INFO - Sistema de logging configurado correctamente
-2025-09-30 14:12:06 - root - INFO - Nivel de log: INFO
-2025-09-30 14:12:06 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-09-30 14:12:06 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-2025-09-30 14:12:06 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-09-30 14:12:06 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-INFO:     Started server process [103754]
-INFO:     Waiting for application startup.
-2025-09-30 14:12:07 - root - INFO - Conexión a MongoDB exitosa
-2025-09-30 14:12:07 - root - INFO - Base de datos inicializada correctamente
-2025-09-30 14:12:07 - app - INFO - Aplicación iniciada correctamente
-INFO:     Application startup complete.
-INFO:     127.0.0.1:33816 - "POST /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38220 - "GET /api/informes/68dbf93c447ae8a012bc1f09/debug/imagenes HTTP/1.1" 200 OK
-WARNING:  WatchFiles detected changes in 'app/routes/informes.py'. Reloading...
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-2025-09-30 14:12:57 - root - INFO - Conexión a la base de datos cerrada
-2025-09-30 14:12:57 - app - INFO - Aplicación cerrada correctamente
-INFO:     Application shutdown complete.
-INFO:     Finished server process [103754]
-2025-09-30 14:12:58 - root - INFO - Sistema de logging configurado correctamente
-2025-09-30 14:12:58 - root - INFO - Nivel de log: INFO
-2025-09-30 14:12:58 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-09-30 14:12:58 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-2025-09-30 14:12:58 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-09-30 14:12:58 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-INFO:     Started server process [104163]
-INFO:     Waiting for application startup.
-2025-09-30 14:12:59 - root - INFO - Conexión a MongoDB exitosa
-2025-09-30 14:12:59 - root - INFO - Base de datos inicializada correctamente
-2025-09-30 14:12:59 - app - INFO - Aplicación iniciada correctamente
-INFO:     Application startup complete.
-INFO:     127.0.0.1:47068 - "OPTIONS /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47082 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47082 - "OPTIONS /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47082 - "OPTIONS /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47094 - "OPTIONS /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47068 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47106 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47094 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59056 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59062 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59074 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59056 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44218 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44218 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44218 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44234 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44234 - "OPTIONS /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44218 - "POST /api/informes/68dbf93c447ae8a012bc1f09/sync-imagenes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44218 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44234 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44218 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44236 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53240 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53240 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53252 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53258 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49372 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49372 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49374 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49388 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34116 - "OPTIONS /api/informes/68c6209dd6dbe2e47c51e92d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34132 - "DELETE /api/informes/68c6209dd6dbe2e47c51e92d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34132 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34132 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34116 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44266 - "GET /api/informes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44266 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44274 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     Finished server process [110883]
+INFO:     Stopping reloader process [110879]

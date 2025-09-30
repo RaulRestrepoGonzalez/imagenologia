@@ -6,6 +6,30 @@
   margin: 0 auto;
 }
 
+/* FORZAR FONDO BLANCO EN TODAS LAS TARJETAS - PRIORIDAD MÁXIMA */
+.informe-card,
+.informe-card.urgent,
+.informe-card.validated,  
+.informe-card.pending {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+::ng-deep {
+  .informe-card,
+  .informe-card.urgent,
+  .informe-card.validated,
+  .informe-card.pending,
+  .informe-card mat-card,
+  .informe-card .mat-card,
+  .informe-card .mat-mdc-card {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+}
+
 /* =====================================
    HEADER SECTION
    ===================================== */
@@ -193,10 +217,17 @@
   gap: var(--spacing-lg);
 }
 
+/* =====================================
+   TARJETA DE INFORME - CORRECCIONES
+   ===================================== */
 .informe-card {
   margin-bottom: 1rem;
   transition: all 0.3s ease;
   border-left: 4px solid #e0e0e0;
+  position: relative;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
 
   &:hover {
     transform: translateY(-2px);
@@ -204,40 +235,24 @@
   }
 
   &.urgent {
-    border-left-color: #f44336;
-    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+    border-left-color: #f44336 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
   }
 
   &.validated {
-    border-left-color: #4caf50;
-    background: linear-gradient(135deg, #f3f9f3 0%, #ffffff 100%);
+    border-left-color: #4caf50 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
   }
 
   &.pending {
-    border-left-color: #ff9800;
-    background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
-  }
-
-  .cedula-badge {
-    font-size: 0.75rem;
-    background: #e3f2fd;
-    color: #1976d2;
-    padding: 0.2rem 0.4rem;
-    border-radius: 12px;
-    margin-left: 0.5rem;
-    font-weight: 500;
-  }
-
-  .modalidad-info {
-    font-weight: 500;
-    color: #2196f3;
-    margin-left: 0.3rem;
-  }
-
-  .fecha-estudio {
-    color: #666;
-    font-size: 0.9rem;
-    margin-left: 0.3rem;
+    border-left-color: #ff9800 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
   }
 }
 
@@ -251,72 +266,194 @@
   background: linear-gradient(90deg, var(--success-500), var(--success-600));
 }
 
-.card-actions-header {
-  margin-left: auto;
+/* Asegurar que mat-card también tenga fondo blanco */
+.informe-card mat-card,
+.informe-card .mat-card,
+.informe-card ::ng-deep mat-card,
+.informe-card ::ng-deep .mat-card,
+.informe-card ::ng-deep .mat-mdc-card {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
 }
 
+/* Forzar fondo blanco en el header también */
+.informe-card mat-card-header,
+.informe-card .mat-card-header,
+.informe-card ::ng-deep mat-card-header,
+.informe-card ::ng-deep .mat-card-header {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Header de la tarjeta - Layout mejorado */
 .informe-card mat-card-header {
+  padding: 16px;
   padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border-light);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-md);
+  position: relative;
+  padding-left: 16px;
+  padding-right: 60px; /* Espacio para el ícono a la derecha */
+  min-height: 56px;
+  display: block;
 }
 
+/* Avatar/Ícono posicionado en la esquina superior derecha */
+.informe-card .avatar,
+.informe-card .mat-card-avatar {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e3f2fd;
+  border-radius: 50%;
+  margin: 0;
+  
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #1976d2;
+  }
+
+  &.urgent-avatar {
+    background: #ffebee;
+    mat-icon {
+      color: #f44336;
+    }
+  }
+}
+
+/* Contenedor de texto del header */
+.informe-card .mat-card-header-text {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+/* Título - permite wrap */
 .informe-card mat-card-title {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--gray-900);
-  margin-bottom: var(--spacing-xs);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 0 0 4px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+  display: block;
+  
+  .cedula-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    font-weight: 500;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
 }
 
+/* Subtítulo - permite wrap */
 .informe-card mat-card-subtitle {
   color: var(--gray-600);
   font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  display: block;
+  
+  .modalidad-info {
+    font-weight: 500;
+    color: #2196f3;
+    margin-left: 4px;
+  }
+
+  .fecha-estudio {
+    color: #666;
+    font-size: 0.9rem;
+    margin-left: 4px;
+  }
 }
 
-/* Asegurar que el bloque de texto del header pueda encoger sin empujar los chips */
-.informe-card .mat-card-header-text {
-  flex: 1 1 auto;
-  min-width: 0; /* permite ellipsis */
-}
-
-/* Evitar que el avatar/ícono se superponga */
-.informe-card .mat-card-avatar,
-.informe-card .avatar {
-  flex: 0 0 auto;
-}
-
-/* Contenedor de chips: siempre debajo, ocupa todo el ancho y puede envolver */
+/* Contenedor de badges/chips - siempre en nueva línea */
 .informe-card .card-badges {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
 }
 
+/* Estilos para los chips */
+.informe-card .card-badges mat-chip,
 .informe-card .card-badges .mat-chip {
-  max-width: 100%;
-  white-space: nowrap;
+  height: 28px;
+  font-size: 0.75rem;
+  padding: 0 10px;
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
 }
 
-/* Evitar que chips de estado/validado se vayan a esquinas: ocupar línea completa si es necesario */
-.informe-card .card-badges .mat-chip:first-child {
-  flex: 0 0 auto;
+/* Chips de estado */
+.estado-borrador {
+  background-color: #fff3e0 !important;
+  color: #f57c00 !important;
 }
 
-.informe-card .card-badges .validated-chip,
-.informe-card .card-badges .urgent-chip {
-  flex: 0 0 auto;
+.estado-en-revision {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
 }
 
+.estado-completado {
+  background-color: #e8f5e9 !important;
+  color: #388e3c !important;
+}
+
+.estado-validado {
+  background-color: #c8e6c9 !important;
+  color: #2e7d32 !important;
+}
+
+.estado-entregado {
+  background-color: #f3e5f5 !important;
+  color: #7b1fa2 !important;
+}
+
+.estado-corregido {
+  background-color: #fff9c4 !important;
+  color: #f9a825 !important;
+}
+
+.validated-chip {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.urgent-chip {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* Contenido de la tarjeta */
 .informe-card mat-card-content {
   padding: var(--spacing-lg) 0;
 }
@@ -324,6 +461,12 @@
 .informe-details {
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-md);
 }
 
@@ -352,42 +495,98 @@
 }
 
 .detail-value {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: block;
+  color: var(--gray-900);
+  font-weight: 500;
+  
+  &.today-date {
+    color: #4caf50;
+    font-weight: 600;
+  }
+}
+
+.today-badge {
+  display: inline-block;
+  background: #4caf50;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* Panel de expansión */
+.content-expansion {
+  margin-top: var(--spacing-md);
+  
+  .mat-expansion-panel-header {
+    background-color: #87C15C !important;
+    border-radius: 8px;
+    padding: 12px 16px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.expanded-content {
+  padding: var(--spacing-md) 0;
+}
+
+.content-section-detail {
+  margin-bottom: var(--spacing-lg);
+  
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-sm);
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--primary-600);
+    }
+  }
 }
 
 .medical-text {
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  line-clamp: 6;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  color: var(--gray-700);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  
+  &.diagnostic {
+    font-weight: 500;
+    color: var(--gray-900);
+  }
+  
+  &.technical {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+  }
 }
 
-.medical-text.diagnostic {
-  -webkit-line-clamp: 5;
-  line-clamp: 5;
-}
-
-.image-caption {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+/* Acciones de la tarjeta */
 .informe-card mat-card-actions {
-  padding: var(--spacing-md) 0;
+  padding: var(--spacing-md) 16px;
   border-top: 1px solid var(--border-light);
+  background-color: #87C15C !important;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   display: flex;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 .informe-card mat-card-actions button {
   flex: 1;
+  min-width: 100px;
   border-radius: var(--radius-lg);
   font-weight: 500;
   transition: all var(--transition-fast);
@@ -470,6 +669,44 @@
   .informe-card {
     margin: 0 var(--spacing-sm);
   }
+  
+  .informe-card mat-card-header {
+    padding-left: 16px;
+    padding-right: 56px;
+    min-height: auto;
+  }
+
+  .informe-card .avatar,
+  .informe-card .mat-card-avatar {
+    width: 36px;
+    height: 36px;
+    right: 12px;
+    top: 12px;
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .informe-card mat-card-title {
+    font-size: 1rem;
+    
+    .cedula-badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      margin-left: 6px;
+    }
+  }
+
+  .informe-card mat-card-subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .detail-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -489,6 +726,21 @@
   
   .informe-card mat-card-actions {
     flex-direction: column;
+  }
+  
+  .informe-card mat-card-actions button {
+    width: 100%;
+  }
+  
+  .informe-card .card-badges {
+    gap: 6px;
+  }
+
+  .informe-card .card-badges mat-chip,
+  .informe-card .card-badges .mat-chip {
+    height: 24px;
+    font-size: 0.7rem;
+    padding: 0 8px;
   }
 }
 
@@ -551,12 +803,12 @@
     border-color: var(--gray-700);
   }
   
-  .informe-card.urgente {
+  .informe-card.urgent {
     background: linear-gradient(135deg, var(--error-900) 0%, var(--gray-800) 100%);
     border-color: var(--error-600);
   }
   
-  .informe-card.validado {
+  .informe-card.validated {
     background: linear-gradient(135deg, var(--success-900) 0%, var(--gray-800) 100%);
     border-color: var(--success-600);
   }
@@ -582,19 +834,9 @@
   }
 }
 
-.informe-card .content-expansion .mat-expansion-panel-header {
-  background-color: #87C15C !important;
-  border-radius: 8px;
-  color: inherit; /* Mantener texto e íconos como están */
-}
-
-.informe-card mat-card-actions {
-  background-color: #87C15C !important;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-}
-
-// Estilos para snackbars
+/* =====================================
+   SNACKBARS
+   ===================================== */
 ::ng-deep .success-snackbar {
   background-color: #4caf50 !important;
   color: white !important;
