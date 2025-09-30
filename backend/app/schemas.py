@@ -7,6 +7,7 @@ class UserRole(str, Enum):
     ADMIN = "admin"
     RADIOLOGO = "radiologo"
     SECRETARIO = "secretario"
+    TECNICO = "tecnico"
     PACIENTE = "paciente"
 
 class EstadoEstudio(str, Enum):
@@ -72,7 +73,7 @@ class Estudio(EstudioBase):
     fecha_programada: Optional[datetime] = None
     fecha_realizacion: Optional[datetime] = None
     resultados: Optional[str] = None
-    archivos_dicom: List[str] = []
+    archivos_dicom: List[dict] = []  # Cambiado de List[str] a List[dict]
     fecha_actualizacion: datetime
     # Campos adicionales para información del paciente
     paciente_nombre: Optional[str] = None
@@ -82,6 +83,7 @@ class Estudio(EstudioBase):
 
     class Config:
         from_attributes = True
+        arbitrary_types_allowed = True
 
 class CitaBase(BaseModel):
     paciente_id: str
@@ -111,6 +113,14 @@ class Cita(CitaBase):
     class Config:
         from_attributes = True
 
+class ImagenDICOM(BaseModel):
+    """Información de una imagen DICOM anexada al informe"""
+    archivo_dicom: str  # Nombre del archivo DICOM original
+    archivo_png: str    # Nombre del archivo PNG convertido
+    estudio_id: str     # ID del estudio al que pertenece
+    descripcion: Optional[str] = None  # Descripción opcional de la imagen
+    orden: int = 0      # Orden de visualización en el informe
+
 class InformeBase(BaseModel):
     estudio_id: str
     medico_radiologo: str
@@ -124,6 +134,7 @@ class InformeBase(BaseModel):
     urgente: bool = False
     validado: bool = False
     observaciones_tecnicas: Optional[str] = None
+    imagenes_dicom: List[ImagenDICOM] = []  # Imágenes anexadas al informe
 
 class InformeCreate(InformeBase):
     pass

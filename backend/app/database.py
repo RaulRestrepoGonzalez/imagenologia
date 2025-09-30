@@ -9,11 +9,14 @@ load_dotenv()
 
 # Configuración de la base de datos
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "ips_imagenologia")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "imagenologia")
 
 # Cliente MongoDB
 client = AsyncIOMotorClient(MONGO_URI)
 database = client[DATABASE_NAME]
+
+# Alias para compatibilidad
+db = database
 
 def get_database():
     """Obtener instancia de la base de datos"""

@@ -5,6 +5,7 @@ import { Pacientes } from './components/pacientes/pacientes';
 import { Citas } from './components/citas/citas';
 import { Notificaciones } from './components/notificaciones/notificaciones';
 import { AuthGuard } from './guards/auth.guard';
+import { DicomUploadComponent } from './components/dicom-upload/dicom-upload';
 
 export const routes: Routes = [
   {
@@ -50,6 +51,13 @@ export const routes: Routes = [
     component: Notificaciones,
     title: 'Notificaciones',
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'dicom-upload',
+    component: DicomUploadComponent,
+    title: 'Cargar DICOM',
+    canActivate: [AuthGuard],
+    data: { roles: ['admin', 'tecnico'] }
   },
   {
     path: 'dashboard',

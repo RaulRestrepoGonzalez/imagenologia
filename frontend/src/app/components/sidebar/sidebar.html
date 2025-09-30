@@ -59,6 +59,16 @@
           </a>
         </li>
         
+        <li class="nav-item" *ngIf="isAdmin() || isTechnician()">
+          <a routerLink="/dicom-upload" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <mat-icon>cloud_upload</mat-icon>
+            </div>
+            <span class="nav-label">Cargar DICOM</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
         <li class="nav-item">
           <a routerLink="/notificaciones" routerLinkActive="active" class="nav-link">
             <div class="nav-icon">

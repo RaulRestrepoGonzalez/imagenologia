@@ -8,7 +8,7 @@ export interface User {
   email: string;
   nombre: string;
   apellidos?: string;
-  role: 'admin' | 'radiologo' | 'secretario' | 'paciente';
+  role: 'admin' | 'radiologo' | 'secretario' | 'tecnico' | 'paciente';
   is_active: boolean;
   fecha_creacion: string;
   fecha_actualizacion: string;
@@ -25,7 +25,7 @@ export interface RegisterRequest {
   password: string;
   nombre: string;
   apellidos?: string;
-  role: 'admin' | 'radiologo' | 'secretario' | 'paciente';
+  role: 'admin' | 'radiologo' | 'secretario' | 'tecnico' | 'paciente';
 }
 
 export interface AuthResponse {
@@ -144,7 +144,11 @@ export class AuthService {
   }
 
   isStaff(): boolean {
-    return this.hasRole(['admin', 'radiologo', 'secretario']);
+    return this.currentUserSubject.value?.role === 'secretario';
+  }
+
+  isTechnician(): boolean {
+    return this.currentUserSubject.value?.role === 'tecnico';
   }
 
   isMedicalStaff(): boolean {

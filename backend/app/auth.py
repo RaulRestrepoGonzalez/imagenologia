@@ -95,3 +95,46 @@ def require_staff(current_user: dict = Depends(verify_token)):
 def require_medical_staff(current_user: dict = Depends(verify_token)):
     """Require medical staff (admin, radiologo)"""
     return require_role(["admin", "radiologo"])(current_user)
+
+# Import here to avoid circular imports
+from .schemas import User, UserRole
+from .database import db
+
+async def get_current_user(token_data: dict = Depends(verify_token)) -> User:
+    """Get current user from token"""
+    from bson import ObjectId
+    
+    # Buscar por _id (ObjectId de MongoDB)
+    user_data = await db.users.find_one({"_id": ObjectId(token_data["user_id"])})
+    
+    if not user_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuario no encontrado"
+        )
+    
+    # Agregar campo 'id' si no existe (para compatibilidad con Pydantic)
+    if "id" not in user_data:
+        user_data["id"] = str(user_data["_id"])
+    
+    user = User(**user_data)
+    
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Usuario inactivo"
+        )
+    
+    return user
+
+def get_current_active_user(allowed_roles: list[UserRole] = None):
+    """Factory function to create a dependency that checks user roles"""
+    async def check_user(current_user: User = Depends(get_current_user)) -> User:
+        # Check role if specified
+        if allowed_roles and current_user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Permisos insuficientes"
+            )
+        return current_user
+    return check_user

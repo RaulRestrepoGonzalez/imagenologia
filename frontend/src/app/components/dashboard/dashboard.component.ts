@@ -86,6 +86,27 @@ import { AuthService, User } from '../../services/auth.service';
           </mat-card>
         </div>
 
+        <!-- Technician Dashboard -->
+        <div *ngIf="authService.isTechnician()" class="technician-section">
+          <mat-card class="dashboard-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>medical_services</mat-icon>
+              <mat-card-title>Panel de Técnico</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Sube y gestiona imágenes DICOM de estudios médicos.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="navigateTo('/dicom-upload')">
+                <mat-icon>cloud_upload</mat-icon> Subir DICOM
+              </button>
+              <button mat-raised-button color="accent" (click)="navigateTo('/estudios')">
+                <mat-icon>list_alt</mat-icon> Ver Estudios
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+
         <!-- Patient Dashboard -->
         <div *ngIf="authService.isPatient()" class="patient-section">
           <mat-card class="dashboard-card">
@@ -220,6 +241,7 @@ export class DashboardComponent implements OnInit {
       'admin': 'Administrador',
       'radiologo': 'Radiólogo',
       'secretario': 'Secretario',
+      'tecnico': 'Técnico',
       'paciente': 'Paciente'
     };
     return role ? roleLabels[role] || role : '';

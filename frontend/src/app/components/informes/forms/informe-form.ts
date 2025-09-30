@@ -425,7 +425,12 @@ export class InformeFormComponent implements OnInit {
     this.isLoadingEstudios = true;
     this.api.get('api/estudios').subscribe({
       next: (response: any[]) => {
-        this.estudios = response.map(e => ({
+        // Filtrar solo estudios que tengan archivos DICOM subidos
+        const estudiosConDicom = response.filter(e => 
+          e.archivos_dicom && e.archivos_dicom.length > 0
+        );
+        
+        this.estudios = estudiosConDicom.map(e => ({
           id: e.id,
           paciente_id: e.paciente_id,
           paciente_nombre: e.paciente_nombre || 'Paciente no encontrado',
@@ -438,7 +443,8 @@ export class InformeFormComponent implements OnInit {
           parte_cuerpo: e.parte_cuerpo || 'No especificada',
           estado: e.estado,
           medico_solicitante: e.medico_solicitante,
-          observaciones: e.observaciones
+          observaciones: e.observaciones,
+          archivos_dicom: e.archivos_dicom || []
         }));
         this.isLoadingEstudios = false;
         

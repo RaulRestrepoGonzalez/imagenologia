@@ -42,6 +42,7 @@ export class LoginComponent {
     { value: 'admin', label: 'Administrador' },
     { value: 'radiologo', label: 'Radiólogo' },
     { value: 'secretario', label: 'Secretario' },
+    { value: 'tecnico', label: 'Técnico' },
     { value: 'paciente', label: 'Paciente' }
   ];
 

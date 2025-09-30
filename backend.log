@@ -1,0 +1,51 @@
+INFO:     Will watch for changes in these directories: ['/home/raul/Source/imagenologia/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [42342] using WatchFiles
+2025-09-30 10:35:23 - root - INFO - Sistema de logging configurado correctamente
+2025-09-30 10:35:23 - root - INFO - Nivel de log: INFO
+2025-09-30 10:35:23 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
+2025-09-30 10:35:23 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
+2025-09-30 10:35:23 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
+2025-09-30 10:35:23 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
+INFO:     Started server process [42372]
+INFO:     Waiting for application startup.
+2025-09-30 10:35:23 - root - INFO - Conexión a MongoDB exitosa
+2025-09-30 10:35:23 - root - INFO - Base de datos inicializada correctamente
+2025-09-30 10:35:23 - app - INFO - Aplicación iniciada correctamente
+INFO:     Application startup complete.
+INFO:     127.0.0.1:43030 - "GET /health HTTP/1.1" 200 OK
+2025-09-30 10:35:26 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/raul/Source/imagenologia/backend/.venv/lib/python3.13/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-09-30 10:35:26 - app.routes.auth - INFO - Usuario autenticado: admin@imagenologia.com
+INFO:     127.0.0.1:43040 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34768 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34768 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34774 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34778 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34778 - "OPTIONS /api/informes/68dbf75d2508a81fff575e63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34774 - "DELETE /api/informes/68dbf75d2508a81fff575e63 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34774 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34774 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34778 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34778 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39798 - "POST /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39798 - "GET /api/informes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39798 - "GET /api/estudios/68c61b755ab3fe8bc21e1354 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39810 - "GET /api/estudios/68d55c20f07783cb194c7019 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39826 - "GET /api/estudios/68c5ff87d6e0a6661c587404 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34274 - "OPTIONS /api/citas HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34278 - "GET /api/citas HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34278 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34274 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34284 - "GET /api/citas HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-09-30 10:38:35 - root - INFO - Conexión a la base de datos cerrada
+2025-09-30 10:38:35 - app - INFO - Aplicación cerrada correctamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [42372]
+INFO:     Stopping reloader process [42342]

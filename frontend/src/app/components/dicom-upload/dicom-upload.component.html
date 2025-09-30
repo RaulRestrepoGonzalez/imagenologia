@@ -1,0 +1,203 @@
+<div class="dicom-upload-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon class="header-icon">cloud_upload</mat-icon>
+        Cargador de Imágenes DICOM
+      </mat-card-title>
+      <mat-card-subtitle>Suba y gestione imágenes médicas en formato DICOM</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Patient Selection -->
+      <div class="patient-selection">
+        <h3 class="selection-title">
+          <mat-icon>person_search</mat-icon>
+          Paso 1: Seleccione el Paciente
+        </h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Buscar paciente por nombre o cédula</mat-label>
+          <mat-select [(ngModel)]="selectedPaciente" [ngModelOptions]="{standalone: true}" (selectionChange)="onPacienteSelected()">
+            <mat-option *ngFor="let paciente of pacientes" [value]="paciente.id">
+              {{ getPacienteDisplay(paciente) }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>person</mat-icon>
+          <mat-hint *ngIf="pacientes.length > 0">{{ pacientes.length }} paciente(s) con estudios pendientes</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Study Selection -->
+      <div class="study-selection" *ngIf="selectedPaciente && estudios.length > 0">
+        <h3 class="selection-title">
+          <mat-icon>assignment</mat-icon>
+          Paso 2: Seleccione el Estudio
+        </h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Seleccione el estudio a cargar</mat-label>
+          <mat-select [(ngModel)]="selectedEstudio" [ngModelOptions]="{standalone: true}" (selectionChange)="onEstudioSelected()">
+            <mat-option *ngFor="let estudio of estudios" [value]="estudio.id">
+              {{ getEstudioDisplay(estudio) }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>medical_services</mat-icon>
+          <mat-hint>{{ estudios.length }} estudio(s) pendiente(s) para este paciente</mat-hint>
+        </mat-form-field>
+        
+        <!-- Patient Information Card -->
+        <mat-card class="patient-info-card" *ngIf="selectedEstudioInfo">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="primary">person</mat-icon>
+            <mat-card-title>Información del Paciente</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="patient-details">
+              <div class="detail-row">
+                <strong>Nombre:</strong>
+                <span>{{ selectedEstudioInfo.paciente_nombre }} {{ selectedEstudioInfo.paciente_apellidos }}</span>
+              </div>
+              <div class="detail-row">
+                <strong>Cédula:</strong>
+                <span>{{ selectedEstudioInfo.paciente_cedula }}</span>
+              </div>
+              <div class="detail-row">
+                <strong>Tipo de Estudio:</strong>
+                <span>{{ selectedEstudioInfo.tipo_estudio }}</span>
+              </div>
+              <div class="detail-row">
+                <strong>Estado:</strong>
+                <mat-chip [color]="getEstadoColor(selectedEstudioInfo.estado)">
+                  {{ selectedEstudioInfo.estado }}
+                </mat-chip>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="warning-message">
+              <mat-icon color="warn">warning</mat-icon>
+              <p>
+                <strong>¡Importante!</strong> Las imágenes que suba se anexarán automáticamente 
+                al informe de <strong>{{ selectedEstudioInfo.paciente_nombre }} {{ selectedEstudioInfo.paciente_apellidos }}</strong>.
+                Verifique que está subiendo las imágenes correctas para este paciente.
+              </p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- File Upload Area -->
+      <div class="upload-section" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+        <div class="upload-area" [class.drag-over]="isDragging">
+          <mat-icon class="upload-icon">cloud_upload</mat-icon>
+          <h3>Arrastre y suelte archivos DICOM aquí</h3>
+          <p>o</p>
+          <input 
+            type="file" 
+            #fileInput 
+            style="display: none" 
+            multiple 
+            accept=".dcm" 
+            (change)="onFileSelected($event)"
+          >
+          <button mat-raised-button color="primary" (click)="fileInput.click()">
+            <mat-icon>folder_open</mat-icon> Seleccionar archivos
+          </button>
+          <p class="file-types">Formatos soportados: .dcm</p>
+        </div>
+
+        <!-- Selected Files -->
+        <div class="selected-files" *ngIf="selectedFiles.length > 0">
+          <h4>Archivos seleccionados ({{ selectedFiles.length }})</h4>
+          <mat-list dense>
+            <mat-list-item *ngFor="let file of selectedFiles; let i = index" class="file-item">
+              <mat-icon mat-list-icon>insert_drive_file</mat-icon>
+              <div mat-line>{{ file.name }}</div>
+              <div mat-line>{{ formatFileSize(file.size) }}</div>
+              <button mat-icon-button color="warn" (click)="removeFile(i)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+
+          <!-- Upload Progress -->
+          <div class="upload-progress" *ngIf="uploadProgress !== null">
+            <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+            <div class="progress-text">{{ uploadProgress }}% completado</div>
+          </div>
+
+          <!-- Upload Button -->
+          <div class="upload-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="uploadFiles()"
+              [disabled]="!selectedEstudio || selectedFiles.length === 0 || isUploading"
+            >
+              <mat-icon>cloud_upload</mat-icon>
+              {{ isUploading ? 'Subiendo...' : 'Subir archivos' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DICOM Files List -->
+      <div class="dicom-files" *ngIf="selectedEstudio && dicomFiles.length > 0">
+        <h3>Archivos DICOM del estudio</h3>
+        <table mat-table [dataSource]="dicomFiles" class="full-width">
+          <!-- Preview Column -->
+          <ng-container matColumnDef="preview">
+            <th mat-header-cell *matHeaderCellDef>Vista Previa</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="preview-image" (click)="viewDicom(selectedEstudio, element)">
+                <img [src]="environment.apiUrl + '/api/dicom/preview/' + selectedEstudio + '/' + element.preview_name" alt="DICOM Preview">
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let element">{{ element.original_name }}</td>
+          </ng-container>
+
+          <!-- Size Column -->
+          <ng-container matColumnDef="size">
+            <th mat-header-cell *matHeaderCellDef>Tamaño</th>
+            <td mat-cell *matCellDef="let element">{{ formatFileSize(element.size) }}</td>
+          </ng-container>
+
+          <!-- Date Column -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Subido el</th>
+            <td mat-cell *matCellDef="let element">{{ element.uploaded_at | date:'medium' }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="primary" (click)="viewDicom(selectedEstudio, element)" matTooltip="Ver">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="downloadDicom(selectedEstudio, element.saved_name)" matTooltip="Descargar">
+                <mat-icon>download</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteDicom(selectedEstudio, element.saved_name)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="selectedEstudio && dicomFiles.length === 0">
+        <mat-icon>folder_open</mat-icon>
+        <h3>No hay archivos DICOM para este estudio</h3>
+        <p>Arrastre y suelte archivos DICOM o haga clic en el botón para seleccionar archivos.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -26,23 +26,42 @@ async def get_estudios(skip: int = 0, limit: int = 100, estado: str = None, tipo
     async for estudio in db.estudios.find(query).skip(skip).limit(limit).sort("fecha_solicitud", -1):
         # Obtener información del paciente
         try:
-            paciente = await db.pacientes.find_one({"_id": ObjectId(estudio["paciente_id"])})
+            # Try to find patient by _id or id
+            paciente = None
+            try:
+                paciente = await db.pacientes.find_one({"_id": ObjectId(estudio["paciente_id"])})
+            except:
+                paciente = await db.pacientes.find_one({"id": estudio["paciente_id"]})
+            
             if paciente:
-                estudio["paciente_nombre"] = paciente["nombre"]
-                estudio["paciente_apellidos"] = paciente.get("apellidos")
-                estudio["paciente_cedula"] = paciente.get("cedula")
-                estudio["paciente_edad"] = paciente.get("edad")
+                estudio["paciente_nombre"] = paciente.get("nombre", "")
+                estudio["paciente_apellidos"] = paciente.get("apellidos", "")
+                estudio["paciente_cedula"] = paciente.get("identificacion", "")
+                # Calcular edad si existe fecha_nacimiento
+                if paciente.get("fecha_nacimiento"):
+                    from datetime import datetime
+                    try:
+                        if isinstance(paciente["fecha_nacimiento"], str):
+                            fecha_nac = datetime.fromisoformat(paciente["fecha_nacimiento"].replace('Z', '+00:00'))
+                        else:
+                            fecha_nac = paciente["fecha_nacimiento"]
+                        edad = (datetime.now() - fecha_nac).days // 365
+                        estudio["paciente_edad"] = edad
+                    except:
+                        estudio["paciente_edad"] = None
+                else:
+                    estudio["paciente_edad"] = None
             else:
                 print(f"Paciente no encontrado para ID: {estudio['paciente_id']}")
                 estudio["paciente_nombre"] = "Paciente no encontrado"
-                estudio["paciente_apellidos"] = None
-                estudio["paciente_cedula"] = None
+                estudio["paciente_apellidos"] = ""
+                estudio["paciente_cedula"] = ""
                 estudio["paciente_edad"] = None
         except Exception as e:
             print(f"Error al cargar paciente {estudio.get('paciente_id')}: {e}")
             estudio["paciente_nombre"] = "Error al cargar paciente"
-            estudio["paciente_apellidos"] = None
-            estudio["paciente_cedula"] = None
+            estudio["paciente_apellidos"] = ""
+            estudio["paciente_cedula"] = ""
             estudio["paciente_edad"] = None
         
         estudio["id"] = str(estudio["_id"])

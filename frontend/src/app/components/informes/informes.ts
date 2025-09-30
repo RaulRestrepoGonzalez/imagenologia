@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Api } from '../../services/api';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -37,6 +38,7 @@ export interface Informe {
   urgente: boolean;
   validado: boolean;
   observaciones_tecnicas: string;
+  imagenes_dicom?: any[];  // Imágenes DICOM convertidas a PNG
   created_at?: string;
   updated_at?: string;
 }
@@ -72,6 +74,7 @@ export class Informes implements OnInit {
   selectedUrgencia: string = 'Todos';
   selectedValidacion: string = 'Todos';
   isLoading: boolean = true;
+  environment = environment;  // Para acceder a la URL del API
 
   estadoOptions = [
     'Todos',
@@ -438,19 +441,137 @@ export class Informes implements OnInit {
     this.showMessage('Informe exportado exitosamente', 'success');
   }
 
-  printReport(informe: Informe): void {
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async printReport(informe: Informe): Promise<void> {
+    // Cargar imágenes como base64 primero
+    const imagenesBase64: string[] = [];
+    
+    if (informe.imagenes_dicom && informe.imagenes_dicom.length > 0) {
+      this.showMessage('Cargando imágenes...', 'success');
+      
+      for (const imagen of informe.imagenes_dicom) {
+        try {
+          const imageUrl = `${this.environment.apiUrl}/api/dicom/preview/${informe.estudio_id}/${imagen.archivo_png || imagen.preview_name}`;
+          const response = await fetch(imageUrl, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          
+          if (response.ok) {
+            const blob = await response.blob();
+            const base64 = await this.blobToBase64(blob);
+            imagenesBase64.push(base64);
+          } else {
+            console.error(`Error cargando imagen: ${response.status}`);
+            imagenesBase64.push(''); // Imagen vacía si falla
+          }
+        } catch (error) {
+          console.error('Error cargando imagen:', error);
+          imagenesBase64.push(''); // Imagen vacía si falla
+        }
+      }
+    }
+    
     const printWindow = window.open('', '_blank');
     if (printWindow) {
+      // Generar HTML de imágenes DICOM
+      let imagenesHTML = '';
+      if (informe.imagenes_dicom && informe.imagenes_dicom.length > 0 && imagenesBase64.length > 0) {
+        imagenesHTML = `
+          <div class="section page-break">
+            <div class="section-title">IMÁGENES DEL ESTUDIO</div>
+            <div class="images-grid">
+        `;
+        
+        informe.imagenes_dicom.forEach((imagen: any, index: number) => {
+          if (imagenesBase64[index]) {
+            imagenesHTML += `
+              <div class="image-container">
+                <img src="${imagenesBase64[index]}" alt="Imagen ${index + 1}" class="dicom-image" />
+                <p class="image-caption">Imagen ${index + 1}: ${imagen.descripcion || 'Sin descripción'}</p>
+              </div>
+            `;
+          }
+        });
+        
+        imagenesHTML += `
+            </div>
+          </div>
+        `;
+      }
+      
       printWindow.document.write(`
         <html>
           <head>
             <title>Informe - ${informe.paciente_nombre}</title>
             <style>
-              body { font-family: Arial, sans-serif; margin: 20px; }
-              .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-              .section { margin: 20px 0; }
-              .section-title { font-weight: bold; color: #333; margin-bottom: 10px; }
-              .patient-info { background: #f5f5f5; padding: 15px; border-radius: 5px; }
+              body { 
+                font-family: Arial, sans-serif; 
+                margin: 20px;
+                color: #333;
+              }
+              .header { 
+                text-align: center; 
+                border-bottom: 2px solid #333; 
+                padding-bottom: 10px; 
+                margin-bottom: 20px; 
+              }
+              .section { 
+                margin: 20px 0;
+                page-break-inside: avoid;
+              }
+              .section-title { 
+                font-weight: bold; 
+                color: #333; 
+                margin-bottom: 10px;
+                font-size: 16px;
+                text-transform: uppercase;
+              }
+              .patient-info { 
+                background: #f5f5f5; 
+                padding: 15px; 
+                border-radius: 5px; 
+              }
+              .images-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-top: 15px;
+              }
+              .image-container {
+                text-align: center;
+                page-break-inside: avoid;
+              }
+              .dicom-image {
+                max-width: 100%;
+                height: auto;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              }
+              .image-caption {
+                margin-top: 8px;
+                font-size: 12px;
+                color: #666;
+                font-style: italic;
+              }
+              .page-break {
+                page-break-before: always;
+              }
+              @media print {
+                body { margin: 15px; }
+                .section { page-break-inside: avoid; }
+                .image-container { page-break-inside: avoid; }
+              }
             </style>
           </head>
           <body>
@@ -462,7 +583,8 @@ export class Informes implements OnInit {
             <div class="section">
               <div class="section-title">INFORMACIÓN DEL PACIENTE</div>
               <div class="patient-info">
-                <strong>Nombre:</strong> ${informe.paciente_nombre}<br>
+                <strong>Nombre:</strong> ${informe.paciente_nombre} ${informe.paciente_apellidos || ''}<br>
+                <strong>Cédula:</strong> ${informe.paciente_cedula || 'N/A'}<br>
                 <strong>Médico Radiólogo:</strong> ${informe.medico_radiologo}<br>
                 <strong>Fecha del Informe:</strong> ${this.formatFecha(informe.fecha_informe)}
               </div>
@@ -492,6 +614,8 @@ export class Informes implements OnInit {
               <div class="section-title">CALIDAD DEL ESTUDIO</div>
               <p>${informe.calidad_estudio}</p>
             </div>
+            
+            ${imagenesHTML}
           </body>
         </html>
       `);

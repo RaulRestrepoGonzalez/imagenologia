@@ -1,0 +1,20 @@
+❯ Building...
+✔ Building...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 638.75 kB | 
+styles.css          | styles                 | 146.14 kB | 
+chunk-EO5NWZFE.js   | -                      |   5.39 kB | 
+polyfills.js        | polyfills              |  95 bytes | 
+
+                    | Initial total          | 790.38 kB
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-INDY4EPJ.js   | login                  |  45.91 kB | 
+chunk-2MUEWRDA.js   | dashboard-component    |  23.27 kB | 
+chunk-OMGQU3FJ.js   | unauthorized-component |   7.45 kB | 
+
+Application bundle generation complete. [7.205 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://localhost:4200/

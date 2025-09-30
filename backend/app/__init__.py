@@ -43,7 +43,7 @@ def create_app(config_name=None):
     )
     
     # Registrar rutas
-    from app.routes import pacientes, estudios, citas, informes, notificaciones, auth
+    from app.routes import pacientes, estudios, citas, informes, notificaciones, auth, dicom
     
     app.include_router(auth.router, prefix="/api", tags=["Autenticación"])
     app.include_router(pacientes.router, prefix="/api", tags=["Pacientes"])
@@ -51,6 +51,7 @@ def create_app(config_name=None):
     app.include_router(citas.router, prefix="/api", tags=["Citas"])
     app.include_router(informes.router, prefix="/api", tags=["Informes"])
     app.include_router(notificaciones.router, prefix="/api", tags=["Notificaciones"])
+    app.include_router(dicom.router, tags=["DICOM"])
     
     # Eventos de startup y shutdown
     @app.on_event("startup")
