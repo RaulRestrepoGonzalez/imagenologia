@@ -72,15 +72,11 @@ export class Estudios implements OnInit {
   selectedUrgencia: string = 'Todos';
   isLoading: boolean = true;
 
+  // CORREGIDO: Solo Pendiente y Completado
   estadoOptions = [
     'Todos',
-    'Programado',
-    'En Proceso',
+    'Pendiente',
     'Completado',
-    'Interpretado',
-    'Informado',
-    'Entregado',
-    'Cancelado',
   ];
 
   tipoEstudioOptions = [
@@ -136,20 +132,16 @@ export class Estudios implements OnInit {
           indicaciones: e.indicaciones,
           sala: e.sala,
           tecnico_asignado: e.tecnico_asignado,
-          estado: e.estado, // valor crudo del backend (enum)
-          // usar display si viene para UI
-          // estado_display no está tipado en la interfaz, usamos estado para filtrar y mostramos formateado cuando sea necesario
+          estado: this.formatEstadoForDisplay(e.estado),
           fecha_solicitud: e.fecha_solicitud,
           fecha_programada: e.fecha_programada,
           fecha_realizacion: e.fecha_realizacion,
           resultados: e.resultados,
           created_at: e.fecha_creacion,
           updated_at: e.fecha_actualizacion,
-          // Map to legacy fields for template compatibility
-          // El backend normaliza prioridad a 'Urgente' o 'Normal'
           urgente: (e.prioridad || '').toLowerCase() === 'urgente' || (e.prioridad || '').toLowerCase() === 'alta',
-          modalidad: 'RX', // Default modalidad
-          parte_cuerpo: 'General', // Default parte_cuerpo
+          modalidad: 'RX',
+          parte_cuerpo: 'General',
           contraste: e.indicaciones?.toLowerCase().includes('contraste') || false,
           observaciones: e.indicaciones || e.resultados,
           medico_referente: e.medico_solicitante,
@@ -168,17 +160,12 @@ export class Estudios implements OnInit {
   private buildServerParams(): any {
     const params: any = {};
     if (this.selectedEstado && this.selectedEstado !== 'Todos') {
-      // Mapear al formato esperado por el backend (snake_case minúsculas)
+      // Mapear al formato esperado por el backend
       const estadoMap: Record<string, string> = {
-        'Programado': 'programado',
-        'En Proceso': 'en_proceso',
+        'Pendiente': 'pendiente',
         'Completado': 'completado',
-        'Interpretado': 'interpretado', // si existiera
-        'Informado': 'informado',       // si existiera
-        'Entregado': 'entregado',       // si existiera
-        'Cancelado': 'cancelado',
       };
-      params.estado = estadoMap[this.selectedEstado] || this.selectedEstado;
+      params.estado = estadoMap[this.selectedEstado] || this.selectedEstado.toLowerCase();
     }
     if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
       params.tipo_estudio = this.selectedTipoEstudio;
@@ -219,9 +206,20 @@ export class Estudios implements OnInit {
 
   deleteEstudio(estudio: Estudio): void {
     if (confirm(`¿Está seguro que desea eliminar el estudio de ${estudio.paciente_nombre}?`)) {
-      this.estudios = this.estudios.filter((e) => e.id !== estudio.id);
-      this.applyFilters();
-      this.showMessage('Estudio eliminado exitosamente', 'success');
+      this.api.delete(`api/estudios/${estudio.id}`).subscribe({
+        next: (response) => {
+          console.log('Estudio eliminado exitosamente:', response);
+          this.loadEstudios();
+          this.showMessage('Estudio eliminado exitosamente', 'success');
+        },
+        error: (error) => {
+          console.error('Error al eliminar estudio:', error);
+          this.showMessage(
+            `Error al eliminar estudio: ${error.error?.detail || error.message}`,
+            'error',
+          );
+        },
+      });
     }
   }
 
@@ -234,7 +232,6 @@ export class Estudios implements OnInit {
   }
 
   onModalidadChange(): void {
-    // Modalidad es local; no existe en backend. Solo aplicar filtro local.
     this.applyFilters();
   }
 
@@ -256,7 +253,6 @@ export class Estudios implements OnInit {
 
     let filtered = [...this.estudios];
 
-    // Filtro por término de búsqueda
     if (this.searchTerm && this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -268,25 +264,21 @@ export class Estudios implements OnInit {
       console.log('Después de filtro de búsqueda estudios:', filtered.length);
     }
 
-    // Filtro por estado
     if (this.selectedEstado && this.selectedEstado !== 'Todos') {
       filtered = filtered.filter((estudio) => estudio.estado === this.selectedEstado);
       console.log('Después de filtro de estado estudios:', filtered.length);
     }
 
-    // Filtro por tipo de estudio
     if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
       filtered = filtered.filter((estudio) => estudio.tipo_estudio === this.selectedTipoEstudio);
       console.log('Después de filtro de tipo estudio estudios:', filtered.length);
     }
 
-    // Filtro por modalidad (si el dato existe en los items)
     if (this.selectedModalidad && this.selectedModalidad !== 'Todos') {
       filtered = filtered.filter((estudio) => (estudio.modalidad || '') === this.selectedModalidad);
       console.log('Después de filtro de modalidad estudios:', filtered.length);
     }
 
-    // Filtro por urgencia
     if (this.selectedUrgencia && this.selectedUrgencia !== 'Todos') {
       if (this.selectedUrgencia === 'Urgente') {
         filtered = filtered.filter((estudio) => !!estudio.urgente || (estudio.prioridad || '').toLowerCase() === 'urgente' || (estudio.prioridad || '').toLowerCase() === 'alta');
@@ -309,20 +301,10 @@ export class Estudios implements OnInit {
 
   getEstadoClass(estado: string): string {
     switch (estado) {
-      case 'Programado':
-        return 'estado-programado';
-      case 'En Proceso':
-        return 'estado-en-proceso';
+      case 'Pendiente':
+        return 'estado-pendiente';
       case 'Completado':
         return 'estado-completado';
-      case 'Interpretado':
-        return 'estado-interpretado';
-      case 'Informado':
-        return 'estado-informado';
-      case 'Entregado':
-        return 'estado-entregado';
-      case 'Cancelado':
-        return 'estado-cancelado';
       default:
         return 'estado-default';
     }
@@ -332,10 +314,10 @@ export class Estudios implements OnInit {
     if (!estadoRaw) return '';
     const map: Record<string, string> = {
       pendiente: 'Pendiente',
-      programado: 'Programado',
-      en_proceso: 'En Proceso',
+      programado: 'Pendiente',
+      en_proceso: 'Pendiente',
       completado: 'Completado',
-      cancelado: 'Cancelado',
+      cancelado: 'Completado',
     };
     return map[estadoRaw] || estadoRaw;
   }
@@ -383,12 +365,11 @@ export class Estudios implements OnInit {
     return this.estudios.filter((e) => e.contraste).length;
   }
 
-  // Métodos faltantes para el template
   getEstudiosStats(): any {
     return {
       total: this.estudios.length,
-      programados: this.getEstudiosCountByEstado('Programado'),
-      enProceso: this.getEstudiosCountByEstado('En Proceso'),
+      programados: this.getEstudiosCountByEstado('Pendiente'),
+      enProceso: 0,
       completados: this.getEstudiosCountByEstado('Completado'),
       urgentes: this.getEstudiosUrgentes(),
     };
@@ -402,11 +383,9 @@ export class Estudios implements OnInit {
     );
   }
 
-  // Template references for *ngIf directives
   loadingTemplate: any = null;
   estudiosTemplate: any = null;
 
-  // Filter management methods
   hasActiveFilters(): boolean {
     return (
       (this.searchTerm && this.searchTerm.trim() !== '') ||
@@ -459,6 +438,6 @@ export class Estudios implements OnInit {
   }
 
   isPending(estado: string): boolean {
-    return ['Programado', 'En Proceso'].includes(estado);
+    return estado === 'Pendiente';
   }
 }
