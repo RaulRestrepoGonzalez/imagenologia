@@ -1,20 +1,138 @@
 ❯ Building...
 ✔ Building...
 Initial chunk files | Names                  |  Raw size
-main.js             | main                   | 638.75 kB | 
+main.js             | main                   | 735.92 kB | 
 styles.css          | styles                 | 146.14 kB | 
-chunk-EO5NWZFE.js   | -                      |   5.39 kB | 
+chunk-65BEFXUA.js   | -                      |   5.58 kB | 
 polyfills.js        | polyfills              |  95 bytes | 
 
-                    | Initial total          | 790.38 kB
+                    | Initial total          | 887.74 kB
 
 Lazy chunk files    | Names                  |  Raw size
-chunk-INDY4EPJ.js   | login                  |  45.91 kB | 
-chunk-2MUEWRDA.js   | dashboard-component    |  23.27 kB | 
-chunk-OMGQU3FJ.js   | unauthorized-component |   7.45 kB | 
+chunk-7DG6ODXI.js   | login                  |  45.91 kB | 
+chunk-BR7F7UYI.js   | dashboard-component    |  23.27 kB | 
+chunk-NK27Q2EG.js   | unauthorized-component |   7.45 kB | 
 
-Application bundle generation complete. [7.205 seconds]
+Application bundle generation complete. [10.340 seconds]
 
 Watch mode enabled. Watching for file changes...
 NOTE: Raw file sizes do not reflect development server per-request transformations.
   ➜  Local:   http://localhost:4200/
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 736.44 kB | 
+
+Application bundle generation complete. [7.472 seconds]
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 737.80 kB | 
+
+Application bundle generation complete. [1.516 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 737.80 kB | 
+styles.css          | styles                 | 146.14 kB | 
+chunk-65BEFXUA.js   | -                      |   5.58 kB | 
+polyfills.js        | polyfills              |  95 bytes | 
+
+                    | Initial total          | 889.62 kB
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-7DG6ODXI.js   | login                  |  45.91 kB | 
+chunk-BR7F7UYI.js   | dashboard-component    |  23.27 kB | 
+chunk-NK27Q2EG.js   | unauthorized-component |   7.45 kB | 
+
+Application bundle generation complete. [1.633 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 738.84 kB | 
+
+Application bundle generation complete. [1.644 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 738.95 kB | 
+
+Application bundle generation complete. [1.178 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 740.58 kB | 
+
+Application bundle generation complete. [1.200 seconds]
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 740.58 kB | 
+styles.css          | styles                 | 146.14 kB | 
+chunk-65BEFXUA.js   | -                      |   5.58 kB | 
+polyfills.js        | polyfills              |  95 bytes | 
+
+                    | Initial total          | 892.39 kB
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-7DG6ODXI.js   | login                  |  45.91 kB | 
+chunk-BR7F7UYI.js   | dashboard-component    |  23.27 kB | 
+chunk-NK27Q2EG.js   | unauthorized-component |   7.45 kB | 
+
+Application bundle generation complete. [0.986 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 741.68 kB | 
+
+Application bundle generation complete. [1.117 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 741.62 kB | 
+
+Application bundle generation complete. [1.770 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  | 742.17 kB | 
+
+Application bundle generation complete. [1.483 seconds]
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 742.17 kB | 
+styles.css          | styles                 | 146.14 kB | 
+chunk-65BEFXUA.js   | -                      |   5.58 kB | 
+polyfills.js        | polyfills              |  95 bytes | 
+
+                    | Initial total          | 893.98 kB
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-7DG6ODXI.js   | login                  |  45.91 kB | 
+chunk-BR7F7UYI.js   | dashboard-component    |  23.27 kB | 
+chunk-NK27Q2EG.js   | unauthorized-component |   7.45 kB | 
+
+Application bundle generation complete. [1.208 seconds]
+
+Component update sent to client(s).

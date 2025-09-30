@@ -153,23 +153,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="filter-field">
-        <mat-label>Calidad</mat-label>
-        <mat-select [(value)]="selectedCalidad" (selectionChange)="onCalidadChange()">
-          <mat-option *ngFor="let calidad of calidadOptions" [value]="calidad">
-            {{ calidad }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="filter-field">
-        <mat-label>Urgencia</mat-label>
-        <mat-select [(value)]="selectedUrgencia" (selectionChange)="onUrgenciaChange()">
-          <mat-option *ngFor="let urgencia of urgenciaOptions" [value]="urgencia">
-            {{ urgencia }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <!-- Filtros de calidad y urgencia removidos -->
 
       <mat-form-field appearance="fill" class="filter-field">
         <mat-label>Validación</mat-label>
@@ -192,14 +176,12 @@
     <div *ngIf="filteredInformes.length === 0; else informesTemplate" class="no-data">
       <mat-icon>description</mat-icon>
       <h3>
-        {{ searchTerm || selectedEstado !== 'Todos' || selectedCalidad !== 'Todos' ||
-        selectedUrgencia !== 'Todos' || selectedValidacion !== 'Todos' ? 'No se encontraron
-        informes' : 'No hay informes registrados' }}
+        {{ searchTerm || selectedEstado !== 'Todos' || selectedValidacion !== 'Todos' ?
+        'No se encontraron informes' : 'No hay informes registrados' }}
       </h3>
       <p>
-        {{ searchTerm || selectedEstado !== 'Todos' || selectedCalidad !== 'Todos' ||
-        selectedUrgencia !== 'Todos' || selectedValidacion !== 'Todos' ? 'Intenta ajustar los
-        filtros' : 'Comienza creando tu primer informe' }}
+        {{ searchTerm || selectedEstado !== 'Todos' || selectedValidacion !== 'Todos' ?
+        'Intenta ajustar los filtros' : 'Comienza creando tu primer informe' }}
       </p>
     </div>
 
@@ -228,13 +210,6 @@
             <div class="card-badges">
               <mat-chip [class]="getEstadoClass(informe.estado)" selected>
                 {{ informe.estado }}
-              </mat-chip>
-              <mat-chip [class]="getCalidadClass(informe.calidad_estudio)" selected>
-                {{ informe.calidad_estudio }}
-              </mat-chip>
-              <mat-chip *ngIf="informe.urgente" class="urgent-chip" selected>
-                <mat-icon>priority_high</mat-icon>
-                Urgente
               </mat-chip>
               <mat-chip *ngIf="informe.validado" class="validated-chip" selected>
                 <mat-icon>verified</mat-icon>
@@ -312,6 +287,10 @@
             <button mat-button (click)="printReport(informe)">
               <mat-icon>print</mat-icon>
               Imprimir
+            </button>
+            <button mat-button color="primary" *ngIf="(informe.imagenes_dicom?.length || 0) === 0" (click)="syncImagenes(informe)">
+              <mat-icon>sync</mat-icon>
+              Sincronizar imágenes
             </button>
             <button mat-button color="primary" (click)="openEditDialog(informe)">
               <mat-icon>edit</mat-icon>

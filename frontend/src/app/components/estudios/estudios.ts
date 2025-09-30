@@ -90,10 +90,24 @@ export class Estudios implements OnInit {
     'Resonancia Magnética',
     'Ecografía',
     'Mamografía',
-    'Densitometría Ósea'
+    'Densitometría Ósea',
   ];
 
-  modalidadOptions = ['Todos', 'RX', 'CT', 'MR', 'US', 'MG', 'DX', 'XA', 'PT', 'NM', 'RF', 'EC', 'OT'];
+  modalidadOptions = [
+    'Todos',
+    'RX',
+    'CT',
+    'MR',
+    'US',
+    'MG',
+    'DX',
+    'XA',
+    'PT',
+    'NM',
+    'RF',
+    'EC',
+    'OT',
+  ];
 
   urgenciaOptions = ['Todos', 'Urgente', 'Normal'];
 
@@ -109,9 +123,10 @@ export class Estudios implements OnInit {
 
   loadEstudios(): void {
     this.isLoading = true;
-    this.api.get('api/estudios').subscribe({
+    const params = this.buildServerParams();
+    this.api.get('api/estudios', params).subscribe({
       next: (response: any[]) => {
-        this.estudios = response.map(e => ({
+        this.estudios = response.map((e) => ({
           id: e.id,
           paciente_id: e.paciente_id,
           paciente_nombre: e.paciente_nombre || 'Paciente no encontrado',
@@ -121,7 +136,9 @@ export class Estudios implements OnInit {
           indicaciones: e.indicaciones,
           sala: e.sala,
           tecnico_asignado: e.tecnico_asignado,
-          estado: e.estado,
+          estado: e.estado, // valor crudo del backend (enum)
+          // usar display si viene para UI
+          // estado_display no está tipado en la interfaz, usamos estado para filtrar y mostramos formateado cuando sea necesario
           fecha_solicitud: e.fecha_solicitud,
           fecha_programada: e.fecha_programada,
           fecha_realizacion: e.fecha_realizacion,
@@ -129,12 +146,13 @@ export class Estudios implements OnInit {
           created_at: e.fecha_creacion,
           updated_at: e.fecha_actualizacion,
           // Map to legacy fields for template compatibility
-          urgente: e.prioridad === 'urgente' || e.prioridad === 'alta',
+          // El backend normaliza prioridad a 'Urgente' o 'Normal'
+          urgente: (e.prioridad || '').toLowerCase() === 'urgente' || (e.prioridad || '').toLowerCase() === 'alta',
           modalidad: 'RX', // Default modalidad
           parte_cuerpo: 'General', // Default parte_cuerpo
           contraste: e.indicaciones?.toLowerCase().includes('contraste') || false,
           observaciones: e.indicaciones || e.resultados,
-          medico_referente: e.medico_solicitante
+          medico_referente: e.medico_solicitante,
         }));
         this.applyFilters();
         this.isLoading = false;
@@ -143,8 +161,32 @@ export class Estudios implements OnInit {
         console.error('Error al cargar estudios:', error);
         this.estudios = [];
         this.isLoading = false;
-      }
+      },
     });
+  }
+
+  private buildServerParams(): any {
+    const params: any = {};
+    if (this.selectedEstado && this.selectedEstado !== 'Todos') {
+      // Mapear al formato esperado por el backend (snake_case minúsculas)
+      const estadoMap: Record<string, string> = {
+        'Programado': 'programado',
+        'En Proceso': 'en_proceso',
+        'Completado': 'completado',
+        'Interpretado': 'interpretado', // si existiera
+        'Informado': 'informado',       // si existiera
+        'Entregado': 'entregado',       // si existiera
+        'Cancelado': 'cancelado',
+      };
+      params.estado = estadoMap[this.selectedEstado] || this.selectedEstado;
+    }
+    if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
+      params.tipo_estudio = this.selectedTipoEstudio;
+    }
+    if (this.selectedUrgencia && this.selectedUrgencia !== 'Todos') {
+      params.prioridad = this.selectedUrgencia.toLowerCase();
+    }
+    return params;
   }
 
   openAddDialog(): void {
@@ -177,30 +219,31 @@ export class Estudios implements OnInit {
 
   deleteEstudio(estudio: Estudio): void {
     if (confirm(`¿Está seguro que desea eliminar el estudio de ${estudio.paciente_nombre}?`)) {
-      this.estudios = this.estudios.filter(e => e.id !== estudio.id);
+      this.estudios = this.estudios.filter((e) => e.id !== estudio.id);
       this.applyFilters();
       this.showMessage('Estudio eliminado exitosamente', 'success');
     }
   }
 
   onSearchChange(): void {
-    this.applyFilters();
+    this.loadEstudios();
   }
 
   onEstadoChange(): void {
-    this.applyFilters();
+    this.loadEstudios();
   }
 
   onModalidadChange(): void {
+    // Modalidad es local; no existe en backend. Solo aplicar filtro local.
     this.applyFilters();
   }
 
   onTipoEstudioChange(): void {
-    this.applyFilters();
+    this.loadEstudios();
   }
 
   onUrgenciaChange(): void {
-    this.applyFilters();
+    this.loadEstudios();
   }
 
   private applyFilters(): void {
@@ -208,9 +251,9 @@ export class Estudios implements OnInit {
     console.log('Filtros activos:', {
       searchTerm: this.searchTerm,
       selectedEstado: this.selectedEstado,
-      selectedTipoEstudio: this.selectedTipoEstudio
+      selectedTipoEstudio: this.selectedTipoEstudio,
     });
-    
+
     let filtered = [...this.estudios];
 
     // Filtro por término de búsqueda
@@ -220,7 +263,7 @@ export class Estudios implements OnInit {
         (estudio) =>
           (estudio.paciente_nombre && estudio.paciente_nombre.toLowerCase().includes(term)) ||
           (estudio.tipo_estudio && estudio.tipo_estudio.toLowerCase().includes(term)) ||
-          (estudio.medico_solicitante && estudio.medico_solicitante.toLowerCase().includes(term))
+          (estudio.medico_solicitante && estudio.medico_solicitante.toLowerCase().includes(term)),
       );
       console.log('Después de filtro de búsqueda estudios:', filtered.length);
     }
@@ -235,6 +278,22 @@ export class Estudios implements OnInit {
     if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
       filtered = filtered.filter((estudio) => estudio.tipo_estudio === this.selectedTipoEstudio);
       console.log('Después de filtro de tipo estudio estudios:', filtered.length);
+    }
+
+    // Filtro por modalidad (si el dato existe en los items)
+    if (this.selectedModalidad && this.selectedModalidad !== 'Todos') {
+      filtered = filtered.filter((estudio) => (estudio.modalidad || '') === this.selectedModalidad);
+      console.log('Después de filtro de modalidad estudios:', filtered.length);
+    }
+
+    // Filtro por urgencia
+    if (this.selectedUrgencia && this.selectedUrgencia !== 'Todos') {
+      if (this.selectedUrgencia === 'Urgente') {
+        filtered = filtered.filter((estudio) => !!estudio.urgente || (estudio.prioridad || '').toLowerCase() === 'urgente' || (estudio.prioridad || '').toLowerCase() === 'alta');
+      } else if (this.selectedUrgencia === 'Normal') {
+        filtered = filtered.filter((estudio) => !estudio.urgente && (estudio.prioridad || '').toLowerCase() === 'normal');
+      }
+      console.log('Después de filtro de urgencia estudios:', filtered.length);
     }
 
     this.filteredEstudios = filtered;
@@ -269,6 +328,18 @@ export class Estudios implements OnInit {
     }
   }
 
+  formatEstadoForDisplay(estadoRaw: string): string {
+    if (!estadoRaw) return '';
+    const map: Record<string, string> = {
+      pendiente: 'Pendiente',
+      programado: 'Programado',
+      en_proceso: 'En Proceso',
+      completado: 'Completado',
+      cancelado: 'Cancelado',
+    };
+    return map[estadoRaw] || estadoRaw;
+  }
+
   getModalidadIcon(modalidad: string): string {
     switch (modalidad) {
       case 'RX':
@@ -301,15 +372,15 @@ export class Estudios implements OnInit {
   }
 
   getEstudiosCountByEstado(estado: string): number {
-    return this.estudios.filter(e => e.estado === estado).length;
+    return this.estudios.filter((e) => e.estado === estado).length;
   }
 
   getEstudiosUrgentes(): number {
-    return this.estudios.filter(e => e.urgente).length;
+    return this.estudios.filter((e) => e.urgente).length;
   }
 
   getEstudiosConContraste(): number {
-    return this.estudios.filter(e => e.contraste).length;
+    return this.estudios.filter((e) => e.contraste).length;
   }
 
   // Métodos faltantes para el template
@@ -319,31 +390,55 @@ export class Estudios implements OnInit {
       programados: this.getEstudiosCountByEstado('Programado'),
       enProceso: this.getEstudiosCountByEstado('En Proceso'),
       completados: this.getEstudiosCountByEstado('Completado'),
-      urgentes: this.getEstudiosUrgentes()
+      urgentes: this.getEstudiosUrgentes(),
     };
   }
 
   getTodaysEstudios(): Estudio[] {
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
-    return this.estudios.filter(estudio => 
-      estudio.fecha_realizacion?.startsWith(todayString) || false
+    return this.estudios.filter(
+      (estudio) => estudio.fecha_realizacion?.startsWith(todayString) || false,
     );
+  }
+
+  // Template references for *ngIf directives
+  loadingTemplate: any = null;
+  estudiosTemplate: any = null;
+
+  // Filter management methods
+  hasActiveFilters(): boolean {
+    return (
+      (this.searchTerm && this.searchTerm.trim() !== '') ||
+      this.selectedEstado !== 'Todos' ||
+      this.selectedTipoEstudio !== 'Todos' ||
+      this.selectedModalidad !== 'Todos' ||
+      this.selectedUrgencia !== 'Todos'
+    );
+  }
+
+  clearAllFilters(): void {
+    this.searchTerm = '';
+    this.selectedEstado = 'Todos';
+    this.selectedTipoEstudio = 'Todos';
+    this.selectedModalidad = 'Todos';
+    this.selectedUrgencia = 'Todos';
+    this.applyFilters();
   }
 
   getModalidadName(modalidad: string | undefined): string {
     if (!modalidad) return 'No especificada';
     const modalidadNames: { [key: string]: string } = {
-      'RX': 'Radiografía',
-      'CT': 'Tomografía Computarizada',
-      'MR': 'Resonancia Magnética',
-      'US': 'Ultrasonido',
-      'MG': 'Mamografía',
-      'DX': 'Radiografía Digital',
-      'XA': 'Angiografía',
-      'PT': 'Tomografía por Emisión de Positrones',
-      'NM': 'Medicina Nuclear',
-      'RF': 'Radiología Fluoroscópica'
+      RX: 'Radiografía',
+      CT: 'Tomografía Computarizada',
+      MR: 'Resonancia Magnética',
+      US: 'Ultrasonido',
+      MG: 'Mamografía',
+      DX: 'Radiografía Digital',
+      XA: 'Angiografía',
+      PT: 'Tomografía por Emisión de Positrones',
+      NM: 'Medicina Nuclear',
+      RF: 'Radiología Fluoroscópica',
     };
     return modalidadNames[modalidad] || modalidad;
   }

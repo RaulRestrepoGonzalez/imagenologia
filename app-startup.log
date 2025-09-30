@@ -1,0 +1,35 @@
+nohup: no se tendrá en cuenta la entrada
+[0;34m🚀 Iniciando servicios del sistema de imagenología v1.3.0[0m
+
+[1;33m🔍 Verificando MongoDB...[0m
+[0;32m✅ MongoDB está corriendo[0m
+[1;33m🔍 Verificando puerto 8000 para Backend...[0m
+[1;33m⚠️  Puerto 8000 en uso. Terminando procesos existentes...[0m
+[0;32m✅ Puerto 8000 liberado[0m
+[1;33m🔍 Verificando puerto 4200 para Frontend...[0m
+[1;33m⚠️  Puerto 4200 en uso. Terminando procesos existentes...[0m
+[0;32m✅ Puerto 4200 liberado[0m
+
+[0;34m📡 Iniciando backend (FastAPI)...[0m
+[1;33m⏳ Esperando a que el backend inicie...[0m
+[0;32m✅ Backend iniciado correctamente[0m
+
+[1;33m👤 Verificando usuario administrador...[0m
+
+[0;34m🎨 Iniciando frontend (Angular)...[0m
+[1;33m⏳ Esperando a que el frontend compile...[0m
+[0;32m✅ Usuario administrador ya existe[0m
+[0;32m✅ Frontend compilado correctamente[0m
+
+[0;32m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m✅ Servicios iniciados correctamente[0m
+[0;32m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[0;34m📍 URLs:[0m 🌐 [0;32mhttp://localhost:4200[0m | 🔌 [0;32mhttp://localhost:8000[0m | 📚 [0;32mhttp://localhost:8000/docs[0m
+[0;34m👤 Admin:[0m 📧 [0;32madmin@imagenologia.com[0m | 🔑 [0;32madmin123[0m
+[0;34m📝 Logs:[0m [1;33mtail -f backend.log[0m | [1;33mtail -f frontend.log[0m
+
+[1;33mPresiona Ctrl+C para detener los servicios[0m
+
+./start-services.sh: línea 182: 71341 Terminado (killed)         uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 > ../backend.log 2>&1  (da: ~/Source/imagenologia/backend)
+./start-services.sh: línea 182: 71482 Terminado (killed)         ng serve --port 4200 > ../frontend.log 2>&1  (da: ~/Source/imagenologia/frontend)

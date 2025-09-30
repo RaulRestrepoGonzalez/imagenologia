@@ -1,13 +1,14 @@
 <app-header></app-header>
 
-<div class="app-container">
-  <app-sidebar></app-sidebar>
-  
-  <main class="main-content">
-    <div class="content-wrapper">
-      <router-outlet></router-outlet>
-    </div>
-  </main>
+<div class="app-container" [class.sidebar-collapsed]="isCollapsed()">
+    <app-sidebar></app-sidebar>
+    <app-sidebar-toggle></app-sidebar-toggle>
+
+    <main class="main-content" [class.sidebar-collapsed]="isCollapsed()">
+        <div class="content-wrapper">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
 </div>
 
 <app-footer></app-footer>

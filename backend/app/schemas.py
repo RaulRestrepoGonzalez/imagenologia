@@ -3,12 +3,14 @@ from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
+
 class UserRole(str, Enum):
     ADMIN = "admin"
     RADIOLOGO = "radiologo"
     SECRETARIO = "secretario"
     TECNICO = "tecnico"
     PACIENTE = "paciente"
+
 
 class EstadoEstudio(str, Enum):
     PENDIENTE = "pendiente"
@@ -17,6 +19,7 @@ class EstadoEstudio(str, Enum):
     COMPLETADO = "completado"
     CANCELADO = "cancelado"
 
+
 class EstadoCita(str, Enum):
     PROGRAMADA = "programada"
     EN_PROCESO = "en_proceso"
@@ -24,10 +27,12 @@ class EstadoCita(str, Enum):
     CANCELADA = "cancelada"
     NO_ASISTIO = "no_asistio"
 
+
 class TipoNotificacion(str, Enum):
     EMAIL = "email"
     SMS = "sms"
     PUSH = "push"
+
 
 class PacienteBase(BaseModel):
     nombre: str
@@ -43,8 +48,10 @@ class PacienteBase(BaseModel):
     condiciones_cronicas: Optional[str] = None
     medicamentos: Optional[str] = None
 
+
 class PacienteCreate(PacienteBase):
     pass
+
 
 class Paciente(PacienteBase):
     id: str
@@ -53,6 +60,7 @@ class Paciente(PacienteBase):
 
     class Config:
         from_attributes = True
+
 
 class EstudioBase(BaseModel):
     paciente_id: str
@@ -63,8 +71,10 @@ class EstudioBase(BaseModel):
     sala: Optional[str] = None
     tecnico_asignado: Optional[str] = None
 
+
 class EstudioCreate(EstudioBase):
     pass
+
 
 class Estudio(EstudioBase):
     id: str
@@ -85,18 +95,22 @@ class Estudio(EstudioBase):
         from_attributes = True
         arbitrary_types_allowed = True
 
+
 class CitaBase(BaseModel):
     paciente_id: str
     fecha_cita: datetime
     tipo_estudio: str
+    tipo_cita: str = "Consulta General"
     observaciones: Optional[str] = None
-    estado: EstadoCita = EstadoCita.PROGRAMADA
+    estado: str = "programada"
+
 
 class CitaCreate(CitaBase):
     estudio_id: Optional[str] = None
     tecnico_asignado: Optional[str] = None
     sala: Optional[str] = None
     duracion_minutos: int = 30
+
 
 class Cita(CitaBase):
     id: str
@@ -113,13 +127,16 @@ class Cita(CitaBase):
     class Config:
         from_attributes = True
 
+
 class ImagenDICOM(BaseModel):
     """Información de una imagen DICOM anexada al informe"""
+
     archivo_dicom: str  # Nombre del archivo DICOM original
-    archivo_png: str    # Nombre del archivo PNG convertido
-    estudio_id: str     # ID del estudio al que pertenece
+    archivo_png: str  # Nombre del archivo PNG convertido
+    estudio_id: str  # ID del estudio al que pertenece
     descripcion: Optional[str] = None  # Descripción opcional de la imagen
-    orden: int = 0      # Orden de visualización en el informe
+    orden: int = 0  # Orden de visualización en el informe
+
 
 class InformeBase(BaseModel):
     estudio_id: str
@@ -136,8 +153,10 @@ class InformeBase(BaseModel):
     observaciones_tecnicas: Optional[str] = None
     imagenes_dicom: List[ImagenDICOM] = []  # Imágenes anexadas al informe
 
+
 class InformeCreate(InformeBase):
     pass
+
 
 class InformeUpdate(BaseModel):
     estudio_id: Optional[str] = None
@@ -152,6 +171,7 @@ class InformeUpdate(BaseModel):
     urgente: Optional[bool] = None
     validado: Optional[bool] = None
     observaciones_tecnicas: Optional[str] = None
+
 
 class Informe(InformeBase):
     id: str
@@ -171,6 +191,7 @@ class Informe(InformeBase):
     class Config:
         from_attributes = True
 
+
 class NotificacionBase(BaseModel):
     paciente_id: str
     tipo: TipoNotificacion
@@ -179,8 +200,10 @@ class NotificacionBase(BaseModel):
     titulo: Optional[str] = None
     prioridad: str = "normal"
 
+
 class NotificacionCreate(NotificacionBase):
     pass
+
 
 class Notificacion(NotificacionBase):
     id: str
@@ -193,6 +216,7 @@ class Notificacion(NotificacionBase):
     class Config:
         from_attributes = True
 
+
 # Schemas adicionales para operaciones específicas
 class EstudioUpdate(BaseModel):
     estado: Optional[EstadoEstudio] = None
@@ -201,14 +225,18 @@ class EstudioUpdate(BaseModel):
     tecnico_asignado: Optional[str] = None
     indicaciones: Optional[str] = None
 
+
 class CitaUpdate(BaseModel):
-    fecha_hora: Optional[datetime] = None
+    fecha_cita: Optional[datetime] = None
+    tipo_estudio: Optional[str] = None
+    tipo_cita: Optional[str] = None
+    observaciones: Optional[str] = None
+    estado: Optional[str] = None
     tecnico_asignado: Optional[str] = None
     sala: Optional[str] = None
     duracion_minutos: Optional[int] = None
-    estado: Optional[EstadoCita] = None
-    observaciones: Optional[str] = None
     asistio: Optional[bool] = None
+
 
 class PacienteUpdate(BaseModel):
     nombre: Optional[str] = None
@@ -222,6 +250,7 @@ class PacienteUpdate(BaseModel):
     condiciones_cronicas: Optional[str] = None
     medicamentos: Optional[str] = None
 
+
 # User Authentication Schemas
 class UserBase(BaseModel):
     email: EmailStr
@@ -230,13 +259,16 @@ class UserBase(BaseModel):
     role: UserRole
     is_active: bool = True
 
+
 class UserCreate(UserBase):
     password: str
     paciente_id: Optional[str] = None  # Link to patient record if role is PACIENTE
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class User(UserBase):
     id: str
@@ -247,17 +279,20 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+
 class UserUpdate(BaseModel):
     nombre: Optional[str] = None
     apellidos: Optional[str] = None
     is_active: Optional[bool] = None
     role: Optional[UserRole] = None
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
     expires_in: int
     user: User
+
 
 class TokenData(BaseModel):
     email: Optional[str] = None

@@ -164,114 +164,404 @@
       </p>
     </div>
 
-    <ng-template #estudiosTemplate>
-      <div class="cards-container">
-        <mat-card
-          *ngFor="let estudio of filteredEstudios"
-          class="estudio-card"
-          [class.urgent]="estudio.urgente"
-          [class.today]="isToday(estudio.fecha_realizacion)"
-          [class.pending]="isPending(estudio.estado)"
-        >
-          <mat-card-header>
-            <div mat-card-avatar class="avatar" [class.urgent-avatar]="estudio.urgente">
-              <mat-icon>{{ estudio.urgente ? 'priority_high' : 'science' }}</mat-icon>
-            </div>
-            <mat-card-title>{{ estudio.paciente_nombre }}</mat-card-title>
-            <mat-card-subtitle>{{ estudio.tipo_estudio }}</mat-card-subtitle>
-            <div class="card-badges">
-              <mat-chip [class]="getEstadoClass(estudio.estado)" selected>
-                {{ estudio.estado }}
-              </mat-chip>
-              <mat-chip *ngIf="estudio.urgente" class="urgent-chip" selected>
-                <mat-icon>priority_high</mat-icon>
-                Urgente
-              </mat-chip>
-            </div>
-          </mat-card-header>
+    <!-- Dashboard Stats -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <mat-card class="stat-card total">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <mat-icon>assignment</mat-icon>
+                        <div class="stat-info">
+                            <span class="number">{{ getEstudiosStats().total }}</span>
+                            <span class="label">Total Estudios</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
 
-          <mat-card-content>
-            <div class="estudio-details">
-              <div class="detail-row">
-                <div class="detail-item">
-                  <mat-icon>medical_services</mat-icon>
-                  <div class="detail-content">
-                    <span class="detail-label">Modalidad</span>
-                    <span class="detail-value">{{ getModalidadName(estudio.modalidad) }}</span>
-                  </div>
-                </div>
-                <div class="detail-item">
-                  <mat-icon>accessible</mat-icon>
-                  <div class="detail-content">
-                    <span class="detail-label">Parte del Cuerpo</span>
-                    <span class="detail-value">{{ estudio.parte_cuerpo }}</span>
-                  </div>
-                </div>
-              </div>
+            <mat-card class="stat-card programados">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <mat-icon>schedule</mat-icon>
+                        <div class="stat-info">
+                            <span class="number">{{ getEstudiosStats().programados }}</span>
+                            <span class="label">Programados</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
 
-              <div class="detail-row">
-                <div class="detail-item">
-                  <mat-icon>event</mat-icon>
-                  <div class="detail-content">
-                    <span class="detail-label">Fecha</span>
-                    <span
-                      class="detail-value"
-                      [class.today-date]="isToday(estudio.fecha_realizacion)"
-                    >
-                      {{ estudio.fecha_realizacion | date:'dd/MM/yyyy' }}
-                      <span *ngIf="isToday(estudio.fecha_realizacion)" class="today-badge"
-                        >HOY</span
-                      >
-                    </span>
-                  </div>
-                </div>
-                <div class="detail-item" *ngIf="estudio.medico_referente">
-                  <mat-icon>local_hospital</mat-icon>
-                  <div class="detail-content">
-                    <span class="detail-label">Médico</span>
-                    <span class="detail-value">{{ estudio.medico_referente }}</span>
-                  </div>
-                </div>
-              </div>
+            <mat-card class="stat-card en-proceso">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <mat-icon>hourglass_empty</mat-icon>
+                        <div class="stat-info">
+                            <span class="number">{{ getEstudiosStats().enProceso }}</span>
+                            <span class="label">En Proceso</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
 
-              <div class="detail-row" *ngIf="estudio.contraste || estudio.observaciones">
-                <div class="detail-item" *ngIf="estudio.contraste">
-                  <mat-icon>opacity</mat-icon>
-                  <div class="detail-content">
-                    <span class="detail-label">Contraste</span>
-                    <span class="detail-value contrast-required">Requerido</span>
-                  </div>
-                </div>
-                <div class="detail-item" *ngIf="estudio.observaciones">
-                  <mat-icon>notes</mat-icon>
-                  <div class="detail-content">
-                    <span class="detail-label">Observaciones</span>
-                    <span class="detail-value">{{ estudio.observaciones }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </mat-card-content>
+            <mat-card class="stat-card completados">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <mat-icon>check_circle</mat-icon>
+                        <div class="stat-info">
+                            <span class="number">{{ getEstudiosStats().completados }}</span>
+                            <span class="label">Completados</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
 
-          <mat-card-actions align="end">
-            <button mat-button color="primary" (click)="openEditDialog(estudio)">
-              <mat-icon>edit</mat-icon>
-              Editar
-            </button>
-            <button mat-button color="warn" (click)="deleteEstudio(estudio)">
-              <mat-icon>delete</mat-icon>
-              Eliminar
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </ng-template>
-  </div>
-
-  <ng-template #loadingTemplate>
-    <div class="loading-container">
-      <mat-icon class="loading-spinner">hourglass_empty</mat-icon>
-      <p>Cargando estudios...</p>
+            <mat-card class="stat-card urgentes" *ngIf="getEstudiosStats().urgentes > 0">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <mat-icon>priority_high</mat-icon>
+                        <div class="stat-info">
+                            <span class="number">{{ getEstudiosStats().urgentes }}</span>
+                            <span class="label">Urgentes</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
-  </ng-template>
+
+    <!-- Today's Studies Summary -->
+    <div class="today-section" *ngIf="getTodaysEstudios().length > 0">
+        <mat-card class="today-summary">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>today</mat-icon>
+                    Estudios de Hoy ({{ getTodaysEstudios().length }})
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="today-list">
+                    <div *ngFor="let estudio of getTodaysEstudios()" class="today-item">
+                        <div class="patient-info">
+                            <strong>{{ estudio.paciente_nombre }}</strong>
+                            <span class="study-type">{{ estudio.tipo_estudio }}</span>
+                        </div>
+                        <mat-chip [class]="getEstadoClass(estudio.estado)" selected>
+                            {{ estudio.estado }}
+                        </mat-chip>
+                        <mat-icon *ngIf="estudio.urgente" class="urgent-icon" color="warn"
+                            >priority_high</mat-icon
+                        >
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Enhanced Filters Section -->
+    <div class="filters-section">
+        <div class="filters-container">
+            <div class="search-section">
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>
+                        <mat-icon>search</mat-icon>
+                        Buscar estudios
+                    </mat-label>
+                    <input
+                        matInput
+                        [(ngModel)]="searchTerm"
+                        (input)="onSearchChange()"
+                        placeholder="Paciente, tipo de estudio, modalidad, médico, observaciones..."
+                    />
+                </mat-form-field>
+            </div>
+
+            <div class="filter-controls">
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Estado</mat-label>
+                    <mat-select [(value)]="selectedEstado" (selectionChange)="onEstadoChange()">
+                        <mat-option *ngFor="let estado of estadoOptions" [value]="estado">
+                            <mat-icon
+                                *ngIf="estado !== 'Todos'"
+                                [class]="getEstadoClass(estado)"
+                                class="option-icon"
+                                >circle</mat-icon
+                            >
+                            {{ estado }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint *ngIf="selectedEstado !== 'Todos'">
+                        Mostrando estudios con estado: {{ selectedEstado }}
+                    </mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Modalidad</mat-label>
+                    <mat-select
+                        [(value)]="selectedModalidad"
+                        (selectionChange)="onModalidadChange()"
+                    >
+                        <mat-option *ngFor="let modalidad of modalidadOptions" [value]="modalidad">
+                            <mat-icon *ngIf="modalidad !== 'Todos'" class="option-icon"
+                                >{{ getModalidadIcon(modalidad) }}</mat-icon
+                            >
+                            {{ modalidad === 'Todos' ? modalidad : getModalidadName(modalidad) }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint *ngIf="selectedModalidad !== 'Todos'">
+                        Mostrando: {{ getModalidadName(selectedModalidad) }}
+                    </mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Urgencia</mat-label>
+                    <mat-select [(value)]="selectedUrgencia" (selectionChange)="onUrgenciaChange()">
+                        <mat-option *ngFor="let urgencia of urgenciaOptions" [value]="urgencia">
+                            <mat-icon *ngIf="urgencia === 'Urgente'" class="option-icon urgent-icon"
+                                >priority_high</mat-icon
+                            >
+                            <mat-icon *ngIf="urgencia === 'Normal'" class="option-icon normal-icon"
+                                >low_priority</mat-icon
+                            >
+                            {{ urgencia }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint *ngIf="selectedUrgencia !== 'Todos'">
+                        Filtro de urgencia: {{ selectedUrgencia }}
+                    </mat-hint>
+                </mat-form-field>
+
+                <div class="action-buttons">
+                    <button mat-stroked-button (click)="sortEstudiosByDate()" class="sort-button">
+                        <mat-icon>sort</mat-icon>
+                        Ordenar por fecha
+                    </button>
+
+                    <button
+                        mat-stroked-button
+                        (click)="clearAllFilters()"
+                        class="clear-filters-button"
+                        *ngIf="hasActiveFilters()"
+                        color="warn"
+                    >
+                        <mat-icon>clear_all</mat-icon>
+                        Limpiar filtros
+                    </button>
+                </div>
+            </div>
+
+            <!-- Indicadores de filtros activos -->
+            <div class="active-filters" *ngIf="hasActiveFilters()">
+                <span class="filter-label">Filtros activos:</span>
+
+                <mat-chip-set class="filter-chips">
+                    <mat-chip
+                        *ngIf="searchTerm"
+                        removable
+                        (removed)="searchTerm = ''; onSearchChange()"
+                        class="filter-chip"
+                    >
+                        <mat-icon matChipAvatar>search</mat-icon>
+                        "{{ searchTerm }}"
+                    </mat-chip>
+
+                    <mat-chip
+                        *ngIf="selectedEstado !== 'Todos'"
+                        removable
+                        (removed)="selectedEstado = 'Todos'; onEstadoChange()"
+                        class="filter-chip"
+                    >
+                        <mat-icon matChipAvatar>assignment</mat-icon>
+                        Estado: {{ selectedEstado }}
+                    </mat-chip>
+
+                    <mat-chip
+                        *ngIf="selectedModalidad !== 'Todos'"
+                        removable
+                        (removed)="selectedModalidad = 'Todos'; onModalidadChange()"
+                        class="filter-chip"
+                    >
+                        <mat-icon matChipAvatar>{{ getModalidadIcon(selectedModalidad) }}</mat-icon>
+                        {{ getModalidadName(selectedModalidad) }}
+                    </mat-chip>
+
+                    <mat-chip
+                        *ngIf="selectedUrgencia !== 'Todos'"
+                        removable
+                        (removed)="selectedUrgencia = 'Todos'; onUrgenciaChange()"
+                        class="filter-chip"
+                    >
+                        <mat-icon matChipAvatar
+                            >{{ selectedUrgencia === 'Urgente' ? 'priority_high' : 'low_priority'
+                            }}</mat-icon
+                        >
+                        {{ selectedUrgencia }}
+                    </mat-chip>
+                </mat-chip-set>
+
+                <span class="results-count">
+                    {{ filteredEstudios.length }} de {{ estudios.length }} estudios
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section" *ngIf="!isLoading; else loadingTemplate">
+        <div *ngIf="filteredEstudios.length === 0; else estudiosTemplate" class="empty-state">
+            <div class="empty-state-icon">
+                <mat-icon>{{ hasActiveFilters() ? 'search_off' : 'science' }}</mat-icon>
+            </div>
+            <h3 class="empty-state-title">
+                {{ hasActiveFilters() ? 'No se encontraron estudios' : 'No hay estudios registrados'
+                }}
+            </h3>
+            <p class="empty-state-description">
+                {{ hasActiveFilters() ? 'Intenta ajustar los filtros de búsqueda o crear un nuevo
+                estudio' : 'Comienza creando tu primer estudio médico' }}
+            </p>
+            <div class="empty-state-actions">
+                <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="openAddDialog()"
+                    class="empty-state-action"
+                >
+                    <mat-icon>add</mat-icon>
+                    {{ hasActiveFilters() ? 'Nuevo Estudio' : 'Crear Primer Estudio' }}
+                </button>
+                <button
+                    *ngIf="hasActiveFilters()"
+                    mat-stroked-button
+                    (click)="clearAllFilters()"
+                    class="empty-state-action"
+                >
+                    <mat-icon>clear_all</mat-icon>
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+
+        <ng-template #estudiosTemplate>
+            <div class="cards-container">
+                <mat-card
+                    *ngFor="let estudio of filteredEstudios"
+                    class="estudio-card"
+                    [class.urgent]="estudio.urgente"
+                    [class.today]="isToday(estudio.fecha_realizacion)"
+                    [class.pending]="isPending(estudio.estado)"
+                >
+                    <mat-card-header>
+                        <div mat-card-avatar class="avatar" [class.urgent-avatar]="estudio.urgente">
+                            <mat-icon>{{ estudio.urgente ? 'priority_high' : 'science' }}</mat-icon>
+                        </div>
+                        <mat-card-title>{{ estudio.paciente_nombre }}</mat-card-title>
+                        <mat-card-subtitle>{{ estudio.tipo_estudio }}</mat-card-subtitle>
+                        <div class="card-badges">
+                            <mat-chip [class]="getEstadoClass(estudio.estado)" selected>
+                                {{ estudio.estado }}
+                            </mat-chip>
+                            <mat-chip *ngIf="estudio.urgente" class="urgent-chip" selected>
+                                <mat-icon>priority_high</mat-icon>
+                                Urgente
+                            </mat-chip>
+                        </div>
+                    </mat-card-header>
+
+                    <mat-card-content>
+                        <div class="estudio-details">
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <mat-icon>medical_services</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Modalidad</span>
+                                        <span class="detail-value"
+                                            >{{ getModalidadName(estudio.modalidad) }}</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <mat-icon>accessible</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Parte del Cuerpo</span>
+                                        <span class="detail-value">{{ estudio.parte_cuerpo }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <mat-icon>event</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Fecha</span>
+                                        <span
+                                            class="detail-value"
+                                            [class.today-date]="isToday(estudio.fecha_realizacion)"
+                                        >
+                                            {{ estudio.fecha_realizacion | date:'dd/MM/yyyy' }}
+                                            <span
+                                                *ngIf="isToday(estudio.fecha_realizacion)"
+                                                class="today-badge"
+                                                >HOY</span
+                                            >
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="detail-item" *ngIf="estudio.medico_referente">
+                                    <mat-icon>local_hospital</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Médico</span>
+                                        <span class="detail-value"
+                                            >{{ estudio.medico_referente }}</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="detail-row"
+                                *ngIf="estudio.contraste || estudio.observaciones"
+                            >
+                                <div class="detail-item" *ngIf="estudio.contraste">
+                                    <mat-icon>opacity</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Contraste</span>
+                                        <span class="detail-value contrast-required"
+                                            >Requerido</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="detail-item" *ngIf="estudio.observaciones">
+                                    <mat-icon>notes</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Observaciones</span>
+                                        <span class="detail-value"
+                                            >{{ estudio.observaciones }}</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+
+                    <mat-card-actions align="end">
+                        <button mat-button color="primary" (click)="openEditDialog(estudio)">
+                            <mat-icon>edit</mat-icon>
+                            Editar
+                        </button>
+                        <button mat-button color="warn" (click)="deleteEstudio(estudio)">
+                            <mat-icon>delete</mat-icon>
+                            Eliminar
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </ng-template>
+    </div>
+
+    <ng-template #loadingTemplate>
+        <div class="loading-container">
+            <mat-icon class="loading-spinner">hourglass_empty</mat-icon>
+            <p>Cargando estudios...</p>
+        </div>
+    </ng-template>
 </div>

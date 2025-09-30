@@ -38,7 +38,7 @@ export interface Informe {
   urgente: boolean;
   validado: boolean;
   observaciones_tecnicas: string;
-  imagenes_dicom?: any[];  // Imágenes DICOM convertidas a PNG
+  imagenes_dicom?: any[]; // Imágenes DICOM convertidas a PNG
   created_at?: string;
   updated_at?: string;
 }
@@ -70,11 +70,10 @@ export class Informes implements OnInit {
   filteredInformes: Informe[] = [];
   searchTerm: string = '';
   selectedEstado: string = 'Todos';
-  selectedCalidad: string = 'Todos';
-  selectedUrgencia: string = 'Todos';
+  // Eliminados filtros de calidad y urgencia
   selectedValidacion: string = 'Todos';
   isLoading: boolean = true;
-  environment = environment;  // Para acceder a la URL del API
+  environment = environment; // Para acceder a la URL del API
 
   estadoOptions = [
     'Todos',
@@ -86,9 +85,7 @@ export class Informes implements OnInit {
     'Corregido',
   ];
 
-  calidadOptions = ['Todos', 'Excelente', 'Buena', 'Regular', 'Deficiente'];
-
-  urgenciaOptions = ['Todos', 'Urgente', 'Normal'];
+  // Eliminados: calidadOptions y urgenciaOptions
 
   validacionOptions = ['Todos', 'Validado', 'Pendiente'];
 
@@ -109,18 +106,19 @@ export class Informes implements OnInit {
         console.log('Informes cargados desde el backend:', response);
         // Cargar informes con información completa del paciente y estudio
         this.informes = [];
-        
+
         // Para cada informe, obtener información del estudio asociado
         const informesPromises = response.map(async (i) => {
           try {
             // Obtener datos del estudio
             const estudioResponse = await this.api.get(`api/estudios/${i.estudio_id}`).toPromise();
-            
+
             return {
               id: i.id,
               estudio_id: i.estudio_id,
               paciente_id: estudioResponse?.paciente_id || i.paciente_id || 0,
-              paciente_nombre: estudioResponse?.paciente_nombre || i.paciente_nombre || 'Desconocido',
+              paciente_nombre:
+                estudioResponse?.paciente_nombre || i.paciente_nombre || 'Desconocido',
               paciente_apellidos: estudioResponse?.paciente_apellidos || '',
               paciente_cedula: estudioResponse?.paciente_cedula || '',
               estudio_tipo: estudioResponse?.tipo_estudio || i.estudio_tipo || 'No especificado',
@@ -138,7 +136,7 @@ export class Informes implements OnInit {
               validado: i.validado,
               observaciones_tecnicas: i.observaciones_tecnicas,
               created_at: i.fecha_creacion,
-              updated_at: i.fecha_actualizacion
+              updated_at: i.fecha_actualizacion,
             };
           } catch (error) {
             console.warn(`Error al cargar estudio ${i.estudio_id}:`, error);
@@ -164,12 +162,12 @@ export class Informes implements OnInit {
               validado: i.validado,
               observaciones_tecnicas: i.observaciones_tecnicas,
               created_at: i.fecha_creacion,
-              updated_at: i.fecha_actualizacion
+              updated_at: i.fecha_actualizacion,
             };
           }
         });
-        
-        Promise.all(informesPromises).then(informesCompletos => {
+
+        Promise.all(informesPromises).then((informesCompletos) => {
           this.informes = informesCompletos;
           this.applyFilters();
           this.isLoading = false;
@@ -199,12 +197,12 @@ export class Informes implements OnInit {
             calidad_estudio: 'Buena',
             urgente: false,
             validado: true,
-            observaciones_tecnicas: 'Estudio satisfactorio'
-          }
+            observaciones_tecnicas: 'Estudio satisfactorio',
+          },
         ];
         this.applyFilters();
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -246,8 +244,11 @@ export class Informes implements OnInit {
         },
         error: (error) => {
           console.error('Error al eliminar informe:', error);
-          this.showMessage(`Error al eliminar informe: ${error.error?.detail || error.message}`, 'error');
-        }
+          this.showMessage(
+            `Error al eliminar informe: ${error.error?.detail || error.message}`,
+            'error',
+          );
+        },
       });
     }
   }
@@ -294,16 +295,7 @@ export class Informes implements OnInit {
       filtered = filtered.filter((informe) => informe.estado === this.selectedEstado);
     }
 
-    // Filtro por calidad
-    if (this.selectedCalidad && this.selectedCalidad !== 'Todos') {
-      filtered = filtered.filter((informe) => informe.calidad_estudio === this.selectedCalidad);
-    }
-
-    // Filtro por urgencia
-    if (this.selectedUrgencia && this.selectedUrgencia !== 'Todos') {
-      const isUrgente = this.selectedUrgencia === 'Urgente';
-      filtered = filtered.filter((informe) => informe.urgente === isUrgente);
-    }
+    // Filtros de calidad y urgencia removidos
 
     // Filtro por validación
     if (this.selectedValidacion && this.selectedValidacion !== 'Todos') {
@@ -314,10 +306,25 @@ export class Informes implements OnInit {
     this.filteredInformes = filtered;
   }
 
-  private showMessage(message: string, type: 'success' | 'error'): void {
+  private showMessage(message: string, type: 'success' | 'error' | 'warning'): void {
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
       panelClass: type === 'success' ? 'success-snackbar' : 'error-snackbar',
+    });
+  }
+
+  syncImagenes(informe: Informe): void {
+    if (!informe?.id) return;
+    this.api.post(`api/informes/${informe.id}/sync-imagenes`, {}).subscribe({
+      next: (resp: any) => {
+        const n = resp?.sincronizadas ?? 0;
+        this.showMessage(`Imágenes sincronizadas: ${n}`, n > 0 ? 'success' : 'warning');
+        this.loadInformes();
+      },
+      error: (err) => {
+        console.error('Error sincronizando imágenes:', err);
+        this.showMessage('Error al sincronizar imágenes', 'error');
+      },
     });
   }
 
@@ -360,19 +367,19 @@ export class Informes implements OnInit {
   }
 
   getInformesCountByEstado(estado: string): number {
-    return this.informes.filter(i => i.estado === estado).length;
+    return this.informes.filter((i) => i.estado === estado).length;
   }
 
   getInformesUrgentes(): number {
-    return this.informes.filter(i => i.urgente).length;
+    return this.informes.filter((i) => i.urgente).length;
   }
 
   getInformesValidados(): number {
-    return this.informes.filter(i => i.validado).length;
+    return this.informes.filter((i) => i.validado).length;
   }
 
   getInformesPendientes(): number {
-    return this.informes.filter(i => !i.validado).length;
+    return this.informes.filter((i) => !i.validado).length;
   }
 
   // Métodos faltantes para el template
@@ -382,21 +389,21 @@ export class Informes implements OnInit {
       borradores: this.getInformesCountByEstado('Borrador'),
       enRevision: this.getInformesCountByEstado('En Revisión'),
       validados: this.getInformesValidados(),
-      urgentes: this.getInformesUrgentes()
+      urgentes: this.getInformesUrgentes(),
     };
   }
 
   getPendingReports(): Informe[] {
-    return this.informes.filter(i => !i.validado);
+    return this.informes.filter((i) => !i.validado);
   }
 
   getUrgentReports(): Informe[] {
-    return this.informes.filter(i => i.urgente);
+    return this.informes.filter((i) => i.urgente);
   }
 
   sortInformesByDate(): void {
-    this.filteredInformes.sort((a, b) => 
-      new Date(b.fecha_informe).getTime() - new Date(a.fecha_informe).getTime()
+    this.filteredInformes.sort(
+      (a, b) => new Date(b.fecha_informe).getTime() - new Date(a.fecha_informe).getTime(),
     );
   }
 
@@ -411,34 +418,69 @@ export class Informes implements OnInit {
   }
 
   exportReport(informe: Informe): void {
-    // Simular exportación
-    const content = `
-      INFORME MÉDICO
-      ===============
-      Paciente: ${informe.paciente_nombre}
-      Estudio: ${informe.estudio_tipo}
-      Médico: ${informe.medico_radiologo}
-      Fecha: ${this.formatFecha(informe.fecha_informe)}
-      
-      HALLAZGOS:
-      ${informe.hallazgos}
-      
-      IMPRESIÓN DIAGNÓSTICA:
-      ${informe.impresion_diagnostica}
-      
-      RECOMENDACIONES:
-      ${informe.recomendaciones || 'Ninguna'}
-    `;
-    
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `informe_${informe.paciente_nombre}_${this.formatFecha(informe.fecha_informe)}.txt`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-    
-    this.showMessage('Informe exportado exitosamente', 'success');
+    const win = window.open('', '_blank');
+    if (!win) {
+      this.showMessage('No se pudo abrir la ventana de exportación', 'error');
+      return;
+    }
+
+    const html = `
+      <html>
+        <head>
+          <title>Informe - ${informe.paciente_nombre}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 24px; color: #333; }
+            h1 { margin: 0 0 8px 0; }
+            h2 { margin: 0 0 16px 0; font-size: 16px; color: #555; }
+            .section { margin: 16px 0; page-break-inside: avoid; }
+            .title { font-weight: bold; text-transform: uppercase; font-size: 13px; margin-bottom: 8px; }
+            .box { background: #f7f7f7; padding: 12px; border-radius: 6px; }
+            .meta { font-size: 12px; color: #666; }
+            .logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+            @media print { body { margin: 16mm; } }
+          </style>
+        </head>
+        <body>
+          <div class="logos">
+            <div>
+              <h1>INFORME MÉDICO</h1>
+              <h2>${informe.estudio_tipo}</h2>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="title">Información del paciente</div>
+            <div class="box">
+              <div><strong>Nombre:</strong> ${informe.paciente_nombre} ${informe.paciente_apellidos || ''}</div>
+              <div><strong>Cédula:</strong> ${informe.paciente_cedula || 'N/A'}</div>
+              <div class="meta"><strong>Fecha del informe:</strong> ${this.formatFecha(informe.fecha_informe)}</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="title">Hallazgos</div>
+            <div class="box">${(informe.hallazgos || '').replace(/\n/g, '<br>')}</div>
+          </div>
+
+          <div class="section">
+            <div class="title">Impresión diagnóstica</div>
+            <div class="box">${(informe.impresion_diagnostica || '').replace(/\n/g, '<br>')}</div>
+          </div>
+
+          <div class="section">
+            <div class="title">Recomendaciones</div>
+            <div class="box">${(informe.recomendaciones || 'Ninguna').replace(/\n/g, '<br>')}</div>
+          </div>
+        </body>
+      </html>`;
+
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => {
+      win.print();
+      win.close();
+      this.showMessage('Exportación a PDF iniciada', 'success');
+    }, 300);
   }
 
   private blobToBase64(blob: Blob): Promise<string> {
@@ -453,25 +495,94 @@ export class Informes implements OnInit {
   async printReport(informe: Informe): Promise<void> {
     // Cargar imágenes como base64 primero
     const imagenesBase64: string[] = [];
-    
+
     if (informe.imagenes_dicom && informe.imagenes_dicom.length > 0) {
       this.showMessage('Cargando imágenes...', 'success');
-      
+
       for (const imagen of informe.imagenes_dicom) {
         try {
-          const imageUrl = `${this.environment.apiUrl}/api/dicom/preview/${informe.estudio_id}/${imagen.archivo_png || imagen.preview_name}`;
-          const response = await fetch(imageUrl, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          });
-          
+          // Determinar nombre de archivo PNG con fallbacks
+          const pngFilename = imagen.archivo_png || imagen.preview_name || (imagen.archivo_dicom ? imagen.archivo_dicom.replace(/\.dcm$/i, '.png') : undefined);
+          if (!pngFilename) {
+            console.warn('No se encontró archivo PNG para la imagen:', imagen);
+            imagenesBase64.push('');
+            continue;
+          }
+
+          // Usar endpoint público sin auth
+          const imageUrl = `${this.environment.apiUrl}/api/dicom/public/preview/${informe.estudio_id}/${encodeURIComponent(pngFilename)}`;
+          console.log('Cargando imagen desde URL:', imageUrl);
+
+          const response = await fetch(imageUrl);
+
           if (response.ok) {
             const blob = await response.blob();
             const base64 = await this.blobToBase64(blob);
             imagenesBase64.push(base64);
+            console.log(`Imagen cargada exitosamente: ${pngFilename}`);
           } else {
-            console.error(`Error cargando imagen: ${response.status}`);
+            // Intentar directamente endpoint base64
+            try {
+              const b64Url = `${this.environment.apiUrl}/api/dicom/public/base64/${informe.estudio_id}/${encodeURIComponent(pngFilename)}`;
+              const b64Resp = await fetch(b64Url);
+              if (b64Resp.ok) {
+                const data = await b64Resp.json();
+                if (data?.data) {
+                  imagenesBase64.push(data.data);
+                  continue;
+                }
+              }
+            } catch (e) {
+              console.warn('Fallo en endpoint base64 directo:', e);
+            }
+            // Reintentar si existe preview_name distinto
+            if (imagen.preview_name && imagen.preview_name !== pngFilename) {
+              try {
+                const altUrl = `${this.environment.apiUrl}/api/dicom/public/preview/${informe.estudio_id}/${encodeURIComponent(imagen.preview_name)}`;
+                console.log('Reintentando con preview_name:', altUrl);
+                const altResp = await fetch(altUrl);
+                if (altResp.ok) {
+                  const blob = await altResp.blob();
+                  const base64 = await this.blobToBase64(blob);
+                  imagenesBase64.push(base64);
+                  continue;
+                }
+              } catch (e) {
+                console.error('Fallo en reintento con preview_name:', e);
+              }
+            }
+
+            // Fallback final: consultar lista pública y usar el primer PNG disponible
+            try {
+              const listUrl = `${this.environment.apiUrl}/api/dicom/public/list/${informe.estudio_id}`;
+              const listResp = await fetch(listUrl);
+              if (listResp.ok) {
+                const listData = await listResp.json();
+                const firstPng: string | undefined = listData?.png_files?.[0];
+                if (firstPng) {
+                  const firstUrl = `${this.environment.apiUrl}/api/dicom/public/preview/${informe.estudio_id}/${encodeURIComponent(firstPng)}`;
+                  const firstResp = await fetch(firstUrl);
+                  if (firstResp.ok) {
+                    const blob = await firstResp.blob();
+                    const base64 = await this.blobToBase64(blob);
+                    imagenesBase64.push(base64);
+                    continue;
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Fallo en fallback de lista pública:', e);
+            }
+            console.error(
+              `Error cargando imagen ${pngFilename}: ${response.status} - ${response.statusText}`,
+            );
+            // Intentar obtener más detalles del error
+            try {
+              const errorText = await response.text();
+              console.error('Detalles del error:', errorText);
+            } catch (e) {
+              console.error('No se pudo obtener detalles del error');
+            }
             imagenesBase64.push(''); // Imagen vacía si falla
           }
         } catch (error) {
@@ -480,66 +591,88 @@ export class Informes implements OnInit {
         }
       }
     }
-    
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       // Generar HTML de imágenes DICOM
       let imagenesHTML = '';
-      if (informe.imagenes_dicom && informe.imagenes_dicom.length > 0 && imagenesBase64.length > 0) {
+      const imagenesValidas = imagenesBase64.filter((img) => img && img.length > 0);
+
+      if (
+        informe.imagenes_dicom &&
+        informe.imagenes_dicom.length > 0 &&
+        imagenesValidas.length > 0
+      ) {
         imagenesHTML = `
           <div class="section page-break">
             <div class="section-title">IMÁGENES DEL ESTUDIO</div>
             <div class="images-grid">
         `;
-        
+
         informe.imagenes_dicom.forEach((imagen: any, index: number) => {
-          if (imagenesBase64[index]) {
+          // Solo incluir imágenes que se cargaron exitosamente
+          if (imagenesBase64[index] && imagenesBase64[index].length > 0) {
             imagenesHTML += `
               <div class="image-container">
                 <img src="${imagenesBase64[index]}" alt="Imagen ${index + 1}" class="dicom-image" />
-                <p class="image-caption">Imagen ${index + 1}: ${imagen.descripcion || 'Sin descripción'}</p>
+                <p class="image-caption">Imagen ${index + 1}: ${imagen.descripcion || `Imagen DICOM - ${imagen.archivo_png || 'Sin nombre'}`}</p>
               </div>
             `;
           }
         });
-        
+
         imagenesHTML += `
             </div>
           </div>
         `;
+      } else if (
+        informe.imagenes_dicom &&
+        informe.imagenes_dicom.length > 0 &&
+        imagenesValidas.length === 0
+      ) {
+        // Si hay imágenes configuradas pero ninguna se pudo cargar
+        imagenesHTML = `
+          <div class="section">
+            <div class="section-title">IMÁGENES DEL ESTUDIO</div>
+            <p style="color: #666; font-style: italic;">
+              Se detectaron ${informe.imagenes_dicom.length} imagen(es) asociada(s) al estudio,
+              pero no se pudieron cargar para la impresión. Verifique la configuración del sistema.
+            </p>
+          </div>
+        `;
       }
-      
+
       printWindow.document.write(`
         <html>
           <head>
             <title>Informe - ${informe.paciente_nombre}</title>
             <style>
-              body { 
-                font-family: Arial, sans-serif; 
+              body {
+                font-family: Arial, sans-serif;
                 margin: 20px;
                 color: #333;
               }
-              .header { 
-                text-align: center; 
-                border-bottom: 2px solid #333; 
-                padding-bottom: 10px; 
-                margin-bottom: 20px; 
+              .header {
+                text-align: center;
+                border-bottom: 2px solid #333;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
               }
-              .section { 
+              .section {
                 margin: 20px 0;
                 page-break-inside: avoid;
               }
-              .section-title { 
-                font-weight: bold; 
-                color: #333; 
+              .section-title {
+                font-weight: bold;
+                color: #333;
                 margin-bottom: 10px;
                 font-size: 16px;
                 text-transform: uppercase;
               }
-              .patient-info { 
-                background: #f5f5f5; 
-                padding: 15px; 
-                border-radius: 5px; 
+              .patient-info {
+                background: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
               }
               .images-grid {
                 display: grid;
@@ -550,13 +683,16 @@ export class Informes implements OnInit {
               .image-container {
                 text-align: center;
                 page-break-inside: avoid;
+                margin-bottom: 20px;
               }
               .dicom-image {
                 max-width: 100%;
+                max-height: 400px;
                 height: auto;
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                object-fit: contain;
               }
               .image-caption {
                 margin-top: 8px;
@@ -579,7 +715,7 @@ export class Informes implements OnInit {
               <h1>INFORME MÉDICO</h1>
               <h2>${informe.estudio_tipo}</h2>
             </div>
-            
+
             <div class="section">
               <div class="section-title">INFORMACIÓN DEL PACIENTE</div>
               <div class="patient-info">
@@ -589,32 +725,32 @@ export class Informes implements OnInit {
                 <strong>Fecha del Informe:</strong> ${this.formatFecha(informe.fecha_informe)}
               </div>
             </div>
-            
+
             <div class="section">
               <div class="section-title">HALLAZGOS</div>
               <p>${informe.hallazgos}</p>
             </div>
-            
+
             <div class="section">
               <div class="section-title">IMPRESIÓN DIAGNÓSTICA</div>
               <p>${informe.impresion_diagnostica}</p>
             </div>
-            
+
             <div class="section">
               <div class="section-title">RECOMENDACIONES</div>
               <p>${informe.recomendaciones || 'Ninguna recomendación específica.'}</p>
             </div>
-            
+
             <div class="section">
               <div class="section-title">TÉCNICA UTILIZADA</div>
               <p>${informe.tecnica_utilizada || 'No especificada'}</p>
             </div>
-            
+
             <div class="section">
               <div class="section-title">CALIDAD DEL ESTUDIO</div>
               <p>${informe.calidad_estudio}</p>
             </div>
-            
+
             ${imagenesHTML}
           </body>
         </html>
@@ -622,7 +758,24 @@ export class Informes implements OnInit {
       printWindow.document.close();
       printWindow.print();
     }
-    
-    this.showMessage('Informe enviado a impresión', 'success');
+
+    const totalImagenes = informe.imagenes_dicom ? informe.imagenes_dicom.length : 0;
+    const imagenesCargadas = imagenesBase64.filter((img) => img && img.length > 0).length;
+
+    if (totalImagenes > 0) {
+      if (imagenesCargadas === totalImagenes) {
+        this.showMessage(
+          `Informe enviado a impresión con ${imagenesCargadas} imagen(es)`,
+          'success',
+        );
+      } else {
+        this.showMessage(
+          `Informe enviado a impresión. ${imagenesCargadas} de ${totalImagenes} imágenes cargadas`,
+          'warning',
+        );
+      }
+    } else {
+      this.showMessage('Informe enviado a impresión', 'success');
+    }
   }
 }

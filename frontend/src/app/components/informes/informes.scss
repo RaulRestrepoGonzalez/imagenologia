@@ -258,6 +258,9 @@
 .informe-card mat-card-header {
   padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
 }
 
 .informe-card mat-card-title {
@@ -265,11 +268,53 @@
   font-weight: 600;
   color: var(--gray-900);
   margin-bottom: var(--spacing-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .informe-card mat-card-subtitle {
   color: var(--gray-600);
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Asegurar que el bloque de texto del header pueda encoger sin empujar los chips */
+.informe-card .mat-card-header-text {
+  flex: 1 1 auto;
+  min-width: 0; /* permite ellipsis */
+}
+
+/* Evitar que el avatar/ícono se superponga */
+.informe-card .mat-card-avatar,
+.informe-card .avatar {
+  flex: 0 0 auto;
+}
+
+/* Contenedor de chips: siempre debajo, ocupa todo el ancho y puede envolver */
+.informe-card .card-badges {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.informe-card .card-badges .mat-chip {
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* Evitar que chips de estado/validado se vayan a esquinas: ocupar línea completa si es necesario */
+.informe-card .card-badges .mat-chip:first-child {
+  flex: 0 0 auto;
+}
+
+.informe-card .card-badges .validated-chip,
+.informe-card .card-badges .urgent-chip {
+  flex: 0 0 auto;
 }
 
 .informe-card mat-card-content {
@@ -307,9 +352,31 @@
 }
 
 .detail-value {
-  display: block;
-  color: var(--gray-900);
-  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.medical-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.medical-text.diagnostic {
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
+.image-caption {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .informe-card mat-card-actions {

@@ -1,113 +1,118 @@
-<nav class="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <img src="assets/logo/logo.png" alt="Logo" class="logo-image">
-      <mat-icon style="display: none;">medical_services</mat-icon>
+<nav class="sidebar" [class.collapsed]="isCollapsed()">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img
+                src="assets/logo/logo.png"
+                alt="Logo"
+                class="logo-image"
+                [class.hidden]="isCollapsed()"
+            />
+            <mat-icon [class.hidden]="!isCollapsed()">medical_services</mat-icon>
+        </div>
+        <div class="sidebar-subtitle" [class.hidden]="isCollapsed()">Centro de imagenología</div>
+        <div class="sidebar-title" [class.hidden]="isCollapsed()">CASTULO ROPAIN LOBO. SAS</div>
     </div>
-    <div class="sidebar-subtitle">Centro de imagenología</div>
-    <div class="sidebar-title">CASTULO ROPAIN LOBO. SAS</div>
-  </div>
-  
-  <div class="sidebar-nav">
-    <div class="nav-section">
-      <h3 class="section-title">
-        <mat-icon>dashboard</mat-icon>
-        <span>Gestión Principal</span>
-      </h3>
-      
-      <ul class="nav-list">
-        <li class="nav-item">
-          <a routerLink="/estudios" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>science</mat-icon>
-            </div>
-            <span class="nav-label">Estudios</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a routerLink="/citas" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>event</mat-icon>
-            </div>
-            <span class="nav-label">Citas</span>
-            <div class="nav-indicator"></div>
-            <span class="notification-badge" *ngIf="getNotificacionesNoLeidas() > 0">
-              {{ getNotificacionesNoLeidas() }}
-            </span>
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a routerLink="/pacientes" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>group</mat-icon>
-            </div>
-            <span class="nav-label">Pacientes</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a routerLink="/informes" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>description</mat-icon>
-            </div>
-            <span class="nav-label">Informes</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-        
-        <li class="nav-item" *ngIf="isAdmin() || isTechnician()">
-          <a routerLink="/dicom-upload" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>cloud_upload</mat-icon>
-            </div>
-            <span class="nav-label">Cargar DICOM</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a routerLink="/notificaciones" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>notifications</mat-icon>
-            </div>
-            <span class="nav-label">Notificaciones</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-      </ul>
+
+    <div class="sidebar-nav">
+        <div class="nav-section">
+            <h3 class="section-title" [class.hidden]="isCollapsed()">
+                <mat-icon>dashboard</mat-icon>
+                <span>Gestión Principal</span>
+            </h3>
+
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a routerLink="/estudios" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>science</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Estudios</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a routerLink="/citas" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>event</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Citas</span>
+                        <div class="nav-indicator"></div>
+                        <span class="notification-badge" *ngIf="getNotificacionesNoLeidas() > 0">
+                            {{ getNotificacionesNoLeidas() }}
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a routerLink="/pacientes" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>group</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Pacientes</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a routerLink="/informes" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>description</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Informes</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+
+                <li class="nav-item" *ngIf="isAdmin() || isTechnician()">
+                    <a routerLink="/dicom-upload" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>cloud_upload</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Cargar DICOM</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a routerLink="/notificaciones" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>notifications</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Notificaciones</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3 class="section-title" [class.hidden]="isCollapsed()">
+                <mat-icon>settings</mat-icon>
+                <span>Sistema</span>
+            </h3>
+
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a routerLink="/configuracion" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>tune</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Configuración</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a routerLink="/ayuda" routerLinkActive="active" class="nav-link">
+                        <div class="nav-icon">
+                            <mat-icon>help</mat-icon>
+                        </div>
+                        <span class="nav-label" [class.hidden]="isCollapsed()">Ayuda</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
-    
-    <div class="nav-section">
-      <h3 class="section-title">
-        <mat-icon>settings</mat-icon>
-        <span>Sistema</span>
-      </h3>
-      
-      <ul class="nav-list">
-        <li class="nav-item">
-          <a routerLink="/configuracion" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>tune</mat-icon>
-            </div>
-            <span class="nav-label">Configuración</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a routerLink="/ayuda" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <mat-icon>help</mat-icon>
-            </div>
-            <span class="nav-label">Ayuda</span>
-            <div class="nav-indicator"></div>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
 </nav>
