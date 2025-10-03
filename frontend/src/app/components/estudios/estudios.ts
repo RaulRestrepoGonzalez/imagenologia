@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { FormsModule } from '@angular/forms';
 import { EstudioFormComponent } from './forms/estudio-form';
 
@@ -32,7 +34,6 @@ export interface Estudio {
   resultados?: string;
   created_at?: string;
   updated_at?: string;
-  // Legacy fields for template compatibility
   urgente?: boolean;
   modalidad?: string;
   parte_cuerpo?: string;
@@ -57,6 +58,8 @@ export interface Estudio {
     MatSelectModule,
     MatChipsModule,
     MatBadgeModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     FormsModule,
   ],
   templateUrl: './estudios.html',
@@ -70,9 +73,10 @@ export class Estudios implements OnInit {
   selectedTipoEstudio: string = 'Todos';
   selectedModalidad: string = 'Todos';
   selectedUrgencia: string = 'Todos';
+  selectedDate: Date | null = null;
   isLoading: boolean = true;
+  expandedEstudioId: string | null = null;
 
-  // CORREGIDO: Solo Pendiente y Completado
   estadoOptions = [
     'Todos',
     'Pendiente',
@@ -160,7 +164,6 @@ export class Estudios implements OnInit {
   private buildServerParams(): any {
     const params: any = {};
     if (this.selectedEstado && this.selectedEstado !== 'Todos') {
-      // Mapear al formato esperado por el backend
       const estadoMap: Record<string, string> = {
         'Pendiente': 'pendiente',
         'Completado': 'completado',
@@ -223,8 +226,16 @@ export class Estudios implements OnInit {
     }
   }
 
+  toggleExpand(estudioId: string): void {
+    if (this.expandedEstudioId === estudioId) {
+      this.expandedEstudioId = null;
+    } else {
+      this.expandedEstudioId = estudioId;
+    }
+  }
+
   onSearchChange(): void {
-    this.loadEstudios();
+    this.applyFilters();
   }
 
   onEstadoChange(): void {
@@ -243,53 +254,100 @@ export class Estudios implements OnInit {
     this.loadEstudios();
   }
 
-  private applyFilters(): void {
-    console.log('Aplicando filtros estudios - Datos originales:', this.estudios.length);
-    console.log('Filtros activos:', {
-      searchTerm: this.searchTerm,
-      selectedEstado: this.selectedEstado,
-      selectedTipoEstudio: this.selectedTipoEstudio,
-    });
+  onDateChange(): void {
+    this.applyFilters();
+  }
 
+  private applyFilters(): void {
     let filtered = [...this.estudios];
 
+    // Filtro de búsqueda
     if (this.searchTerm && this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
         (estudio) =>
           (estudio.paciente_nombre && estudio.paciente_nombre.toLowerCase().includes(term)) ||
           (estudio.tipo_estudio && estudio.tipo_estudio.toLowerCase().includes(term)) ||
-          (estudio.medico_solicitante && estudio.medico_solicitante.toLowerCase().includes(term)),
+          (estudio.medico_solicitante && estudio.medico_solicitante.toLowerCase().includes(term)) ||
+          (estudio.parte_cuerpo && estudio.parte_cuerpo.toLowerCase().includes(term)) ||
+          (estudio.observaciones && estudio.observaciones.toLowerCase().includes(term)),
       );
-      console.log('Después de filtro de búsqueda estudios:', filtered.length);
     }
 
-    if (this.selectedEstado && this.selectedEstado !== 'Todos') {
-      filtered = filtered.filter((estudio) => estudio.estado === this.selectedEstado);
-      console.log('Después de filtro de estado estudios:', filtered.length);
-    }
-
-    if (this.selectedTipoEstudio && this.selectedTipoEstudio !== 'Todos') {
-      filtered = filtered.filter((estudio) => estudio.tipo_estudio === this.selectedTipoEstudio);
-      console.log('Después de filtro de tipo estudio estudios:', filtered.length);
-    }
-
+    // Filtro de modalidad
     if (this.selectedModalidad && this.selectedModalidad !== 'Todos') {
       filtered = filtered.filter((estudio) => (estudio.modalidad || '') === this.selectedModalidad);
-      console.log('Después de filtro de modalidad estudios:', filtered.length);
     }
 
-    if (this.selectedUrgencia && this.selectedUrgencia !== 'Todos') {
-      if (this.selectedUrgencia === 'Urgente') {
-        filtered = filtered.filter((estudio) => !!estudio.urgente || (estudio.prioridad || '').toLowerCase() === 'urgente' || (estudio.prioridad || '').toLowerCase() === 'alta');
-      } else if (this.selectedUrgencia === 'Normal') {
-        filtered = filtered.filter((estudio) => !estudio.urgente && (estudio.prioridad || '').toLowerCase() === 'normal');
-      }
-      console.log('Después de filtro de urgencia estudios:', filtered.length);
+    // Filtro de fecha
+    if (this.selectedDate) {
+      const selectedDateString = this.selectedDate.toISOString().split('T')[0];
+      filtered = filtered.filter((estudio) => {
+        if (!estudio.fecha_realizacion) return false;
+        const estudioDate = new Date(estudio.fecha_realizacion).toISOString().split('T')[0];
+        return estudioDate === selectedDateString;
+      });
     }
 
     this.filteredEstudios = filtered;
-    console.log('Resultado final filtrado estudios:', this.filteredEstudios.length);
+  }
+
+  exportToCSV(): void {
+    if (this.filteredEstudios.length === 0) {
+      this.showMessage('No hay estudios para exportar', 'error');
+      return;
+    }
+
+    // Definir las columnas del CSV
+    const headers = [
+      'ID',
+      'Paciente',
+      'Tipo de Estudio',
+      'Estado',
+      'Modalidad',
+      'Parte del Cuerpo',
+      'Fecha de Realización',
+      'Médico Referente',
+      'Urgente',
+      'Contraste',
+      'Observaciones'
+    ];
+
+    // Convertir datos a formato CSV
+    const csvData = this.filteredEstudios.map(estudio => [
+      estudio.id,
+      estudio.paciente_nombre || '',
+      estudio.tipo_estudio,
+      estudio.estado,
+      this.getModalidadName(estudio.modalidad),
+      estudio.parte_cuerpo || '',
+      estudio.fecha_realizacion ? new Date(estudio.fecha_realizacion).toLocaleDateString('es-ES') : '',
+      estudio.medico_referente || '',
+      estudio.urgente ? 'Sí' : 'No',
+      estudio.contraste ? 'Sí' : 'No',
+      estudio.observaciones || ''
+    ]);
+
+    // Crear el contenido del CSV
+    let csvContent = headers.join(',') + '\n';
+    csvData.forEach(row => {
+      csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+    });
+
+    // Crear y descargar el archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `estudios_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.showMessage(`${this.filteredEstudios.length} estudios exportados exitosamente`, 'success');
   }
 
   private showMessage(message: string, type: 'success' | 'error'): void {
@@ -322,7 +380,8 @@ export class Estudios implements OnInit {
     return map[estadoRaw] || estadoRaw;
   }
 
-  getModalidadIcon(modalidad: string): string {
+  getModalidadIcon(modalidad: string | undefined): string {
+    if (!modalidad) return 'medical_services';
     switch (modalidad) {
       case 'RX':
         return 'photo_camera';
@@ -349,62 +408,6 @@ export class Estudios implements OnInit {
     }
   }
 
-  formatFecha(fecha: string): string {
-    return new Date(fecha).toLocaleDateString('es-ES');
-  }
-
-  getEstudiosCountByEstado(estado: string): number {
-    return this.estudios.filter((e) => e.estado === estado).length;
-  }
-
-  getEstudiosUrgentes(): number {
-    return this.estudios.filter((e) => e.urgente).length;
-  }
-
-  getEstudiosConContraste(): number {
-    return this.estudios.filter((e) => e.contraste).length;
-  }
-
-  getEstudiosStats(): any {
-    return {
-      total: this.estudios.length,
-      programados: this.getEstudiosCountByEstado('Pendiente'),
-      enProceso: 0,
-      completados: this.getEstudiosCountByEstado('Completado'),
-      urgentes: this.getEstudiosUrgentes(),
-    };
-  }
-
-  getTodaysEstudios(): Estudio[] {
-    const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
-    return this.estudios.filter(
-      (estudio) => estudio.fecha_realizacion?.startsWith(todayString) || false,
-    );
-  }
-
-  loadingTemplate: any = null;
-  estudiosTemplate: any = null;
-
-  hasActiveFilters(): boolean {
-    return (
-      (this.searchTerm && this.searchTerm.trim() !== '') ||
-      this.selectedEstado !== 'Todos' ||
-      this.selectedTipoEstudio !== 'Todos' ||
-      this.selectedModalidad !== 'Todos' ||
-      this.selectedUrgencia !== 'Todos'
-    );
-  }
-
-  clearAllFilters(): void {
-    this.searchTerm = '';
-    this.selectedEstado = 'Todos';
-    this.selectedTipoEstudio = 'Todos';
-    this.selectedModalidad = 'Todos';
-    this.selectedUrgencia = 'Todos';
-    this.applyFilters();
-  }
-
   getModalidadName(modalidad: string | undefined): string {
     if (!modalidad) return 'No especificada';
     const modalidadNames: { [key: string]: string } = {
@@ -422,12 +425,22 @@ export class Estudios implements OnInit {
     return modalidadNames[modalidad] || modalidad;
   }
 
-  sortEstudiosByDate(): void {
-    this.filteredEstudios.sort((a, b) => {
-      const fechaA = a.fecha_realizacion ? new Date(a.fecha_realizacion).getTime() : 0;
-      const fechaB = b.fecha_realizacion ? new Date(b.fecha_realizacion).getTime() : 0;
-      return fechaB - fechaA;
-    });
+  getEstudiosStats(): any {
+    return {
+      total: this.estudios.length,
+      programados: this.estudios.filter((e) => e.estado === 'Pendiente').length,
+      enProceso: 0,
+      completados: this.estudios.filter((e) => e.estado === 'Completado').length,
+      urgentes: this.estudios.filter((e) => e.urgente).length,
+    };
+  }
+
+  getTodaysEstudios(): Estudio[] {
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    return this.estudios.filter(
+      (estudio) => estudio.fecha_realizacion?.startsWith(todayString) || false,
+    );
   }
 
   isToday(fecha: string | undefined): boolean {

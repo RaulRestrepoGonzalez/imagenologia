@@ -56,52 +56,111 @@
    ===================================== */
 .stats-section {
     margin-bottom: var(--spacing-xl);
+}
+
+.stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--spacing-lg);
 }
 
 .stat-card {
-    background: #ffffff !important;
     border-radius: var(--radius-xl);
-    padding: var(--spacing-lg);
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-light);
     transition: all var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    pointer-events: none;
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.stat-icon {
+/* Colores específicos para cada tarjeta */
+.stat-card.total {
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%) !important;
+}
+
+.stat-card.programados {
+    background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%) !important;
+}
+
+.stat-card.en-proceso {
+    background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%) !important;
+}
+
+.stat-card.completados {
+    background: linear-gradient(135deg, #26C6DA 0%, #00ACC1 100%) !important;
+}
+
+.stat-card.urgentes {
+    background: linear-gradient(135deg, #EF5350 0%, #E53935 100%) !important;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md);
+    text-align: center;
+    min-height: 160px;
+}
+
+.stat-content mat-icon {
     font-size: 2.5rem;
     width: 2.5rem;
     height: 2.5rem;
-    margin-bottom: var(--spacing-md);
-    color: var(--primary-600);
+    color: rgba(0, 0, 0, 0.7);
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #ffffff !important;
-    margin-bottom: var(--spacing-xs);
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-info .number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: rgba(0, 0, 0, 0.85);
     line-height: 1;
+    margin: 0;
 }
 
-.stat-label {
-    font-size: 0.875rem;
-    color: #000000 !important;
-    font-weight: 500;
+.stat-info .label {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.75);
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin: 0;
 }
 
 /* =====================================
-   FILTERS SECTION
+   FILTERS SECTION (BARRA VERDE ÚNICA)
    ===================================== */
 .filters-section {
     margin-bottom: var(--spacing-xl);
@@ -109,7 +168,7 @@
 
 .search-filters {
     display: grid;
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
     gap: var(--spacing-md);
     align-items: end;
     padding: var(--spacing-lg);
@@ -127,25 +186,342 @@
     min-width: 150px;
 }
 
-.sort-button {
+.date-picker {
+    min-width: 200px;
+}
+
+/* Estilos específicos para Angular Material Datepicker */
+.date-picker .mat-mdc-form-field-icon-suffix {
+    padding-left: 12px;
+}
+
+.date-picker .mat-mdc-text-field-wrapper {
+    padding-right: 8px !important;
+}
+
+.date-picker .mat-mdc-form-field-infix {
+    padding-right: 0 !important;
+}
+
+/* Asegurar que el input tenga espacio para el icono */
+.date-picker input.mat-mdc-input-element {
+    padding-right: 8px !important;
+}
+
+/* Posicionamiento del toggle del datepicker */
+.date-picker .mat-datepicker-toggle {
+    position: relative;
+    right: 0;
+}
+
+.date-picker .mat-datepicker-toggle button {
+    margin: 0 !important;
+}
+
+.export-button {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--radius-lg);
     font-weight: 500;
+    background: white;
+    color: #87c15c;
+    border: 2px solid white;
     transition: all var(--transition-fast);
+    white-space: nowrap;
 }
 
-.sort-button:hover {
-    background-color: var(--primary-50);
-    color: var(--primary-700);
+.export-button:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
 }
 
-.sort-button mat-icon {
+.export-button mat-icon {
     font-size: 1.25rem;
     width: 1.25rem;
     height: 1.25rem;
+}
+
+/* =====================================
+   LISTA DE ESTUDIOS
+   ===================================== */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.estudio-list-item {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: none;
+    transition: all var(--transition-fast);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--spacing-md);
+}
+
+.estudio-list-item:hover {
+    box-shadow: 0 4px 16px rgba(135, 193, 92, 0.3);
+    transform: translateY(-2px);
+}
+
+.estudio-list-item.urgent {
+    border: 2px solid #f44336;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+}
+
+.estudio-list-item.urgent .list-item-row {
+    background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+}
+
+.estudio-list-item.expanded {
+    box-shadow: var(--shadow-lg);
+}
+
+.list-item-row {
+    display: grid;
+    grid-template-columns: 70px 2fr 2fr 180px 200px 60px;
+    align-items: center;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    cursor: pointer;
+    gap: var(--spacing-lg);
+    min-height: 80px;
+    background: linear-gradient(135deg, #87c15c 0%, #9cd171 100%);
+    color: white;
+    margin-bottom: 2px;
+}
+
+.item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-icon mat-icon {
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+    color: white;
+}
+
+.item-icon mat-icon.urgent-icon {
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.item-patient {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.patient-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.status-chip {
+    width: fit-content;
+    height: 28px;
+    font-size: 0.8rem;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item-study {
+    display: flex;
+    align-items: center;
+}
+
+.study-type {
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.item-date,
+.item-modality {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.item-date mat-icon,
+.item-modality mat-icon {
+    font-size: 1.4rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    color: white;
+}
+
+.item-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.expand-button {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.expand-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* =====================================
+   TARJETA EXPANDIBLE
+   ===================================== */
+.expanded-details {
+    padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-xl);
+    animation: expandAnimation 0.3s ease-out;
+    background: #f9f9f9;
+}
+
+@keyframes expandAnimation {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 1000px;
+    }
+}
+
+.detail-card {
+    border: 2px solid #87c15c;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+.detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.detail-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-section h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0 0 var(--spacing-md) 0;
+    color: #87c15c;
+    font-size: 1rem;
+    font-weight: 600;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid #87c15c;
+}
+
+.detail-section h4 mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+}
+
+.detail-row .label {
+    font-weight: 500;
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.detail-row .value {
+    font-weight: 600;
+    color: #000000;
+    text-align: right;
+}
+
+.observations {
+    margin: 0;
+    padding: var(--spacing-md);
+    background: #f5f5f5;
+    border-radius: var(--radius-md);
+    color: #333333;
+    line-height: 1.6;
+}
+
+.contrast-badge,
+.urgent-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.contrast-badge {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.urgent-badge {
+    background: #ffebee;
+    color: #f44336;
+}
+
+.contrast-badge mat-icon,
+.urgent-badge mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-light);
+}
+
+.card-actions button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* =====================================
+   ESTADOS
+   ===================================== */
+.estado-pendiente {
+    background-color: #fff3e0 !important;
+    color: #f57c00 !important;
+}
+
+.estado-completado {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
 }
 
 /* =====================================
@@ -182,172 +558,6 @@
 }
 
 /* =====================================
-   CARDS CONTAINER
-   ===================================== */
-.cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: var(--spacing-lg);
-}
-
-.estudio-card {
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    transition: all var(--transition-normal);
-    border: 1px solid var(--border-light);
-    position: relative;
-}
-
-.estudio-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-}
-
-.estudio-card.urgente {
-    border-color: var(--error-300);
-    background: linear-gradient(135deg, var(--error-50) 0%, white 100%);
-}
-
-.estudio-card.urgente::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--error-500), var(--error-600));
-}
-
-.estudio-card.con-contraste {
-    border-color: var(--warning-300);
-    background: linear-gradient(135deg, var(--warning-50) 0%, white 100%);
-}
-
-.estudio-card.con-contraste::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--warning-500), var(--warning-600));
-}
-
-.card-actions-header {
-    margin-left: auto;
-}
-
-.estudio-card mat-card-header {
-    padding-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--border-light);
-}
-
-.estudio-card mat-card-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--gray-900);
-    margin-bottom: var(--spacing-xs);
-}
-
-.estudio-card mat-card-subtitle {
-    color: var(--gray-600);
-    font-weight: 500;
-}
-
-.estudio-card mat-card-content {
-    padding: var(--spacing-lg) 0;
-}
-
-.estudio-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.detail-item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-md);
-}
-
-.detail-item mat-icon {
-    color: var(--primary-600);
-    margin-top: 2px;
-    flex-shrink: 0;
-}
-
-.detail-content {
-    flex: 1;
-}
-
-.detail-label {
-    display: block;
-    font-size: 0.875rem;
-    color: var(--gray-500);
-    font-weight: 500;
-    margin-bottom: var(--spacing-xs);
-}
-
-.detail-value {
-    display: block;
-    color: var(--gray-900);
-    font-weight: 500;
-}
-
-/* Selector más específico para sobrescribir otros estilos */
-.estudio-card mat-card-actions,
-mat-card mat-card-actions,
-.mat-card .mat-card-actions,
-.estudio-card .mat-card-actions {
-    padding: var(--spacing-lg) !important;
-    border-top: 1px solid var(--border-light) !important;
-    display: flex !important;
-    gap: var(--spacing-sm) !important;
-    background-color: #87c15c !important;
-    background: #87c15c !important;
-    margin: 0 !important;
-    border-radius: 0 0 var(--radius-xl) var(--radius-xl) !important;
-}
-
-/* Botones dentro del footer */
-.estudio-card mat-card-actions button,
-mat-card mat-card-actions button,
-.mat-card .mat-card-actions button,
-.estudio-card .mat-card-actions button {
-    flex: 1 !important;
-    border-radius: var(--radius-lg) !important;
-    font-weight: 500 !important;
-    transition: all var(--transition-fast) !important;
-    color: white !important;
-    background-color: transparent !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-.estudio-card mat-card-actions button:hover,
-mat-card mat-card-actions button:hover,
-.mat-card .mat-card-actions button:hover,
-.estudio-card .mat-card-actions button:hover {
-    transform: translateY(-1px) !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* Iconos de los botones */
-.estudio-card mat-card-actions button mat-icon,
-mat-card mat-card-actions button mat-icon,
-.mat-card .mat-card-actions button mat-icon,
-.estudio-card .mat-card-actions button mat-icon {
-    color: white !important;
-}
-
-/* Si Angular Material usa clases específicas, también incluirlas */
-.mat-mdc-card-actions,
-.mdc-card__actions {
-    background-color: #87c15c !important;
-    background: #87c15c !important;
-}
-
-/* =====================================
    LOADING STATES
    ===================================== */
 .loading-container {
@@ -374,26 +584,35 @@ mat-card mat-card-actions button mat-icon,
     }
 }
 
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
 /* =====================================
    RESPONSIVE DESIGN
    ===================================== */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .search-filters {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: var(--spacing-md);
     }
 
-    .filter-field,
-    .sort-button {
-        min-width: auto;
+    .list-item-row {
+        grid-template-columns: 50px 1fr 1fr 60px;
     }
 
-    .cards-container {
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    .item-date,
+    .item-modality {
+        display: none;
     }
 
-    .stats-section {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    .details-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -404,150 +623,30 @@ mat-card mat-card-actions button mat-icon,
         text-align: center;
     }
 
-    .header-section h1 {
-        font-size: 1.75rem;
-    }
-
-    .stats-section {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--spacing-md);
-    }
-
-    .stat-number {
-        font-size: 1.5rem;
-    }
-
-    .cards-container {
+    .search-filters {
         grid-template-columns: 1fr;
     }
 
-    .estudio-card {
-        margin: 0 var(--spacing-sm);
+    .list-item-row {
+        grid-template-columns: 40px 1fr 40px;
+        gap: var(--spacing-sm);
+    }
+
+    .item-study {
+        display: none;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
-    .header-section,
-    .filters-section {
-        margin: 0 var(--spacing-sm) var(--spacing-lg) var(--spacing-sm);
-    }
-
-    .stats-section {
+    .stats-grid {
         grid-template-columns: 1fr;
-        gap: var(--spacing-sm);
     }
 
-    .estudio-card {
-        margin: 0;
-    }
-
-    .estudio-card mat-card-actions {
-        flex-direction: column;
-    }
-}
-
-/* =====================================
-   ANIMACIONES
-   ===================================== */
-.estudio-card {
-    animation: fadeInUp 0.4s ease-out;
-}
-
-.estudio-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-.estudio-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-.estudio-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-.estudio-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.stat-card {
-    animation: fadeIn 0.4s ease-out;
-}
-
-.stat-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-.stat-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-.stat-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-.stat-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* =====================================
-   TEMA OSCURO
-   ===================================== */
-@media (prefers-color-scheme: dark) {
-    .header-section,
-    .filters-section,
-    .stat-card {
-        background-color: var(--gray-800);
-        border-color: var(--gray-700);
-    }
-
-    .estudio-card {
-        background-color: var(--gray-800);
-        border-color: var(--gray-700);
-    }
-
-    .estudio-card.urgente {
-        background: linear-gradient(135deg, var(--error-900) 0%, var(--gray-800) 100%);
-        border-color: var(--error-600);
-    }
-
-    .estudio-card.con-contraste {
-        background: linear-gradient(135deg, var(--warning-900) 0%, var(--gray-800) 100%);
-        border-color: var(--warning-600);
-    }
-
-    .stat-number {
-        color: var(--gray-100);
-    }
-
-    .stat-label {
-        color: var(--gray-400);
-    }
-
-    .estudio-card mat-card-title {
-        color: var(--gray-100);
-    }
-
-    .estudio-card mat-card-subtitle {
-        color: var(--gray-400);
-    }
-
-    .detail-value {
-        color: var(--gray-100);
+    .list-item-row {
+        padding: var(--spacing-sm);
     }
 }
