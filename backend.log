@@ -90,3 +90,10 @@ Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 INFO:     127.0.0.1:56532 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-10-02 21:09:09 - root - INFO - Conexión a la base de datos cerrada
+2025-10-02 21:09:09 - app - INFO - Aplicación cerrada correctamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18768]
+INFO:     Stopping reloader process [18764]
