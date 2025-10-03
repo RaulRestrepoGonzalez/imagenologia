@@ -1,117 +1,92 @@
 INFO:     Will watch for changes in these directories: ['/home/raul/Source/imagenologia/backend']
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [5286] using WatchFiles
-2025-10-02 20:01:24 - root - INFO - Sistema de logging configurado correctamente
-2025-10-02 20:01:24 - root - INFO - Nivel de log: INFO
-2025-10-02 20:01:25 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-10-02 20:01:25 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-2025-10-02 20:01:25 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
-2025-10-02 20:01:25 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
-INFO:     Started server process [5292]
+INFO:     Started reloader process [18764] using WatchFiles
+2025-10-02 20:43:18 - root - INFO - Sistema de logging configurado correctamente
+2025-10-02 20:43:18 - root - INFO - Nivel de log: INFO
+2025-10-02 20:43:18 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
+2025-10-02 20:43:18 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
+2025-10-02 20:43:18 - root - WARNING - Configuración SMTP incompleta. Los emails no se enviarán.
+2025-10-02 20:43:18 - root - WARNING - Configuración de Twilio incompleta. Los SMS no se enviarán.
+INFO:     Started server process [18768]
 INFO:     Waiting for application startup.
-2025-10-02 20:01:26 - root - INFO - Conexión a MongoDB exitosa
-2025-10-02 20:01:26 - root - INFO - Base de datos inicializada correctamente
-2025-10-02 20:01:26 - app - INFO - Aplicación iniciada correctamente
+2025-10-02 20:43:18 - root - INFO - Conexión a MongoDB exitosa
+2025-10-02 20:43:18 - root - INFO - Base de datos inicializada correctamente
+2025-10-02 20:43:18 - app - INFO - Aplicación iniciada correctamente
 INFO:     Application startup complete.
-INFO:     127.0.0.1:40978 - "GET /health HTTP/1.1" 200 OK
-2025-10-02 20:01:28 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+INFO:     127.0.0.1:52516 - "GET /health HTTP/1.1" 200 OK
+2025-10-02 20:43:21 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
 Traceback (most recent call last):
   File "/home/raul/Source/imagenologia/backend/.venv/lib/python3.13/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
     version = _bcrypt.__about__.__version__
               ^^^^^^^^^^^^^^^^^
 AttributeError: module 'bcrypt' has no attribute '__about__'
-2025-10-02 20:01:29 - app.routes.auth - INFO - Usuario autenticado: admin@imagenologia.com
-INFO:     127.0.0.1:40994 - "POST /api/auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34902 - "OPTIONS /api/citas HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34912 - "GET /api/citas HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51350 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
+2025-10-02 20:43:21 - app.routes.auth - INFO - Usuario autenticado: admin@imagenologia.com
+INFO:     127.0.0.1:46406 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58018 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:51354 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51354 - "GET /api/citas HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58030 - "GET /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:33818 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52866 - "GET /api/citas HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36120 - "GET /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:53500 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41848 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53176 - "GET /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:41852 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56536 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60918 - "OPTIONS /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60924 - "GET /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44940 - "OPTIONS /api/estudios?prioridad=urgente HTTP/1.1" 200 OK
+Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
+INFO:     127.0.0.1:44944 - "GET /api/estudios?prioridad=urgente HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:41852 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37968 - "OPTIONS /api/citas HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37970 - "GET /api/citas HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44944 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44944 - "GET /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34308 - "GET /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59606 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:37970 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59616 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59616 - "GET /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59786 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59800 - "POST /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:37232 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59800 - "GET /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:43310 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41760 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37704 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44212 - "GET /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44220 - "OPTIONS /api/estudios/68df2d3d9c0ae15846372d91 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44230 - "PUT /api/estudios/68df2d3d9c0ae15846372d91 HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:41776 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44230 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44282 - "OPTIONS /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:59434 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44296 - "GET /api/estudios HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:59434 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41810 - "OPTIONS /api/citas HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41820 - "GET /api/citas HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44296 - "GET /api/estudios HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56532 - "OPTIONS /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56548 - "GET /api/pacientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56548 - "OPTIONS /api/estudios/68df2d3d9c0ae15846372d91 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56532 - "PUT /api/estudios/68df2d3d9c0ae15846372d91 HTTP/1.1" 200 OK
 Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
 Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:41820 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33176 - "GET /api/citas HTTP/1.1" 200 OK
-Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:54366 - "GET /api/estudios HTTP/1.1" 200 OK
-Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:35818 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42134 - "OPTIONS /api/estudios?estado=pendiente HTTP/1.1" 200 OK
-Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:42150 - "GET /api/estudios?estado=pendiente HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42166 - "OPTIONS /api/estudios?estado=pendiente&prioridad=normal HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42174 - "GET /api/estudios?estado=pendiente&prioridad=normal HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42174 - "OPTIONS /api/estudios?estado=pendiente&prioridad=urgente HTTP/1.1" 200 OK
-Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
-INFO:     127.0.0.1:42166 - "GET /api/estudios?estado=pendiente&prioridad=urgente HTTP/1.1" 200 OK
-Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:42166 - "GET /api/estudios?estado=pendiente HTTP/1.1" 200 OK
-Paciente no encontrado para ID: 68c5d1c91235cbe1ea331d93
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-Paciente no encontrado para ID: 68c5d7ec3ed42297d4a4a571
-INFO:     127.0.0.1:42166 - "GET /api/estudios HTTP/1.1" 200 OK
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-2025-10-02 20:37:48 - root - INFO - Conexión a la base de datos cerrada
-2025-10-02 20:37:48 - app - INFO - Aplicación cerrada correctamente
-INFO:     Application shutdown complete.
-INFO:     Finished server process [5292]
-INFO:     Stopping reloader process [5286]
+INFO:     127.0.0.1:56532 - "GET /api/estudios HTTP/1.1" 200 OK

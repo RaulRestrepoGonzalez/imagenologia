@@ -128,6 +128,22 @@ export interface Paciente {
         </div>
 
         <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Fecha de Realización</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="fechaPicker" 
+            formControlName="fecha_realizacion"
+            placeholder="Seleccione la fecha del estudio"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="fechaPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fechaPicker></mat-datepicker>
+          <mat-hint>Fecha en la que se realizará o se realizó el estudio</mat-hint>
+          <mat-error *ngIf="estudioForm.get('fecha_realizacion')?.hasError('required')">
+            La fecha de realización es requerida
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Técnico Asignado</mat-label>
           <input matInput formControlName="tecnico_asignado" placeholder="Nombre del técnico asignado (opcional)">
         </mat-form-field>
@@ -171,19 +187,6 @@ export interface Paciente {
       flex: 1;
     }
 
-    .checkboxes-row {
-      display: flex;
-      gap: 2rem;
-      margin: 1.5rem 0;
-      flex-wrap: wrap;
-    }
-
-    .checkbox-label {
-      font-size: 0.95rem;
-      color: #333;
-      margin-left: 0.5rem;
-    }
-
     mat-dialog-content {
       max-height: 80vh;
       overflow-y: auto;
@@ -197,23 +200,9 @@ export interface Paciente {
       font-size: 0.9rem;
     }
 
-    mat-checkbox {
-      display: flex;
-      align-items: center;
-    }
-
-    .mat-mdc-checkbox .mdc-checkbox {
-      padding: 8px;
-    }
-
     @media (max-width: 600px) {
       .row {
         flex-direction: column;
-      }
-
-      .checkboxes-row {
-        flex-direction: column;
-        gap: 1rem;
       }
     }
   `]
@@ -248,6 +237,7 @@ export class EstudioFormComponent implements OnInit {
       tipo_estudio: ['', [Validators.required]],
       medico_solicitante: ['', [Validators.required]],
       prioridad: ['normal', [Validators.required]],
+      fecha_realizacion: ['', [Validators.required]],
       indicaciones: [''],
       sala: [''],
       tecnico_asignado: ['']
@@ -269,11 +259,16 @@ export class EstudioFormComponent implements OnInit {
   }
 
   private populateForm(): void {
+    const fechaRealizacion = this.data.fecha_realizacion 
+      ? new Date(this.data.fecha_realizacion) 
+      : null;
+
     this.estudioForm.patchValue({
       paciente_id: this.data.paciente_id,
       tipo_estudio: this.data.tipo_estudio,
       medico_solicitante: this.data.medico_solicitante || '',
       prioridad: this.data.prioridad || 'normal',
+      fecha_realizacion: fechaRealizacion,
       indicaciones: this.data.indicaciones || '',
       sala: this.data.sala || '',
       tecnico_asignado: this.data.tecnico_asignado || ''
@@ -281,18 +276,32 @@ export class EstudioFormComponent implements OnInit {
   }
 
   onSave(): void {
-    this.isLoading = true;
-    const formValue = { ...this.estudioForm.value };
-
-    // Validar campos requeridos
-    if (!formValue.paciente_id || !formValue.tipo_estudio || !formValue.medico_solicitante) {
-      console.error('Campos requeridos faltantes:', formValue);
-      alert('Por favor complete todos los campos requeridos: Paciente, Tipo de Estudio y Médico Solicitante');
-      this.isLoading = false;
+    if (this.estudioForm.invalid) {
+      console.error('Formulario inválido:', this.estudioForm.errors);
+      Object.keys(this.estudioForm.controls).forEach(key => {
+        const control = this.estudioForm.get(key);
+        if (control?.invalid) {
+          console.error(`Campo inválido: ${key}`, control.errors);
+        }
+      });
+      alert('Por favor complete todos los campos requeridos');
       return;
     }
 
-    console.log('Datos enviados al backend (estudio):', formValue);
+    this.isLoading = true;
+    const formValue = { ...this.estudioForm.value };
+
+    // Convertir la fecha al formato correcto (YYYY-MM-DD)
+    if (formValue.fecha_realizacion) {
+      const fecha = new Date(formValue.fecha_realizacion);
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0');
+      const day = String(fecha.getDate()).padStart(2, '0');
+      formValue.fecha_realizacion = `${year}-${month}-${day}`;
+      console.log('Fecha convertida:', formValue.fecha_realizacion);
+    }
+
+    console.log('Datos completos enviados al backend:', formValue);
 
     const operation = this.isEdit
       ? this.api.put(`api/estudios/${this.data.id}`, formValue)
@@ -300,14 +309,16 @@ export class EstudioFormComponent implements OnInit {
 
     operation.subscribe({
       next: (response) => {
-        console.log('Respuesta del backend (estudio):', response);
+        console.log('Respuesta del backend completa:', response);
+        console.log('Fecha guardada en el backend:', response.fecha_realizacion);
         this.isLoading = false;
         this.dialogRef.close(response);
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Error completo al guardar estudio:', error);
+        console.error('Error al guardar estudio:', error);
         console.error('Detalles del error:', error.error);
+        alert(`Error al guardar: ${error.error?.detail || error.message}`);
       }
     });
   }

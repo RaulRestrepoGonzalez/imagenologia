@@ -279,14 +279,32 @@ export class Estudios implements OnInit {
       filtered = filtered.filter((estudio) => (estudio.modalidad || '') === this.selectedModalidad);
     }
 
-    // Filtro de fecha
+    // Filtro de fecha - CORREGIDO
     if (this.selectedDate) {
-      const selectedDateString = this.selectedDate.toISOString().split('T')[0];
+      // Convertir la fecha seleccionada a formato YYYY-MM-DD
+      const year = this.selectedDate.getFullYear();
+      const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(this.selectedDate.getDate()).padStart(2, '0');
+      const selectedDateString = `${year}-${month}-${day}`;
+      
+      console.log('Fecha seleccionada:', selectedDateString);
+      
       filtered = filtered.filter((estudio) => {
-        if (!estudio.fecha_realizacion) return false;
-        const estudioDate = new Date(estudio.fecha_realizacion).toISOString().split('T')[0];
-        return estudioDate === selectedDateString;
+        if (!estudio.fecha_realizacion) {
+          console.log('Estudio sin fecha:', estudio.id);
+          return false;
+        }
+        
+        // Extraer solo la parte de la fecha (YYYY-MM-DD) ignorando la hora
+        const estudioDate = estudio.fecha_realizacion.split('T')[0];
+        const matches = estudioDate === selectedDateString;
+        
+        console.log(`Comparando: ${estudioDate} === ${selectedDateString} = ${matches}`);
+        
+        return matches;
       });
+      
+      console.log('Estudios filtrados por fecha:', filtered.length);
     }
 
     this.filteredEstudios = filtered;
